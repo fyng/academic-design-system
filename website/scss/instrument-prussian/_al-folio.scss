@@ -1,0 +1,149 @@
+/*******************************************************************************
+ * Instrument / Prussian — al-folio adapter.
+ * Quiet, white, editorial. Maps the tokens onto al-folio's --global-* colour
+ * variables and restyles al-folio's markup (navbar, h2 section labels, news,
+ * publications, CV cards, footer). Load it after al-folio's own partials.
+ * Fonts: load Instrument Serif, IBM Plex Sans and IBM Plex Mono separately
+ * (see website/DESIGN.md, "Typography").
+ ******************************************************************************/
+
+@use "tokens" as *;
+
+:root {
+  @include custom-properties($light);
+}
+
+html[data-theme="dark"] {
+  @include custom-properties($dark);
+}
+
+/* ---- Typography ---------------------------------------------------------- */
+body {
+  font-family: $font-body;
+  font-weight: 300;
+  background: var(--global-bg-color);
+}
+
+b,
+strong {
+  font-weight: 500;
+}
+
+h1,
+h3,
+h4,
+.post-title,
+.page-title {
+  font-family: $font-display !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+
+// Name on the home page: large serif, italic given name.
+.post-header .post-title {
+  font-size: 3.4rem !important;
+  line-height: 1.05;
+  .font-weight-bold {
+    font-weight: 400 !important;
+    font-style: italic;
+  }
+}
+
+// Section labels: small mono caps with a hairline above.
+h2 {
+  font-family: $font-mono !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.16em !important;
+  color: var(--global-text-color-light) !important;
+  border-top: 1px solid var(--global-divider-color);
+  padding-top: 1.1rem;
+  margin-top: 2.6rem;
+  a {
+    color: inherit !important;
+  }
+}
+
+.navbar a,
+.news th,
+.year,
+time,
+code,
+pre {
+  font-family: $font-mono !important;
+}
+
+.news th,
+.year,
+time {
+  font-weight: 400 !important;
+  color: var(--global-text-color-light) !important;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.publications .title {
+  font-weight: 500;
+}
+
+/* ---- Chrome ---------------------------------------------------------------- */
+.navbar {
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--global-divider-color);
+  background: var(--global-bg-color) !important;
+}
+
+.profile img,
+.profile .img-fluid {
+  box-shadow: none !important;
+  border-radius: 2px !important;
+}
+
+footer,
+footer.fixed-bottom,
+footer.sticky-bottom {
+  background: var(--global-footer-bg-color) !important;
+  color: var(--global-footer-text-color) !important;
+  border-top: 1px solid var(--global-divider-color);
+  font-size: 0.78rem;
+  a {
+    color: var(--global-footer-link-color) !important;
+  }
+}
+
+// Social icons on the about page: smaller and muted.
+.social .contact-icons {
+  font-size: 1.5rem !important;
+  a {
+    color: var(--global-text-color-light) !important;
+    margin: 0 0.35rem;
+    &:hover {
+      color: var(--global-hover-color) !important;
+    }
+  }
+}
+
+/* ---- CV page --------------------------------------------------------------- */
+.cv .card {
+  box-shadow: none !important;
+  border: 1px solid var(--global-divider-color) !important;
+  border-radius: 2px;
+  background: var(--global-card-bg-color);
+}
+.cv .badge.danger-color-dark {
+  background: transparent !important;
+  color: var(--global-text-color-light) !important;
+  font-family: $font-mono;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em;
+}
+
+/* News dates: keep on one line. */
+.news th {
+  white-space: nowrap;
+  padding-right: 1rem !important;
+}
