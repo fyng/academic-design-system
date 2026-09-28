@@ -5,7 +5,8 @@ for that job follows from the tables below. If a mark has no job, it is ink or
 context grey.
 
 Reference sheet: `out/specimen-color.png`. The values live in `tokens.mjs`; use the
-CSS variables (`var(--harm)`) or `tokens.json`, never raw hex in a figure.
+CSS variables (`var(--harm)`) or `tokens.json` in a figure, so a change to a token
+reaches every figure.
 
 ## Foundations
 
@@ -17,7 +18,7 @@ CSS variables (`var(--harm)`) or `tokens.json`, never raw hex in a figure.
 | `ink` | `#16181d` | 17.9:1 | Titles, body, primary marks |
 | `ink-2` | `#4a4e58` | 8.3:1 | Labels, axes |
 | `muted` | `#6b707b` | 5.0:1 | Captions, ticks. **The lightest text colour** |
-| `context` | `#a3a8b1` | 2.4:1 | De-emphasised *data* (comparator series, non-hits). Never text |
+| `context` | `#a3a8b1` | 2.4:1 | De-emphasised *data* (comparator series, non-hits). Marks only; text uses `muted` |
 | `rule` | `#d9dbe0` | – | Hairlines, dividers, gridlines |
 | `wash` | `#f4f5f7` | – | Grouping fills; the diverging midpoint |
 | `prussian` | `#1f4e79` | 8.7:1 | Structural ink: panel numbers, arrows, method boxes, models |
@@ -32,7 +33,7 @@ into a role without re-checking contrast:
 | Step | Use |
 |---|---|
 | 100 | Washes: background of a highlighted box or pill |
-| 200–300 | Light end of scales; never marks on their own |
+| 200–300 | Light end of scales |
 | **500** | **Marks**: bars, lines, dots, icons (≥ 3:1 on paper) |
 | **600** | **Text in a hue**: direct labels, accent words (≥ 5:1 on paper) |
 | 700–900 | Dark end of scales; 700 is the text step for blue-family benefit |
@@ -53,7 +54,7 @@ resistance against sensitivity.
   under deuteranopia. Blue against vermilion stays opposite for every reader.
 - A figure about safety makes *harm* the focus; a figure about efficacy makes
   *benefit* the focus. The other side (or a null result) is context grey.
-- Don't use valence for things that are merely "up" or "down"; see *Direction*.
+- For things that are merely "up" or "down", use *Direction*.
 
 ### 2. Emphasis: the one thing to look at
 
@@ -84,12 +85,15 @@ model systems.
 | 6 | moss | `#629742` | `#477825` |
 | 7 | rose | `#c95a8b` | `#a63d6d` |
 
-- **Assign in order, never cycle.** Series *n* gets slot *n*. An 8th category folds
+- **Assign in order.** Series *n* gets slot *n*. An 8th category folds
   into "other" (context grey), or the chart becomes small multiples.
-- **Don't mix identity with valence** in one panel. A chart that uses harm and
-  benefit does not also use categorical slots.
-- **Colour follows the entity, not its rank.** Filtering or re-sorting never
-  repaints survivors.
+- **One job per panel.** A chart that uses harm and benefit keeps to them; a chart
+  that uses categorical slots keeps to those.
+- **Colour follows the entity, not its rank.** Survivors of a filter or a re-sort
+  keep their colours.
+- **When an axis already names the groups**, draw their marks in `ink-2` and let
+  colour carry a factor the axis doesn't (treated against control across panels,
+  for example).
 - **Up to three categories can touch anywhere** (scatter, maps, spatial plots):
   slots 1–3 are distinct in every pairing. With more, add direct labels or shapes,
   or facet.
@@ -131,8 +135,8 @@ related and distinct at once.
 - The mark colour is for nuclei, outlines, dial wedges and matrix fills. The tint
   (62 % toward paper, 40 % chroma) is for cytoplasm and other large fills.
 - **Four is the limit.** With more cell types, fold the rest into "other" (context
-  grey) or split into small multiples. A panel never uses the family palette and the
-  categorical slots together.
+  grey) or split into small multiples. A panel uses either the family palette or
+  the categorical slots.
 - Defined in `tokens.mjs` (`family.cell`).
 
 ### 5. Magnitude: how much
@@ -145,13 +149,17 @@ One hue, light to dark.
 | **Harm** | vermilion 100 → 900 | Risk, toxicity grade, predicted probability of harm |
 | **Benefit** | blue 100 → 900 | Response rate, sensitivity |
 
+- **The ends mean something.** The lightest step sits at zero (or the minimum), the
+  darkest at the maximum.
 - Continuous fields (heatmaps, spatial maps) use the full 100–900. Discrete ordered
-  classes (grades 1–4, tiers) use steps 400–800, so the lightest class is still
-  ≥ 2:1 on paper. Order must be visible in the colour.
+  classes (grades 1–4, tiers, doses, stages) use steps 400–800, so the lightest class
+  is still ≥ 2:1 on paper and the order shows in the colour.
+- **Cap the scale** when a few outliers would use up its range: end it near the 95th
+  percentile and label the key's end "> 2". A rank plot of the values shows where
+  the cap belongs.
 - **Dense images** (e.g. per-pixel spatial expression) may use *cividis*, the one
-  multi-hue exception, because it is perceptually uniform and CVD-safe.
-  Use no other rainbow or jet maps.
-- Always show a key with labelled ends.
+  multi-hue scale, because it is perceptually uniform and CVD-safe.
+- Show a key with labelled ends, and the cap when there is one.
 
 ### 6. Direction: which way, without judging
 
@@ -163,7 +171,8 @@ axes, up- and down-regulation.
 | **Valence** (see §1) | blue (benefit) | `wash` | vermilion (harm) |
 | **Direction** | violet | `wash` | ochre |
 
-- The midpoint is always a neutral grey that means zero.
+- The midpoint is a neutral grey, placed at the value that means "no change": 0 for
+  a fold change, the mean for a z score.
 - Arms are symmetric, with equal steps each side, from 200 to 800.
 - Violet and ochre are chosen because they are warm and cool, CVD-safe, and carry no
   "good" or "bad" meaning. Use them for volcano plots, fold-change heatmaps and
@@ -171,11 +180,11 @@ axes, up- and down-regulation.
 
 ### 7. Structure: the figure itself
 
-Structure is not data, so it takes no data colours.
+Structure is not data, so it uses structural ink.
 
 - **Arrows and flow:** prussian, 2.5 px.
 - **Method boxes** (LLM, model, pipeline step): benefit-wash fill, 12 px corners, a
-  prussian icon above a short prussian label. Never a solid dark block.
+  prussian icon above a short prussian label.
 - **Dividers, axes and gridlines:** `rule` and `ink-2` hairlines.
 - **Pills and tags:** a wash fill with the matching `*-text` colour.
 
@@ -202,10 +211,11 @@ first three, so harm-red doesn't turn up by accident in a neutral comparison.
 
 **If you change a hue:** edit `tokens.mjs`, regenerate, and re-run a CVD validator
 (any OKLab/Machado implementation) on the categorical order and the ordinal ramps
-before using it.
+before using it. To see a scale the way readers will, view it in normal vision,
+greyscale and simulated deuteranopia, with its OKLab lightness plotted along it:
+a good ramp changes steadily in every view (`specimen-scales.html` → `out/specimen-scales.png`).
 
-## What Lamina deliberately is not
+## The look
 
-It avoids the conventions of other visual systems: no coloured background panels
-behind charts, no thick white gridlines, no red brand bar or tab, no single brand hue
-applied to every series. Colour here always follows the data's meaning.
+Charts sit on white paper with hairline axes. Colour lands on data, and each hue
+follows the data's meaning rather than a brand.

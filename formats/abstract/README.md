@@ -140,7 +140,23 @@ ch.label("carriers", 24, 0.08, { dx: 10, color: "var(--harm-text)" });
 
 `x, y, w, h` place the **plot area**; titles and ticks sit outside it. All chart text
 goes through `ga.text`, so the lint covers it, and a label sitting on a curve fails the
-render.
+render. `axes: "x"`, `"y"` or `""` keeps only those axes.
+
+| Mark | Form in `charts.md` |
+|---|---|
+| `line`, `fn`, `ribbon` | Curves, step curves, ECDF, CI ribbons (03, 04, 05, 13) |
+| `dots`, `ref`, `label`, `lineKey`, `key` | Points, dotted reference lines, direct labels, keys |
+| `hbars` | Ranked bars (01) |
+| `intervals` | Forest plot (02) |
+| `heat` | Heatmap; `groups` splits columns, `dense` drops column gaps (07) |
+| `stack` | 100 % stacked bars (08) |
+| `swarm`, `summary` | Beeswarm with a median bar (09, 10) |
+| `vbars` | Bars from zero (11) |
+| `lollipop` | Lollipop (12) |
+| `columns` | Stacked columns grouped by dominant part (14) |
+
+`../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html` use every
+mark.
 
 ## Deliverables per figure
 

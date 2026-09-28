@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina chart specimens II</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../formats/abstract/kit/ga-kit.css">
+<script src="../formats/abstract/kit/icons.js"></script>
+<script src="../formats/abstract/kit/ga-kit.js"></script>
+<script src="../formats/abstract/kit/ga-charts.js"></script>
+</head>
+<body>
+<script>
+// Specimen sheet for core/charts.md, forms 09-14 and the grouped heatmap (07).
+// All data here are synthetic.
+GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens II", desc: "Seven more chart forms drawn with the kit's chart layer, on synthetic data." }, (ga) => {
+  const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
+  const ramp = (h, steps) => steps.map((s) => tok(`${h}-${s}`));
+  const rnd = GA.rng(11);
+  const normal = (mu = 0, sd = 1) => mu + sd * Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+
+  ga.text("LAMINA · CHART SPECIMENS II · SYNTHETIC DATA", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("More forms, one grammar", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+
+  // 4 x 2 cells
+  const CW = 326, GUT = (1600 - 2 * ga.M - 4 * CW) / 3;
+  const cell = (i) => ({ x: ga.M + (i % 4) * (CW + GUT), T: i < 4 ? 138 : 506 });
+  const head = (c, n, name) => ga.text(`${String(n).padStart(2, "0")} · ${name}`, { x: c.x, y: c.T, role: "step", at: 0.2 });
+  const note = (c, s) => ga.text(s, { x: c.x, y: c.T + 298, w: CW, role: "cap", size: 14, at: 0.4 });
+  const PH = 172; // plot height
+  const at = 0.3;
+
+  // 07 grouped heatmap: columns split by annotation, rows ordered by peak group, capped scale
+  {
+    const c = cell(0); head(c, 7, "HEATMAP, GROUPED");
+    const groups = [{ label: "group 1", n: 36 }, { label: "group 2", n: 24 }, { label: "group 3", n: 48 }];
+    const genes = ["gene 1", "gene 2", "gene 3", "gene 4", "gene 5", "gene 6"];
+    const m = genes.map((_, i) => {
+      const peak = Math.floor(i / 2), row = [];
+      groups.forEach((g, k) => { for (let j = 0; j < g.n; j++) row.push(k === peak ? Math.max(0, normal(1.6, 0.45)) + (rnd() < 0.03 ? 4 : 0) : Math.abs(normal(0, 0.35))); });
+      return row;
+    });
+    const q = ramp("teal", [100, 200, 300, 400, 500, 600, 700, 800, 900]);
+    const ch = GA.chart(ga, { x: c.x + 64, y: c.T + 76, w: CW - 64, h: PH - 44, axes: "", at });
+    ch.heat(m, q, { domain: [0, 2], groups, dense: true, rowLabels: genes });
+    ch.key(q, { x: c.x + 64, y: c.T + 76 + PH - 26, w: 150, lo: "0", hi: "> 2" });
+    ga.text("expression", { x: c.x + 64 + 160, y: c.T + 76 + PH - 32, role: "tick", at, anim: "fade" });
+    note(c, "Columns split by group with gaps; rows ordered by the group where they peak. The key's end reads “> 2” because the scale is capped.");
+  }
+
+  // 09 beeswarm + median: shape, n and outliers along with the centre
+  {
+    const c = cell(1); head(c, 9, "BEESWARM + MEDIAN");
+    const A = Array.from({ length: 60 }, () => normal(0.8, 1));
+    const B = Array.from({ length: 60 }, (_, i) => (i % 2 ? normal(2.6, 0.6) : normal(-0.4, 0.6)));
+    const C = Array.from({ length: 60 }, () => Math.min(4.6, -0.6 + Math.exp(normal(0.4, 0.6))));
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 36, h: PH, xd: [0.5, 3.5], yd: [-3, 5], xTicks: [1, 2, 3], xFmt: (v) => "ABC"[v - 1], yTicks: [-2, 0, 2, 4], yTitle: "Response", at });
+    ch.swarm([{ x: 1, values: A }, { x: 2, values: B }, { x: 3, values: C }], { r: 3 });
+    note(c, "Every point, placed without overlap, with the median as a short ink bar. For n up to a few hundred per group.");
+  }
+
+  // 10 small multiples: tested factor on x in every panel, shared y
+  {
+    const c = cell(2); head(c, 10, "SMALL MULTIPLES");
+    const PW = 84, PG = 20, X0 = c.x + 36;
+    [[1.5, 1.4], [1.4, 2.6], [1.3, 3.7]].forEach(([mc, mt], k) => {
+      const ch = GA.chart(ga, { x: X0 + k * (PW + PG), y: c.T + 60, w: PW, h: PH - 22, xd: [0.4, 2.6], yd: [0, 6], xTicks: [1, 2], xFmt: (v) => (v === 1 ? "ctrl" : "trt"), yTicks: k ? undefined : [0, 3, 6], axes: k ? "x" : "xy", yTitle: k ? undefined : "Response", at });
+      const ctrl = Array.from({ length: 5 }, () => normal(mc, 0.35)), trt = Array.from({ length: 5 }, () => normal(mt, 0.35));
+      ch.swarm([{ x: 1, values: ctrl, color: "var(--context)" }, { x: 2, values: trt, color: "var(--cat-1)" }], { hw: 14 });
+      ga.text(`tissue ${k + 1}`, { x: X0 + k * (PW + PG) + PW / 2, y: c.T + 60 + PH + 12, role: "label", size: 14, anchor: "middle", at, anim: "fade" });
+    });
+    note(c, "One panel per level of the factors not under test; the tested factor on x in each. Shared y unless ranges differ by orders of magnitude.");
+  }
+
+  // 11 amounts: bars from zero, replicates on the bar
+  {
+    const c = cell(3); head(c, 11, "AMOUNTS: BARS FROM ZERO");
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 36, h: PH, xd: [0.5, 4.5], yd: [0, 12], xTicks: [1, 2, 3, 4], yTicks: [0, 5, 10], xTitle: "Week", yTitle: "Colonies per well", at });
+    const means = [4, 5.8, 7.8, 9.9];
+    ch.vbars(means.map((v, i) => ({ x: i + 1, v, color: i === 3 ? "var(--cat-1)" : "var(--context)" })));
+    ch.dots(means.flatMap((v, i) => [-0.12, 0, 0.12].map((d) => [i + 1 + d, v + normal(0, 0.35), "var(--ink-2)"])), { at: at + 1.2 });
+    note(c, "Length from zero carries the value, so the axis starts at 0. Replicates sit on the bar when n is small.");
+  }
+
+  // 11 amounts over decades: dots on a log axis
+  {
+    const c = cell(4); head(c, 11, "AMOUNTS OVER DECADES");
+    const vals = [12, 30, 85, 420, 2600];
+    const ch = GA.chart(ga, { x: c.x + 76, y: c.T + 60, w: CW - 110, h: PH, xd: [0.5, 5.5], yd: [6, 5000], ylog: true, xTicks: [1, 2, 3, 4, 5], xFmt: (v) => "abcde"[v - 1], yTicks: [10, 100, 1000], yFmt: (v) => v.toLocaleString("en"), yTitle: "Copies per cell (log scale)", at });
+    ch.dots(vals.map((v, i) => [i + 1, v]));
+    vals.forEach((v, i) => ch.label(v.toLocaleString("en"), i + 1, v, { dx: 9, dy: -9, role: "tick" }));
+    note(c, "When values span orders of magnitude: dots on a log axis, which has no zero for a bar to start from.");
+  }
+
+  // 12 lollipop coloured by a signed scale (direction ramp centred on 0)
+  {
+    const c = cell(5); head(c, 12, "LOLLIPOP, COLOURED BY SCALE");
+    const dir = [...ramp("violet", [700, 600, 500, 400, 300, 200]), tok("wash"), ...ramp("ochre", [200, 300, 400, 500, 600, 700])];
+    const pick = (v) => dir[Math.max(0, Math.min(dir.length - 1, Math.round(((v + 3) / 6) * (dir.length - 1))))];
+    const vals = [3.1, 2.1, 1.3, 0.4, -0.6, -1.5, -2.8];
+    const ch = GA.chart(ga, { x: c.x + 64, y: c.T + 40, w: CW - 64, h: PH - 12, xd: [-3.5, 3.5], xTicks: [-3, 0, 3], axes: "x", xTitle: "log₂ fold change", at });
+    ch.ref("x", 0);
+    ch.lollipop(vals.map((v, i) => ({ label: `gene ${i + 1}`, v, color: pick(v) })));
+    ch.key(dir, { x: c.x + 64, y: c.T + 40 + PH + 40, w: 150, lo: "−3", mid: "0", hi: "3" });
+    note(c, "Ranked values on a stem from the reference; the dot takes the scale colour. Signed data: direction ramp centred on 0.");
+  }
+
+  // 13 ECDF: distributions without bins
+  {
+    const c = cell(6); head(c, 13, "ECDF");
+    const ecdf = (xs) => { const s = [...xs].sort((a, b) => a - b), n = s.length; return [[-3, 0], ...s.map((v, i) => [v, (i + 1) / n]), [5, 1]]; };
+    const ctl = Array.from({ length: 120 }, () => normal(0, 0.9)), trt = Array.from({ length: 120 }, () => normal(1.4, 0.8));
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 104, h: PH, xd: [-3, 5], yd: [0, 1], xTicks: [-2, 0, 2, 4], yTicks: [0, 0.5, 1], xTitle: "Response", yTitle: "Cumulative share", at });
+    ch.line(ecdf(ctl), { curve: "step", color: "var(--context)", width: 2 });
+    ch.line(ecdf(trt), { curve: "step", color: "var(--cat-1)", width: 2 });
+    ch.label("control", 5, 1, { dx: 10, dy: 2, color: "var(--muted)" });
+    ch.label("treated", 5, 0.72, { dx: 10, color: "var(--cat-1-text)" });
+    note(c, "A distribution without bins: each step is one observation. Compare groups by where their curves sit.");
+  }
+
+  // 14 composition across many samples: grouped by dominant part, sorted by its share
+  {
+    const c = cell(7); head(c, 14, "COMPOSITION, MANY SAMPLES");
+    const names = ["T", "B", "NK", "mono", "DC"], sizes = [34, 24, 18, 14, 10];
+    const cats = [1, 2, 3, 4, 5].map((i) => tok(`cat-${i}`));
+    const cols = [];
+    sizes.forEach((n, k) => {
+      const g = Array.from({ length: n }, () => { const p = [0, 1, 2, 3, 4].map(() => 0.1 + rnd() ** 2); p[k] += 1 + rnd() * 3; return p; });
+      g.sort((a, b) => b[k] / b.reduce((s, x) => s + x, 0) - a[k] / a.reduce((s, x) => s + x, 0));
+      cols.push(...g);
+    });
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 76, w: CW - 36, h: PH - 16, yd: [0, 1], yTicks: [0, 0.5, 1], yFmt: (v) => String(v * 100), axes: "y", at });
+    ch.columns(cols, cats, { groups: sizes.map((n, k) => ({ n, label: names[k], color: `var(--cat-${k + 1}-text)` })) });
+    ga.text("Share (%)", { x: c.x + 36, y: c.T + 28, role: "axis", at, anim: "fade" });
+    let lx = c.x + 110;
+    names.forEach((n, i) => {
+      ga.raw(`<rect x="${lx}" y="${c.T + 34}" width="10" height="10" rx="2" fill="${cats[i]}"/>`, { at, anim: "fade" });
+      lx = ga.text(n, { x: lx + 14, y: c.T + 31, role: "tick", at, anim: "fade" }).r + 12;
+    });
+    note(c, "One column per sample, grouped by its dominant part and sorted by that part's share. Parts keep one stack order; the legend sits above.");
+  }
+});
+</script>
+</body>
+</html>

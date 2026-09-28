@@ -7,11 +7,11 @@ What every format shares: the principles, the voice, and five elements. The form
 |---|---|---|
 | Colour | [`color.md`](color.md) | Palettes grouped by meaning, and how they were validated |
 | Typography | [`typography.md`](typography.md) | One family (IBM Plex), type roles, numbers and units |
-| Charts | [`charts.md`](charts.md) | Chart grammar and forms |
+| Charts | [`charts.md`](charts.md) | Chart grammar and fourteen forms |
 | Icons | [`icons.md`](icons.md) | Health Icons, custom glyphs, when an icon takes colour |
 | Illustration | [`illustration.md`](illustration.md) | Cells, tissue, model systems, zooms, arrows and method boxes |
 | Tokens | `tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit the `.mjs`, run `node core/tokens.mjs` |
-| Specimens | `specimen-*.html` → `out/specimen-*.png` | Reference sheets for colour and charts |
+| Specimens | `specimen-*.html` → `out/specimen-*.png` | Reference sheets for colour, scales and charts, drawn with the abstract kit |
 
 | Format | For | Adds |
 |---|---|---|

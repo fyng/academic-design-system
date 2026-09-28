@@ -26,7 +26,7 @@ mm and pt; the abstract adds a canvas, an arc and motion.
 |---|---|
 | `core/*.md` | The shared elements: `color.md`, `typography.md`, `charts.md`, `icons.md`, `illustration.md` |
 | `core/tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit `tokens.mjs`, run `node core/tokens.mjs` |
-| `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour and charts |
+| `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour, scales and charts |
 | `formats/web/scss/instrument-prussian/` | The web format in Sass: `_tokens.scss` (framework-agnostic) and `_al-folio.scss` (al-folio adapter) |
 | `formats/publication/` | The journal figure spec |
 | `formats/abstract/kit/` | The abstract kit: `ga-kit.css`/`ga-kit.js` (layout, type roles, motion, lint), `ga-bio.js`, `ga-charts.js`, `icons.js`, and `render.cjs` (PNG/MP4/WebM renderer) |
@@ -56,9 +56,10 @@ Every project that uses the system can improve it. Change it here, not in a copy
 2. Make the change, and keep the docs and the code in step: a new token, rule or kit
    feature is documented in the matching core or format README in the same commit.
    Shared guidance goes in `core/`; guidance for one medium goes in its format.
-3. Regenerate what is generated: `node core/tokens.mjs` after editing tokens;
-   re-render a specimen (`node formats/abstract/kit/render.cjs core/specimen-color.html --still`,
-   then move `core/out/specimen-color.png` into place if needed) when its look changes.
+3. Regenerate what is generated: `node core/tokens.mjs` after editing tokens, then
+   re-render the specimens it affects (`node formats/abstract/kit/render.cjs core/specimen-color.html --still`
+   writes `core/out/specimen-color.png`). Every image in an `out/` folder comes from a
+   specimen page in the repo, so a token or kit change shows up in the specimens.
 4. Push the branch and open a pull request here. Keep it about the system; anything
    that only one project needs (a page layout, a figure) stays in that project.
 5. Once it merges, bump the pointer in each project that should pick it up:
@@ -69,8 +70,15 @@ adapter, a new kit helper) over changing existing values. When an existing value
 or kit API must change, say so in the pull request and check the consumers you know of.
 See [`CLAUDE.md`](CLAUDE.md) for the same rules written for coding agents.
 
-
 ## Sources
+
+The system draws on these works. Thanks to their authors.
+
+**Charts**
+
+- Chenxin Li, [*Friends Don't Let Friends Make Bad Graphs*](https://github.com/cxli233/FriendsDontLetFriends)
+  ([doi:10.5281/zenodo.7542491](https://doi.org/10.5281/zenodo.7542491)), MIT licence.
+  The source of chart forms 09–14, the grouped heatmap and the capped scale.
 
 **Journal figure guidelines** (`formats/publication/README.md`)
 
@@ -83,3 +91,19 @@ See [`CLAUDE.md`](CLAUDE.md) for the same rules written for coding agents.
 - PNAS: [submitting your manuscript](https://www.pnas.org/author-center/submitting-your-manuscript)
   and [digital art guidelines](https://www.pnas.org/pb-assets/authors/digitalart-1675347574760.pdf)
 - NEJM: [technical guidelines for figures](https://www.nejm.org/pb-assets/pdfs/TechnicalGuidelines_2025-1758311142233.pdf)
+
+**Type, icons and colour**
+
+- [IBM Plex](https://github.com/IBM/plex) (SIL Open Font License) and
+  [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif) (SIL Open Font License)
+- [Health Icons](https://healthicons.org) (MIT), via `@iconify-json/healthicons`
+- Björn Ottosson, [OKLab](https://bottosson.github.io/posts/oklab/): the space the hue ramps are built in
+- Machado, Oliveira and Fernandes, [a physiologically based model for simulating colour
+  vision deficiency](https://doi.org/10.1109/TVCG.2009.113), IEEE TVCG 2009: the CVD check
+- Nuñez, Anderton and Renslow, [cividis](https://doi.org/10.1371/journal.pone.0199239),
+  PLOS ONE 2018
+- [WCAG 2.1](https://www.w3.org/TR/WCAG21/) contrast minimums
+
+**Web**
+
+- [al-folio](https://github.com/alshedivat/al-folio), the Jekyll theme the web adapter targets
