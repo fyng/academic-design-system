@@ -101,14 +101,13 @@
     ch.label = (str, x, y, m = {}) => ga.text(str, { x: sx(x) + (m.dx || 0), y: sy(y) + (m.dy ?? -9), role: m.role || "cap", anchor: m.anchor || "start", color: m.color, w: m.w, at: m.at ?? (mt === undefined ? undefined : mt + 1.2), anim: "fade" });
 
     // Horizontal bars for named categories. rows: [{label, v, color}]
-    // Bars are <= 22px, rounded at the data end only, and grow from the baseline.
+    // Bars are <= 22px, square-cornered, and grow from the baseline.
     ch.hbars = (rows, m = {}) => {
       const band = H / rows.length, th = Math.min(m.thickness || 18, band - 6);
       rows.forEach((r, i) => {
         const cy = Y0 + band * (i + 0.5), x = sx(0), w = sx(r.v) - x;
         const t = m.at ?? (mt === undefined ? undefined : mt + i * 0.08);
-        const rr = Math.min(4, w);
-        ga.raw(`<path d="M${x} ${cy - th / 2}h${w - rr}a${rr} ${rr} 0 0 1 ${rr} ${rr}v${th - 2 * rr}a${rr} ${rr} 0 0 1 ${-rr} ${rr}h${-(w - rr)}Z" fill="${r.color || m.color || "var(--context)"}"/>`, { at: t, anim: "grow", t: 0.7 });
+        ga.raw(`<rect x="${x}" y="${cy - th / 2}" width="${w}" height="${th}" fill="${r.color || m.color || "var(--context)"}"/>`, { at: t, anim: "grow", t: 0.7 });
         ga.text(r.label, { x: X0 - 10, y: cy - 8, role: "label", size: 14, anchor: "end", color: r.labelColor, at: o.at, anim: "fade" });
         if (m.values !== false) ga.text((m.fmt || fmtDefault)(r.v), { x: sx(r.v) + 6, y: cy - 8, role: "tick", color: r.valueColor, at: t === undefined ? undefined : t + 0.5, anim: "fade" });
       });
@@ -161,7 +160,7 @@
       let s = "";
       matrix.forEach((row, i) => row.forEach((v, j) => {
         if (v === null || v === undefined) return;
-        s += `<rect x="${cx[j] + gx}" y="${Y0 + i * rh + 1}" width="${cw - 2 * gx + (m.dense ? 0.5 : 0)}" height="${rh - 2}"${m.dense ? "" : ' rx="2"'} fill="${pick(v)}"/>`;
+        s += `<rect x="${cx[j] + gx}" y="${Y0 + i * rh + 1}" width="${cw - 2 * gx + (m.dense ? 0.5 : 0)}" height="${rh - 2}" fill="${pick(v)}"/>`;
       }));
       ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
       let j0 = 0;
@@ -204,13 +203,13 @@
       }
     };
     // Vertical bars from a zero baseline. rows: [{x, v, color}]; width in px
-    // (default half the band). Rounded at the data end, square at the baseline.
+    // (default half the band). Square-cornered.
     ch.vbars = (rows, m = {}) => {
-      const bw = m.width || Math.abs(sx(1) - sx(0)) / 2, rr = 4;
+      const bw = m.width || Math.abs(sx(1) - sx(0)) / 2;
       rows.forEach((r, i) => {
-        const X = sx(r.x) - bw / 2, yb = sy(0), h = yb - sy(r.v), q = Math.min(rr, h);
+        const X = sx(r.x) - bw / 2, yb = sy(0), h = yb - sy(r.v);
         const t = m.at ?? (mt === undefined ? undefined : mt + i * 0.08);
-        ga.raw(`<path d="M${X} ${yb}V${yb - h + q}a${q} ${q} 0 0 1 ${q} ${-q}h${bw - 2 * q}a${q} ${q} 0 0 1 ${q} ${q}V${yb}Z" fill="${r.color || m.color || "var(--context)"}"/>`, { at: t, anim: "rise", t: 0.7 });
+        ga.raw(`<rect x="${X}" y="${yb - h}" width="${bw}" height="${h}" fill="${r.color || m.color || "var(--context)"}"/>`, { at: t, anim: "rise", t: 0.7 });
       });
     };
     // Lollipop: one row per item, a 2px rule stem from the reference (m.ref, default 0)

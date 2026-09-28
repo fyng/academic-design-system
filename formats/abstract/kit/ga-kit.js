@@ -182,7 +182,7 @@
     // Horizontal bar growing from the left (for small quantitative marks)
     bar(o) {
       const g = this.wrap(o.at, "grow", o.t);
-      el("rect", { x: o.x, y: o.y, width: Math.max(o.w, 2), height: o.h || 14, rx: 3, fill: o.fill }, g);
+      el("rect", { x: o.x, y: o.y, width: Math.max(o.w, 2), height: o.h || 14, fill: o.fill }, g);
       return this.add("bar", g, box(o.x, o.y, o.x + o.w, o.y + (o.h || 14)), { lint: false });
     }
 

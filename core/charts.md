@@ -66,13 +66,13 @@ Start from the data's job.
 |---|---|
 | Line | 2.5 px, round joins and caps |
 | Step curve | Same as line, drawn as steps |
-| Bar | 4 px rounded data end, square at the baseline, grows from 0. ≤ 22 px thick in ranked bars; about half the band in vertical bars |
+| Bar | Square corners, grows from 0. ≤ 22 px thick in ranked bars; about half the band in vertical bars |
 | Point | r 4.5, 1 px paper ring so overlaps stay legible; r 3–3.5 for about 100 per group |
 | Not-significant point | Hollow: paper fill, 1.5 px ring in the series colour |
 | Summary (median, mean) | Short `ink` bar, 3 px, with a 1.5 px paper halo so it reads over points |
 | Confidence interval | 2 px line without caps (forest, summaries), or a ribbon at 14 % opacity |
 | Box (large n, one mode) | `wash` fill, 1.5 px `ink-2` outline, `ink` median, whiskers to 1.5 IQR |
-| Stacked segments / heat cells | Separated by a 2 px paper gap |
+| Stacked segments / heat cells | Square corners, separated by a 2 px paper gap |
 
 **Labels**
 
