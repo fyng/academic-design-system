@@ -58,7 +58,6 @@ Canvas px from the core docs become these pt values at print size.
 | Point | r 4.5, 1 px paper ring | r 1.5 pt, 0.25 pt paper ring |
 | Point, dense beeswarm | r 3 | r 1 pt |
 | Summary bar | 3 px | 1 pt, with a 0.5 pt paper halo |
-| Bar corner | 4 px | 0.75 pt |
 | Paper gap (segments, cells) | 2 px | 0.5 pt |
 
 Strokes stay between 0.5 and 1 pt, which every journal accepts (Nature 0.25–1 pt,
