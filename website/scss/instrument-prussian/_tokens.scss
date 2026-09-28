@@ -44,10 +44,11 @@ $dark: (
   footer-link: #e6e6e3,
 );
 
-// Emit a palette as CSS custom properties: --<prefix><name>-color.
-// With the default prefix this gives --global-bg-color, --global-text-color, ...
-@mixin custom-properties($palette, $prefix: "global-") {
+// Emit a palette as CSS custom properties: --<prefix><name>.
+// Adapters that need a framework's own variable names map them explicitly
+// (see _al-folio.scss).
+@mixin custom-properties($palette, $prefix: "") {
   @each $name, $value in $palette {
-    --#{$prefix}#{$name}-color: #{$value};
+    --#{$prefix}#{$name}: #{$value};
   }
 }

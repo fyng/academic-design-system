@@ -7,14 +7,37 @@
  * (see website/DESIGN.md, "Typography").
  ******************************************************************************/
 
+@use "sass:map";
 @use "tokens" as *;
 
+// al-folio custom property -> palette key.
+$al-folio-vars: (
+  --global-bg-color: bg,
+  --global-card-bg-color: card-bg,
+  --global-text-color: text,
+  --global-text-color-light: text-light,
+  --global-theme-color: theme,
+  --global-hover-color: hover,
+  --global-hover-text-color: hover-text,
+  --global-divider-color: divider,
+  --global-code-bg-color: code-bg,
+  --global-footer-bg-color: footer-bg,
+  --global-footer-text-color: footer-text,
+  --global-footer-link-color: footer-link,
+);
+
+@mixin al-folio-vars($palette) {
+  @each $var, $key in $al-folio-vars {
+    #{$var}: #{map.get($palette, $key)};
+  }
+}
+
 :root {
-  @include custom-properties($light);
+  @include al-folio-vars($light);
 }
 
 html[data-theme="dark"] {
-  @include custom-properties($dark);
+  @include al-folio-vars($dark);
 }
 
 /* ---- Typography ---------------------------------------------------------- */

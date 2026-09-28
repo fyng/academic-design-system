@@ -63,7 +63,8 @@ exclude:
 
 **Any other Sass project** can `@use "instrument-prussian" as ip;` for the font stacks
 (`ip.$font-display`, `ip.$font-body`, `ip.$font-mono`) and palettes (`ip.$light`,
-`ip.$dark`, `@include ip.custom-properties(ip.$light)`).
+`ip.$dark`); `@include ip.custom-properties(ip.$light, "ip-")` emits them as
+`--ip-bg`, `--ip-text`, `--ip-theme` and so on.
 
 **Figures** live in the project that publishes them. A figure page loads the kit by
 relative path and is rendered from its own folder:
