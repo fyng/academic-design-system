@@ -69,3 +69,17 @@ adapter, a new kit helper) over changing existing values. When an existing value
 or kit API must change, say so in the pull request and check the consumers you know of.
 See [`CLAUDE.md`](CLAUDE.md) for the same rules written for coding agents.
 
+
+## Sources
+
+**Journal figure guidelines** (`formats/publication/README.md`)
+
+- Nature: [final submission](https://www.nature.com/nature/for-authors/final-submission)
+  and [research figure guide](https://research-figure-guide.nature.com/figures/preparing-figures-our-specifications/)
+- Science: [preparing an initial manuscript](https://www.science.org/content/page/instructions-preparing-initial-manuscript)
+  and [preparing a revised manuscript](https://www.science.org/content/page/instructions-preparing-revised-manuscript)
+- Cell Press: [figure guidelines](https://www.cell.com/figure-guidelines)
+  and [graphical abstract guidelines](https://www.cell.com/pb/assets/raw/shared/figureguidelines/GA_guide-1537202744020.pdf)
+- PNAS: [submitting your manuscript](https://www.pnas.org/author-center/submitting-your-manuscript)
+  and [digital art guidelines](https://www.pnas.org/pb-assets/authors/digitalart-1675347574760.pdf)
+- NEJM: [technical guidelines for figures](https://www.nejm.org/pb-assets/pdfs/TechnicalGuidelines_2025-1758311142233.pdf)
