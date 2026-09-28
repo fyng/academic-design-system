@@ -7,6 +7,8 @@
 #let ink = rgb(tokens.neutral.ink)
 #let ink-2 = rgb(tokens.neutral.at("ink-2"))
 #let muted = rgb(tokens.neutral.muted)
+// Axes, ticks and their text are black in print, for contrast.
+#let axis-ink = black
 
 // Column widths per journal (formats/publication/README.md, *Size*, which also
 // gives the height caps). Cell Press asks for Arial, which is not vendored:
@@ -68,11 +70,11 @@
 }
 
 // Type roles (formats/publication/README.md, *Type*). Letters, heads and
-// labels are ink; axis titles are ink-2; ticks and notes are muted.
-#let head(body) = context text(font: _font-500(text.font), size: 7pt, weight: 500, fill: ink, body)
-#let axis(body) = context text(font: _font-500(text.font), size: 7pt, weight: 500, fill: ink-2, body)
+// labels are ink; axis titles and ticks are black; notes are muted.
+#let head(body) = context text(font: _font-500(text.font), size: 6pt, weight: 500, fill: ink, body)
+#let axis(body) = context text(font: _font-500(text.font), size: 6pt, weight: 500, fill: axis-ink, body)
 #let label(body) = text(size: 7pt, fill: ink, body)
-#let tick(body) = text(size: 6pt, fill: muted, body)
+#let tick(body) = text(size: 5pt, fill: axis-ink, number-type: "lining", number-width: "tabular", body)
 #let cap(body) = text(size: 6pt, fill: muted, body)
 #let note(body) = text(size: 6pt, fill: muted, body)
 
@@ -85,13 +87,14 @@
   text(size: l.size, weight: 700, fill: ink, s)
 }
 
-// The panel grid: one gutter throughout (4–6 mm, 5 mm default). Rows size to
-// their content, so panels in a row share one height when they are drawn to
-// the same height (the panel contract). `rows` takes an int — expanded to
+// The panel grid for simple figures, where every row divides into the same
+// equal columns: one gutter throughout (3–6 mm, 3 mm default; 2 mm for a
+// small, dense figure). Rows size to their content, so panels in a row share
+// one height when they are drawn to the same height (the panel contract). `rows` takes an int — expanded to
 // `1fr`, to stretch rows over a fixed page height — or a list of tracks;
 // children may be `grid.cell(colspan: ..)` for wide panels.
-#let fig-grid(gutter: 5mm, columns: 2, rows: none, ..children) = {
-  if gutter < 4mm or gutter > 6mm { panic("gutter must be 4–6 mm, got " + str(gutter)) }
+#let fig-grid(gutter: 3mm, columns: 2, rows: none, ..children) = {
+  if gutter < 2mm or gutter > 6mm { panic("gutter must be 2–6 mm, got " + str(gutter)) }
   let cols = if type(columns) == int { (1fr,) * columns } else { columns }
   if rows == none {
     grid(columns: cols, column-gutter: gutter, row-gutter: gutter, ..children)
@@ -101,21 +104,54 @@
   }
 }
 
-// One panel: the letter sits on the panel's top edge, outside the plot, then
-// the panel at scale 1 by width only (the height follows the aspect ratio, so
-// nothing is cropped). `source` is a file path (SVG, PDF, PNG, JPG) or Typst
-// content for a panel drawn here; `width` sizes the panel inside its cell.
+// Guidelines (formats/publication/README.md, *Layout*). A span is a stretch of
+// the figure along one axis, (at: start, len: length). `fig-span` divides a
+// span, or a length from 0, into `n` equal units with gutters between them
+// and returns the `k` adjacent units from unit `i` (0-based), gutters
+// included. Rows, columns and a column's own division all use it.
+#let fig-span(of, n, i, k: 1, gutter: 3mm) = {
+  let s = if type(of) == length { (at: 0mm, len: of) } else { of }
+  if i < 0 or k < 1 or i + k > n { panic("units " + str(i) + "+" + str(k) + " do not fit in " + str(n)) }
+  let u = (s.len - (n - 1) * gutter) / n
+  (at: s.at + i * (u + gutter), len: k * u + (k - 1) * gutter)
+}
+
+// Places `body` in the cell of spans `x` and `y`, relative to the figure's
+// top-left. `body` is content or a function (w, h) => content. The figure
+// needs a fixed height: give `fig-page` a length.
+#let fig-at(x, y, body) = place(top + left, dx: x.at, dy: y.at,
+  block(width: x.len, height: y.len, if type(body) == function { body(x.len, y.len) } else { body }))
+
+// The letter zone: a square at each panel's top-left corner that holds the
+// panel letter. No plot element enters it.
+#let letter-zone = 5mm
+
+// Whether a file is a raster image, from its first bytes.
+#let _is-raster(p) = {
+  let b = array(read(p, encoding: none).slice(0, 4))
+  b.slice(0, 2) == (0xFF, 0xD8) or b == (0x89, 0x50, 0x4E, 0x47) or b == (0x47, 0x49, 0x46, 0x38) or b == (0x52, 0x49, 0x46, 0x46)
+}
+
+// One panel. The letter sits in the letter zone at the panel's top-left.
+// `source` is Typst content, or a file given as `path("…")` so it resolves
+// from the calling file. A vector file (SVG, PDF) is placed at its own size
+// and keeps the zone free through its margins; a raster (PNG, JPG, GIF, WebP)
+// fills the panel's width below the zone. `below-zone` overrides the choice.
 // The letter style follows the page's journal unless `journal:` is given.
-#let fig-panel(n, source, journal: none, width: 100%, alt: none) = context {
+#let fig-panel(n, source, journal: none, width: 100%, below-zone: auto, alt: none) = context {
   let j = if journal != none { journal } else { _journal.get() }
-  let l = letters.at(j, default: letters.nature)
-  let band = l.size * 1.5
+  if type(source) == str {
+    panic("give the file as path(\"" + source + "\"), so it resolves from your file, not fig.typ")
+  }
   block(width: width, breakable: false, {
+    if type(source) == path {
+      let raster = _is-raster(source)
+      let below = if below-zone == auto { raster } else { below-zone }
+      let img = if raster { image(source, width: 100%, alt: alt) } else { image(source, alt: alt) }
+      if below { pad(top: letter-zone, img) } else { img }
+    } else if below-zone == true { pad(top: letter-zone, source) } else { source }
     if n != none {
-      // place(bottom) sets the letter's baseline on the band's bottom edge,
-      // which is the panel's top edge.
-      box(width: 100%, height: band)[#place(bottom + left, fig-letter(n, journal: j))]
+      place(top + left, box(width: letter-zone, height: letter-zone, align(left + top, fig-letter(n, journal: j))))
     }
-    if type(source) == str { image(source, width: 100%, fit: "contain", alt: alt) } else { source }
   })
 }

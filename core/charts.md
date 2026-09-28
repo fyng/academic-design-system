@@ -45,7 +45,8 @@ Start from the data's job.
 
 - Left and bottom axes, 1.5 px `ink-2`, with 5 px outward ticks. The plot area is
   open on the top and right.
-- **y title:** horizontal, above the axis, left-aligned to it.
+- **y title:** horizontal, above the axis, left-aligned to it. Each format may set its
+  own; publication rotates it into the left margin (`../formats/publication/README.md`).
 - **x title:** right-aligned under the ticks, at the high end of the axis.
   Units go in parentheses.
 - **Ticks:** 3–5 per axis, at round values, in the `tick` role (tabular, muted).
