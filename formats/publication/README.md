@@ -25,14 +25,14 @@ IBM Plex Sans in every role (`../../core/typography.md`), with the fonts embedde
 Cell Press asks for Arial only, so Cell Press figures swap Plex for Arial and keep
 the same sizes and weights.
 
-| Role | Size | Weight | Use |
-|---|---|---|---|
-| Panel letter | 8 pt | Bold | `a`, `b`, `c` at each panel's top-left |
-| `head` | 7 pt | 500 | Optional panel title, one line |
-| `axis` | 7 pt | 500 | Axis titles |
-| `label` | 7 pt | 400 | Direct labels, row and column names |
-| `tick` | 6 pt | 400 | Tick labels, keys |
-| `cap`, `note` | 6 pt | 400 | n, scale bars, callouts |
+| Role | Size | Weight | Colour | Use |
+|---|---|---|---|---|
+| Panel letter | 8 pt | Bold | ink | `a`, `b`, `c` at each panel's top-left |
+| `head` | 7 pt | 500 | ink | Optional panel title, one line |
+| `axis` | 7 pt | 500 | ink-2 | Axis titles |
+| `label` | 7 pt | 400 | ink | Direct labels, row and column names |
+| `tick` | 6 pt | 400 | muted | Tick labels, keys |
+| `cap`, `note` | 6 pt | 400 | muted | n, scale bars, callouts |
 
 - These sizes sit inside every journal's range (Nature: 5–7 pt, panel letters 8 pt;
   Science: from 5 pt; Cell Press: 6–8 pt; PNAS: from 6 pt).
@@ -44,6 +44,61 @@ the same sizes and weights.
 | Nature, preprints | Lowercase, 8 pt bold, upright: **a**, **b** |
 | Science | Capitals, 10 pt bold, upper left of each part; inside the edge of an image: **A**, **B** |
 | Cell Press, PNAS, NEJM | Capitals, 8 pt bold: **A**, **B** |
+
+- Colours come from the core roles (`../../core/typography.md`); labels are ink
+  because journals ask for black or grey text.
+
+## The panel contract
+
+Every panel reserves the same margins around its plot area, so axes align across
+panels drawn by any tool. The values fit the type above with 1 mm gaps.
+
+| Edge | Reserves | mm |
+|---|---|---|
+| Left | y ticks (2 pt), their labels (6 pt, ≤ 5 characters), the y title (7 pt) | 12 |
+| Bottom | x ticks, their labels, the x title (7 pt) | 9 |
+| Top | `head` or a key, one line (7 pt) | 6 |
+| Right | nothing | 2 |
+
+A Nature 1-column panel of 89 × 34 mm therefore has a plot area of 75 × 19 mm.
+Three habits keep a panel inside the contract:
+
+- Tick labels stay ≤ 5 characters. "0.001" fits; "120,000" does not — rescale the
+  axis or move the factor into the title ("Length (×10³ µm)").
+- The head is one line. Longer titles belong in the legend.
+- Units, n and callouts live inside the plot area, not in the margins.
+
+**In matplotlib** place the axes at the contract's fractions of the figure, and
+embed TrueType so text stays text:
+
+```python
+from matplotlib import pyplot as plt
+
+mm = 1 / 25.4
+plt.rcParams["pdf.fonttype"] = 42
+fig = plt.figure(figsize=(89 * mm, 34 * mm))
+# left 12, bottom 9, width 75, height 19 mm, as figure fractions
+ax = fig.add_axes([12 / 89, 9 / 34, 75 / 89, 19 / 34])
+fig.savefig("panel-a.pdf")  # never bbox_inches="tight": it crops the margins away
+```
+
+Set the type roles on top of this: 6 pt tick labels, 7 pt titles (`ax.tick_params(labelsize=6)`).
+
+**In ggplot** fix the panel size and save through cairo so fonts embed:
+
+```r
+library(ggplot2)
+library(egg)
+
+p <- ggplot(...) +
+  theme_gray(base_size = 7) +                                   # pt
+  theme(axis.text = element_text(size = 6))                     # the tick role
+p <- egg::set_panel_size(p, width = unit(75, "mm"), height = unit(19, "mm"))
+ggsave("panel-a.pdf", p, width = 89, height = 34, units = "mm", device = cairo_pdf)
+```
+
+To assemble panels side by side, give patchwork each column's width:
+`p1 + p2 + plot_layout(widths = unit(c(75, 75), "mm"))`.
 
 ## Lines and marks
 
@@ -75,7 +130,8 @@ Science from 0.5 pt, Cell Press 0.5–1.5 pt).
 ## Layout
 
 - Panels sit on a shared grid: axes aligned across a row, the same plot height in a
-  row, the same gutter throughout (4–6 mm).
+  row, the same gutter throughout (4–6 mm). Each panel reserves the margins of the
+  panel contract (above).
 - A panel letter sits at the top-left of its panel, outside the plot area, on the
   line of the panel's top edge.
 - Repeated panels share axes and labels (form 10, small multiples): label the y-axis
@@ -113,6 +169,52 @@ The legend is the figure's text, set in the paper, not in the figure.
 - One file per figure, with all its panels, named `fig<n>.pdf`.
 - Keep the source (script and data) next to each figure in the project, so a
   revision re-runs.
+
+## Assembling with Typst
+
+Panels come out of the project's tool at final size (*Export*), and `fig.typ` puts
+them on one page: the page from a journal preset, panel letters in the journal's
+style, the grid, and the type roles. Colours read from `../../core/tokens.json`.
+
+```typst
+#import "design-system/formats/publication/fig.typ": *
+
+#fig-page(journal: "nature", width: "full", height: auto)[
+  #fig-grid(columns: 2,
+    fig-panel("a", "panels/a.svg"),
+    fig-panel("b", "panels/b.png", width: 40mm),
+  )
+]
+```
+
+| Helper | Job |
+|---|---|
+| `fig-page` | The page: journal preset × column width (or a length), height in mm or auto, margin 0 |
+| `fig-grid` | The panel grid: 5 mm gutter (4–6 mm), one shared height per row |
+| `fig-panel` | The letter on the panel's top edge, then the file at scale 1 by width |
+| `fig-letter` | A panel letter in the journal's style |
+| `head`, `axis`, `label`, `tick`, `cap`, `note` | The type roles |
+
+Build from the project root, where the design system sits at `design-system/`:
+
+```bash
+typst compile --font-path design-system/core/fonts fig1.typ                     # writes fig1.pdf
+typst compile --font-path design-system/core/fonts --format png --ppi 300 fig1.typ  # a preview
+typst watch --font-path design-system/core/fonts fig1.typ                      # rebuild as you edit
+typst fonts --font-path design-system/core/fonts                               # what Typst sees
+```
+
+- `typst fonts` should list IBM Plex Sans; if it does not, check `--font-path`.
+- The vendored static TTFs register the 500 weight under IBM's legacy family name
+  ("IBM Plex Sans Medm"); `fig.typ` resolves it, so `weight: 500` just works.
+- Cell Press figures need Arial, which is not vendored: install it and add its
+  folder to `--font-path`. Arial has no 500 weight, so `head` and `axis` set as 400.
+- Panels import as SVG, PDF, PNG or JPG. Convert TIFF panels to PNG at their
+  submission resolution for assembly; keep the TIFFs for submission.
+- SVG text stays text in the PDF when the SVG names IBM Plex Sans and the fonts
+  are on `--font-path`.
+- Compiling a specimen inside the design system itself needs its root:
+  `typst compile --root . …` from the repo root.
 
 ## Graphical abstracts for journals
 
