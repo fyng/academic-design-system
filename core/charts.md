@@ -72,7 +72,7 @@ Start from the data's job.
 | Summary (median, mean) | Short `ink` bar, 3 px, with a 1.5 px paper halo so it reads over points |
 | Confidence interval | 2 px line without caps (forest, summaries), or a ribbon at 14 % opacity |
 | Box (large n, one mode) | `wash` fill, 1.5 px `ink-2` outline, `ink` median, whiskers to 1.5 IQR |
-| Stacked segments / heat cells | Separated by a 2 px paper gap |
+| Stacked segments / heat cells | Square corners, separated by a 2 px paper gap |
 
 **Labels**
 

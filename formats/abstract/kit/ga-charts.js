@@ -160,7 +160,7 @@
       let s = "";
       matrix.forEach((row, i) => row.forEach((v, j) => {
         if (v === null || v === undefined) return;
-        s += `<rect x="${cx[j] + gx}" y="${Y0 + i * rh + 1}" width="${cw - 2 * gx + (m.dense ? 0.5 : 0)}" height="${rh - 2}"${m.dense ? "" : ' rx="2"'} fill="${pick(v)}"/>`;
+        s += `<rect x="${cx[j] + gx}" y="${Y0 + i * rh + 1}" width="${cw - 2 * gx + (m.dense ? 0.5 : 0)}" height="${rh - 2}" fill="${pick(v)}"/>`;
       }));
       ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
       let j0 = 0;
