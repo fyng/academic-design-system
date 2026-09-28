@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Micrograph stand-in</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../abstract/kit/ga-kit.css">
+<script src="../abstract/kit/ga-kit.js"></script>
+<script src="../abstract/kit/ga-bio.js"></script>
+</head>
+<body>
+<script>
+// Stand-in micrograph for the publication specimen's raster panel (panel c):
+// a field of cells with no text, so the raster carries no type below the
+// figure's floor. Rendered to out/specimen-micrograph.png by the abstract kit
+// renderer (formats/abstract/kit/render.cjs specimen-micrograph.html --still).
+GA.build({ duration: 2, poster: 1.2, title: "Cell field", desc: "Stand-in micrograph: a field of cells, drawn with the kit." }, (ga) => {
+  const B = GA.bio(ga);
+  ga.raw(`<rect x="0" y="0" width="${ga.W}" height="${ga.H}" fill="var(--wash)"/>`, { at: 0.1, anim: "fade" });
+  // Seeded PRNG so re-renders are identical. Cells may crop at the frame edge,
+  // as in a real field of view. The kit's lint checks bounding boxes, so cells
+  // are kept apart by their boxes, not their circles.
+  let s = 20260928;
+  const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const placed = [];
+  let tries = 0;
+  while (tries < 9000 && placed.length < 130) {
+    tries++;
+    const r = 15 + 30 * rnd() * rnd();
+    const cx = rnd() * ga.W;
+    const cy = rnd() * ga.H;
+    const apart = (p) => Math.abs(p.cx - cx) < p.r + r + 3 && Math.abs(p.cy - cy) < p.r + r + 3;
+    if (placed.some(apart)) continue;
+    const k = rnd() < 0.78 ? "neutral" : 1 + Math.floor(rnd() * 4);
+    B.cell({ cx, cy, r: Math.round(r), k, at: 0.1 });
+    placed.push({ cx, cy, r: Math.round(r) });
+  }
+});
+</script>
+</body>
+</html>

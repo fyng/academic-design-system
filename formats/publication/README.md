@@ -216,6 +216,16 @@ typst fonts --font-path design-system/core/fonts                               #
 - Compiling a specimen inside the design system itself needs its root:
   `typst compile --root . …` from the repo root.
 
+## Specimen
+
+`specimen-figure.typ` compiles to `out/specimen-figure.pdf` and `.png`: a
+Nature full-width (183 mm) figure showing the grid, panel letters, gutters and
+type roles, the panel contract as annotated placeholder panels, an SVG
+schematic and a raster panel with a scale bar. The legend and caption belong to
+the paper, so the model figure carries none. Its raster panel is
+`specimen-micrograph.html`, a text-free cell field drawn with the abstract kit
+and rendered to `out/specimen-micrograph.png` with `../abstract/kit/render.cjs`.
+
 ## Graphical abstracts for journals
 
 Cell Press journals ask for a square graphical abstract: 1,200 × 1,200 px, Arial

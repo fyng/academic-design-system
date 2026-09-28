@@ -28,17 +28,18 @@
   <!-- dotted IC50 reference (0.5 pt, muted, 1 2 pt dash) -->
   <line x1="12" y1="15.5" x2="87" y2="15.5" stroke="#6b707b" stroke-width="0.176" stroke-dasharray="0.35 0.71"/>
   <text x="86.5" y="14.7" font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b" text-anchor="end">IC₅₀</text>
-  <!-- curves (1 pt): sensitive in prussian, resistant in context -->
-  <path d="M 12,24.4 C 36,24.4 40,6.6 55,6.6" fill="none" stroke="#1f4e79" stroke-width="0.353" stroke-linecap="round"/>
-  <path d="M 46,24.4 C 68,24.4 72,7.2 86,7.2" fill="none" stroke="#a3a8b1" stroke-width="0.353" stroke-linecap="round"/>
-  <!-- direct labels (7 pt, 400, ink) -->
+  <!-- curves (1 pt): sensitive in prussian, resistant in context; viability
+       falls as dose rises (form 04), both sigmoids span the full domain -->
+  <path d="M 12,6.3 L 22,6.3 C 32,6.3 30,24.6 44,24.6 L 87,24.6" fill="none" stroke="#1f4e79" stroke-width="0.353" stroke-linecap="round"/>
+  <path d="M 12,6.3 L 52,6.3 C 68,6.3 72,24.6 84,24.6 L 87,24.6" fill="none" stroke="#a3a8b1" stroke-width="0.353" stroke-linecap="round"/>
+  <!-- direct labels (7 pt, 400, ink), set beside their own curve -->
   <g font-family="IBM Plex Sans" font-size="2.47" fill="#16181d">
-    <text x="57" y="9.4">sensitive</text>
-    <text x="74" y="10.2">resistant</text>
+    <text x="60" y="23.2">sensitive</text>
+    <text x="36" y="8.6">resistant</text>
   </g>
   <!-- axis titles (7 pt, 500, ink-2) -->
   <text x="87" y="30.8" font-family="IBM Plex Sans" font-size="2.47" font-weight="500" fill="#4a4e58" text-anchor="end">Drug (µM)</text>
   <text x="3.4" y="15.5" transform="rotate(-90 3.4 15.5)" font-family="IBM Plex Sans" font-size="2.47" font-weight="500" fill="#4a4e58" text-anchor="middle">Viability (fraction)</text>
-  <!-- note (6 pt, muted) -->
-  <text x="13" y="23.2" font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b">schematic</text>
+  <!-- note (6 pt, muted), in the empty lower-left corner -->
+  <text x="13.5" y="23.4" font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b">schematic</text>
 </svg>
