@@ -1,4 +1,4 @@
-// Explanatory layer for the graphical abstract kit (see artifacts/DESIGN.md, "Drawing biology").
+// Explanatory layer for the graphical abstract kit (see core/illustration.md).
 //
 //   const B = GA.bio(ga);
 //   B.cell({ cx, cy, r: 18, k: 1 });                 // nucleus + cytoplasm glyph, family colour k

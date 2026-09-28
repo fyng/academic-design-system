@@ -1,6 +1,6 @@
 /* Graphical abstract kit: tokens, type roles and motion primitives. */
-@import url("../artifacts/tokens.css");
-/* Kit aliases over the design tokens (artifacts/tokens.css is generated) */
+@import url("../../../core/tokens.css");
+/* Kit aliases over the design tokens (core/tokens.css is generated) */
 :root {
   --blue-wash: var(--benefit-wash);
 }

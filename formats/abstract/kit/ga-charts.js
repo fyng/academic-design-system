@@ -1,4 +1,4 @@
-// Chart layer for the graphical abstract kit (see artifacts/charts.md).
+// Chart layer for the graphical abstract kit (see core/charts.md).
 //
 //   const ch = GA.chart(ga, { x, y, w, h, xd: [0, 1], yd: [0, 1], xTitle, yTitle, at });
 //   ch.line([[0, 0], [1, 1]], { color: "var(--accent)" });

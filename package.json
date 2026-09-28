@@ -3,8 +3,8 @@
   "private": true,
   "description": "Instrument / Prussian (websites) and Lamina (figures): the shared design system for fyng's projects.",
   "scripts": {
-    "tokens": "node artifacts/tokens.mjs",
-    "render": "node kit/render.cjs"
+    "tokens": "node core/tokens.mjs",
+    "render": "node formats/abstract/kit/render.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
