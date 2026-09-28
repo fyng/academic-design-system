@@ -28,14 +28,15 @@ the same sizes and weights.
 | Role | Size | Weight | Colour | Use |
 |---|---|---|---|---|
 | Panel letter | 8 pt | Bold | ink | `a`, `b`, `c` at each panel's top-left |
-| `head` | 7 pt | 500 | ink | Optional panel title, one line |
-| `axis` | 7 pt | 500 | ink-2 | Axis titles |
+| `head` | 6 pt | 500 | ink | Optional panel title, one line |
+| `axis` | 6 pt | 500 | black | Axis titles |
 | `label` | 7 pt | 400 | ink | Direct labels, row and column names |
-| `tick` | 6 pt | 400 | muted | Tick labels, keys |
+| `tick` | 5 pt | 400, tabular figures | black | Tick labels, keys |
 | `cap`, `note` | 6 pt | 400 | muted | n, scale bars, callouts |
 
-- These sizes sit inside every journal's range (Nature: 5–7 pt, panel letters 8 pt;
-  Science: from 5 pt; Cell Press: 6–8 pt; PNAS: from 6 pt).
+- These sizes sit inside Nature's range (5–7 pt, panel letters 8 pt) and Science's
+  (from 5 pt). Tick labels at 5 pt are below Cell Press (6–8 pt) and PNAS (from 6 pt):
+  for those journals set `tick` at 6 pt.
 - Every figure in a paper uses the same sizes, so figures read as one set.
 - Panel letters are the one bold text, because journals ask for it:
 
@@ -45,30 +46,80 @@ the same sizes and weights.
 | Science | Capitals, 10 pt bold, upper left of each part; inside the edge of an image: **A**, **B** |
 | Cell Press, PNAS, NEJM | Capitals, 8 pt bold: **A**, **B** |
 
-- Colours come from the core roles (`../../core/typography.md`); labels are ink
-  because journals ask for black or grey text.
+- Colours come from the core roles (`../../core/color.md`), with one change: axis
+  lines, ticks, tick labels and axis titles are black, for contrast in print. Other
+  text is ink or muted, because journals ask for black or grey text.
 
 ## The panel contract
 
-Every panel reserves the same margins around its plot area, so axes align across
-panels drawn by any tool. The values fit the type above with 1 mm gaps.
+Every panel reserves margins around its plot area, so axes align across panels
+drawn by any tool. The margins follow from the type and the gaps (*Spacing inside the
+margins*, below), and grow with the panel. For a 30 × 24 mm cell they are:
 
 | Edge | Reserves | mm |
 |---|---|---|
-| Left | y ticks (2 pt), their labels (6 pt, ≤ 5 characters), the y title (7 pt) | 12 |
-| Bottom | x ticks, their labels, the x title (7 pt) | 9 |
-| Top | `head` or a key, one line (7 pt) | 6 |
-| Right | nothing | 2 |
+| Left | y ticks, their labels (5 pt, 4 characters or the widest label), the y title (6 pt) | 8.8 |
+| Bottom | x ticks, their labels, the x title (6 pt) | 5.8 |
+| Top | `head` or a key, one line (6 pt) | 3.6 |
+| Right | nothing | 2.0 |
 
-A Nature 1-column panel of 89 × 34 mm therefore has a plot area of 75 × 19 mm.
-Three habits keep a panel inside the contract:
+### Spacing inside the margins
 
-- Tick labels stay ≤ 5 characters. "0.001" fits; "120,000" does not — rescale the
-  axis or move the factor into the title ("Length (×10³ µm)").
+Font sizes stay fixed at every panel size. The gaps grow with the panel at a
+discount, and the plot area takes all the remaining space. Distances run outward
+from the axis to the edge of the panel's cell; ink is the glyphs' cap top to
+baseline, and descenders hang 0.5 mm below.
+
+| Distance | Base (mm) | Scales |
+|---|---|---|
+| Tick length, outward from the axis | 0.5 | no |
+| Tick text to tick mark | 0.5 | yes |
+| Axis title to tick text (y: to the widest label, ≤ 4 characters) | 0.6 | yes |
+| Axis title, ink to the cell edge | 1.0 | yes |
+| Head, ink to the cell's top edge | 1.0 | yes |
+| Head to plot | 0.6 | yes |
+| Right margin | 2.0 | no |
+
+- **Base** values hold for the reference cell, 30 × 24 mm. For a cell of w × h,
+  the scale is s = √(w·h / (30·24)), and each scaling gap is its base times
+  1 + d·(s − 1). The discount d is 0.5 in the specimen (`gap-discount` in
+  `spec-lib.typ`); 0.3 keeps the gaps tighter.
+- **Margins** follow from the sums: left = title edge gap + title (cap + descender)
+  + title gap + label width + tick-text gap + tick; top = edge gap + head
+  (cap + descender) + head gap; bottom = tick + tick-text gap + tick text +
+  title gap + title + edge gap. The label width is the widest y tick label, at
+  least 4.2 mm (four characters at 5 pt); the tick text is the x tick labels' cap
+  height, at least 1.2 mm (5 pt). Longer or larger labels grow the margin. For the reference cell that is 8.8 / 3.6 / 2.0 /
+  5.8 mm (left / top / right / bottom); a 100 × 175 mm cell gets 12.9 / 6.7 / 2.0 /
+  9.9 mm.
+- Titles sit against the cell edge and tick text against the ticks, so both keep
+  their place when labels change.
+- The y title reads upward, rotated in the left margin and centred on the axis; the
+  x title is right-aligned under the ticks. The rotated y title is this format's
+  rule; core keeps it horizontal above the axis (`../../core/charts.md`).
+- `specimen-panel.typ` draws the reference panel at 5× with each distance
+  dimensioned (`out/specimen-panel.pdf`, `.png`). `margins()` in `spec-lib.typ`
+  computes the margins from the measured tick labels; the figure specimen shares it.
+
+Three habits keep panels aligned and inside their margins:
+
+- Tick labels stay short, so the margins stay at their defaults. "0.01" fits;
+  "120,000" grows the left margin — rescale the axis or move the factor into the
+  title ("Length (×10³ µm)"). Where one panel's labels grow its margin, give the
+  panels of its row the same margin, so their axes align.
 - The head is one line. Longer titles belong in the legend.
 - Units, n and callouts live inside the plot area, not in the margins.
 
-**In matplotlib** place the axes at the contract's fractions of the figure, and
+### Ticks
+
+- Every axis has a tick at its start and at its end.
+- A small plot (one fifth of the figure width or narrower, or the same in height) can
+  carry just those two.
+- A larger plot carries at least three ticks per axis: the start, the end and a
+  round value between.
+- On a heatmap or a categorical axis, the first and last categories take the ticks.
+
+**In matplotlib** place the axes at the margins' fractions of the figure, and
 embed TrueType so text stays text:
 
 ```python
@@ -77,12 +128,14 @@ from matplotlib import pyplot as plt
 mm = 1 / 25.4
 plt.rcParams["pdf.fonttype"] = 42
 fig = plt.figure(figsize=(89 * mm, 34 * mm))
-# left 12, bottom 9, width 75, height 19 mm, as figure fractions
-ax = fig.add_axes([12 / 89, 9 / 34, 75 / 89, 19 / 34])
+# an 89 x 34 mm cell: left 9.9, bottom 6.9, width 77.1, height 22.7 mm, as figure fractions
+ax = fig.add_axes([9.9 / 89, 6.9 / 34, 77.1 / 89, 22.7 / 34])
 fig.savefig("panel-a.pdf")  # never bbox_inches="tight": it crops the margins away
 ```
 
-Set the type roles on top of this: 6 pt tick labels, 7 pt titles (`ax.tick_params(labelsize=6)`).
+Set the type roles on top of this: 5 pt tick labels, 6 pt titles
+(`ax.tick_params(labelsize=5)`). Matplotlib's axes, ticks and their text are black
+by default; keep them so.
 
 **In ggplot** fix the panel size and save through cairo so fonts embed:
 
@@ -91,14 +144,18 @@ library(ggplot2)
 library(egg)
 
 p <- ggplot(...) +
-  theme_gray(base_size = 7) +                                   # pt
-  theme(axis.text = element_text(size = 6))                     # the tick role
-p <- egg::set_panel_size(p, width = unit(75, "mm"), height = unit(19, "mm"))
+  theme_classic(base_size = 6) +                                # pt: the axis role
+  theme(axis.text = element_text(size = 5, colour = "black"),   # the tick role
+        axis.title = element_text(colour = "black"),
+        axis.line = element_line(colour = "black", linewidth = 0.5 / .pt),
+        axis.ticks = element_line(colour = "black", linewidth = 0.5 / .pt),
+        axis.ticks.length = unit(0.5, "mm"))
+p <- egg::set_panel_size(p, width = unit(77.1, "mm"), height = unit(22.7, "mm"))
 ggsave("panel-a.pdf", p, width = 89, height = 34, units = "mm", device = cairo_pdf)
 ```
 
 To assemble panels side by side, give patchwork each column's width:
-`p1 + p2 + plot_layout(widths = unit(c(75, 75), "mm"))`.
+`p1 + p2 + plot_layout(widths = unit(c(77.1, 77.1), "mm"))`.
 
 ## Lines and marks
 
@@ -106,7 +163,7 @@ Canvas px from the core docs become these pt values at print size.
 
 | Element | Canvas | Print |
 |---|---|---|
-| Axis, tick | 1.5 px, 5 px long | 0.5 pt, 2 pt long, outward |
+| Axis, tick | 1.5 px, 5 px long | 0.5 pt black, 0.5 mm long, outward |
 | Data line, step curve | 2.5 px | 1 pt |
 | Reference line | 1.5 px, `2 4` dash | 0.5 pt, `1 2` dash |
 | Confidence interval line | 2 px | 0.75 pt |
@@ -123,19 +180,35 @@ Science from 0.5 pt, Cell Press 0.5–1.5 pt).
 - The core palettes carry over as they are (`../../core/color.md`). They are
   validated for colour-vision deficiency, which journals ask for.
 - **Labels are ink.** Nature and Science ask for black or grey text, so a direct label
-  is set in `ink-2` beside its mark, with a short swatch or line key in the series
+  is set in `ink` beside its mark (core's `label` is `ink-2`; print takes the darker
+  step for legibility at 7 pt), with a short swatch or line key in the series
   colour where the link needs it.
 - Export in RGB. Science asks for CMYK at first submission; convert then.
 
 ## Layout
 
-- Panels sit on a shared grid: axes aligned across a row, the same plot height in a
-  row, the same gutter throughout (4–6 mm). Each panel reserves the margins of the
-  panel contract (above).
-- A panel letter sits at the top-left of its panel, outside the plot area, on the
-  line of the panel's top edge.
+- **Margins.** Journals ask for a figure cropped to its final size, so a figure has
+  no border of its own. A preview on a Letter page locks its margins: 6 mm at left
+  and right, 8 mm at top and bottom. The figure fills the rest.
+- **Guidelines divide the plotting space.** Cut the height into rows and each row's
+  width into equal columns: halves, thirds, quarters, fifths or sixths, with one
+  gutter (3–6 mm; 2 mm for a small, dense figure) between units. Each guideline set gives units; a panel takes one
+  unit or several adjacent ones (and the gutters between them). Rows may use
+  different column counts.
+- **Typical rows.** Divide the row, then give each panel whole units: four columns,
+  panels a and b one unit each, panel c two.
+- **Atypical rows.** Columns of one row may divide differently. A large panel takes
+  a whole column or several row units, and the neighbouring column divides on its own
+  into halves, thirds or more: panel d one unit, the other column in thirds with e
+  taking two and f one. Every panel still takes whole units.
+- **Letter zone.** Each panel's top-left corner holds its letter in a 5 mm square.
+  No plot element, image or text enters the square: charts keep it free through the
+  panel contract's margins, and an image starts below it.
+- Each panel reserves the margins of the panel contract (above), so axes align
+  across a row.
 - Repeated panels share axes and labels (form 10, small multiples): label the y-axis
-  once per row and the x title once per column.
+  once per row and the x title once per column. Small multiples sit one gutter
+  apart, 2 mm at the least.
 - Keys and legends sit above the plot or beside it, inside the panel.
 - Micrographs carry a scale bar, labelled with its length.
 
@@ -174,25 +247,49 @@ The legend is the figure's text, set in the paper, not in the figure.
 
 Panels come out of the project's tool at final size (*Export*), and `fig.typ` puts
 them on one page: the page from a journal preset, panel letters in the journal's
-style, the grid, and the type roles. Colours read from `../../core/tokens.json`.
+style, the guidelines (*Layout*), and the type roles. Colours read from
+`../../core/tokens.json`.
+
+`fig-span` cuts a length, or a span it returned, into equal units with gutters, and
+returns the units a panel takes. `fig-at` places a panel in the cell two spans make.
+One call covers rows, columns, and a column that divides on its own:
 
 ```typst
 #import "design-system/formats/publication/fig.typ": *
 
-#fig-page(journal: "nature", width: "full", height: auto)[
-  #fig-grid(columns: 2,
-    fig-panel("a", "panels/a.svg"),
-    fig-panel("b", "panels/b.png", width: 40mm),
-  )
+#let (W, H) = (183mm, 120mm)
+#fig-page(journal: "nature", width: W, height: H)[
+  #let row(i, k: 1) = fig-span(H, 3, i, k: k)   // three row units
+  // Row 1, typical: four columns; a and b one unit each, c two.
+  #fig-at(fig-span(W, 4, 0), row(0), fig-panel("a", path("panels/a.svg")))
+  #fig-at(fig-span(W, 4, 1), row(0), fig-panel("b", path("panels/b.pdf")))
+  #fig-at(fig-span(W, 4, 2, k: 2), row(0), fig-panel("c", path("panels/c.svg")))
+  // Rows 2–3, atypical: d takes the left half; the right half in thirds.
+  #let lower = row(1, k: 2)
+  #fig-at(fig-span(W, 2, 0), lower, fig-panel("d", path("panels/d.png")))
+  #fig-at(fig-span(W, 2, 1), fig-span(lower, 3, 0, k: 2), fig-panel("e", path("panels/e.svg")))
+  #fig-at(fig-span(W, 2, 1), fig-span(lower, 3, 2), fig-panel("f", path("panels/f.svg")))
 ]
 ```
+
+Give files as `path("…")`, so they resolve from your file rather than from `fig.typ`.
+A vector panel (SVG, PDF) goes in at its own size, as exported, and keeps the letter
+zone free through its margins. A raster (PNG, JPG) fills the panel's width below the
+zone. `below-zone: true` or `false` overrides the choice.
+
+For a figure whose rows all divide into the same columns, `fig-grid` is shorter:
+`#fig-grid(columns: 2, fig-panel("a", path("a.svg")), fig-panel("b", path("b.svg")))`
+on a page of `height: auto`.
 
 | Helper | Job |
 |---|---|
 | `fig-page` | The page: journal preset × column width (or a length), height in mm or auto, margin 0 |
-| `fig-grid` | The panel grid: 5 mm gutter (4–6 mm), one shared height per row |
-| `fig-panel` | The letter on the panel's top edge, then the file at scale 1 by width |
+| `fig-span` | `fig-span(of, n, i, k: 1, gutter: 3mm)`: of a length or span, `n` units, the `k` from unit `i` (0-based), gutters included; returns `(at:, len:)` |
+| `fig-at` | `fig-at(x, y, body)`: places `body` (content, or `(w, h) => content`) in the cell of spans `x` and `y`; needs a fixed page height |
+| `fig-grid` | Equal columns in every row: 3 mm gutter (3–6 mm, down to 2 mm), rows sized to their panels |
+| `fig-panel` | The letter in the 5 mm letter zone at the panel's top-left, over content or a `path(…)` file |
 | `fig-letter` | A panel letter in the journal's style |
+| `letter-zone` | The letter zone's side, 5 mm |
 | `head`, `axis`, `label`, `tick`, `cap`, `note` | The type roles |
 
 Build from the project root, where the design system sits at `design-system/`:
@@ -218,13 +315,25 @@ typst fonts --font-path design-system/core/fonts                               #
 
 ## Specimen
 
-`specimen-figure.typ` compiles to `out/specimen-figure.pdf` and `.png`: a
-Nature full-width (183 mm) figure showing the grid, panel letters, gutters and
-type roles, the panel contract as annotated placeholder panels, an SVG
-schematic and a raster panel with a scale bar. The legend and caption belong to
-the paper, so the model figure carries none. Its raster panel is
-`specimen-micrograph.html`, a text-free cell field drawn with the abstract kit
-and rendered to `out/specimen-micrograph.png` with `../abstract/kit/render.cjs`.
+`specimen-figure.typ` compiles to `out/specimen-figure.pdf` and `.png`: a US Letter
+page with the locked margins (6 mm at the sides, 8 mm at top and bottom) and a
+203.9 × 263.4 mm figure. Red guides mark the distances: margins, row and column
+units, gutters (3 mm), the letter zone (5 mm), the contract's margins (panel c) and
+each plot area (dashed). It is wider than any journal column, so it shows the
+layout, not a submission size.
+
+The height is six units of 41.4 mm, laid out with `fig-span` and `fig-at`. Each row
+divides its width its own way:
+
+| Row | Columns | Panels |
+|---|---|---|
+| 1, typical | 4 × 48.7 mm | a, b one unit each; c two units |
+| 2, atypical | 2 × 100.5 mm, height 4 units; right column in thirds | d takes the left column; e two thirds of the right; f one third |
+| 3, typical | 3 × 66.0 mm | g one unit; h two units |
+
+Its raster panel is `specimen-micrograph.html`, a text-free cell field drawn with
+the abstract kit and rendered to `out/specimen-micrograph.png` with
+`../abstract/kit/render.cjs`.
 
 ## Graphical abstracts for journals
 
