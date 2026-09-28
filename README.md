@@ -26,9 +26,10 @@ mm and pt; the abstract adds a canvas, an arc and motion.
 |---|---|
 | `core/*.md` | The shared elements: `color.md`, `typography.md`, `charts.md`, `icons.md`, `illustration.md` |
 | `core/tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit `tokens.mjs`, run `node core/tokens.mjs` |
+| `core/fonts/ibm-plex-sans/` | Vendored IBM Plex Sans static TTFs (SIL OFL) for print figures |
 | `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour, scales and charts |
 | `formats/web/scss/instrument-prussian/` | The web format in Sass: `_tokens.scss` (framework-agnostic) and `_al-folio.scss` (al-folio adapter) |
-| `formats/publication/` | The journal figure spec |
+| `formats/publication/` | The journal figure spec: the panel contract, and `fig.typ` + the specimen that assemble figures in Typst |
 | `formats/abstract/kit/` | The abstract kit: `ga-kit.css`/`ga-kit.js` (layout, type roles, motion, lint), `ga-bio.js`, `ga-charts.js`, `icons.js`, and `render.cjs` (PNG/MP4/WebM renderer) |
 
 ## Using it in a project

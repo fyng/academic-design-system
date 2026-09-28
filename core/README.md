@@ -11,7 +11,7 @@ What every format shares: the principles, the voice, and five elements. The form
 | Icons | [`icons.md`](icons.md) | Health Icons, custom glyphs, when an icon takes colour |
 | Illustration | [`illustration.md`](illustration.md) | Cells, tissue, model systems, zooms, arrows and method boxes |
 | Tokens | `tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit the `.mjs`, run `node core/tokens.mjs` |
-| Specimens | `specimen-*.html` → `out/specimen-*.png` | Reference sheets for colour, scales and charts, drawn with the abstract kit |
+| Specimens | `specimen-*.html` → `out/specimen-*.png`; `formats/publication/specimen-*.typ` → `out/specimen-figure.png` | Reference sheets for colour, scales and charts (drawn with the abstract kit), and the journal figure (assembled with Typst) |
 
 | Format | For | Adds |
 |---|---|---|

@@ -14,14 +14,16 @@ checked out as a git submodule at `design-system/` inside another project
   Write a constraint only when it is necessary.
 - **Generated files.** `core/tokens.css` and `core/tokens.json` come from
   `core/tokens.mjs`; edit the `.mjs` and run `node core/tokens.mjs`.
-- **What belongs here.** Tokens, rules, framework adapters, the kit and the renderer.
+- **What belongs here.** Tokens, rules, framework adapters, the kit, the renderer
+  and the vendored fonts (`core/fonts/`).
   Project content (figure sources, page layouts, publish scripts) stays in the
   consuming project, and explorations stay out of the repo.
 - **Code only where it is the system.** The token generator, the Sass, the kit and the
-  renderer ship here. Specimens are HTML pages drawn with the kit, and every image in
-  an `out/` folder is rendered from one, so no image outlives its source. A second
-  plotting stack (e.g. a matplotlib adapter) joins only as a maintained format
-  adapter, with its own specimen.
+  renderer ship here. Specimens are HTML pages drawn with the kit, or Typst sources
+  in `formats/publication/` (compiled to `out/`), and every image in an `out/` folder
+  is rendered from one, so no image outlives its source. A second plotting stack
+  (e.g. a matplotlib adapter) joins only as a maintained format adapter, with its
+  own specimen.
 - **Contributing from a consumer.** Branch inside the submodule, commit and push
   here, open a PR against `main`, then bump the submodule pointer in the consumer.
   Never edit a copy of these files inside a consumer.

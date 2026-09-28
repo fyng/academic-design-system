@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="89mm" height="34mm" viewBox="0 0 89 34">
+  <!-- Panel a of the specimen figure: a schematic dose–response drawn at final
+       size with the panel contract margins (left 12, top 6, right 2, bottom 9;
+       plot area 75 × 19 mm). Text stays text: it is set in IBM Plex Sans. -->
+  <!-- head (7 pt, 500, ink) in the top margin -->
+  <text x="12" y="4.6" font-family="IBM Plex Sans" font-size="2.47" font-weight="500" fill="#16181d">Dose–response, 72 h</text>
+  <!-- axes (0.5 pt, ink-2) and outward ticks (0.7 mm) -->
+  <line x1="12" y1="6" x2="12" y2="25" stroke="#4a4e58" stroke-width="0.176"/>
+  <line x1="12" y1="25" x2="87" y2="25" stroke="#4a4e58" stroke-width="0.176"/>
+  <g stroke="#4a4e58" stroke-width="0.176">
+    <line x1="12" y1="25" x2="12" y2="25.7"/><line x1="30.75" y1="25" x2="30.75" y2="25.7"/>
+    <line x1="49.5" y1="25" x2="49.5" y2="25.7"/><line x1="68.25" y1="25" x2="68.25" y2="25.7"/>
+    <line x1="87" y1="25" x2="87" y2="25.7"/>
+    <line x1="11.3" y1="25" x2="12" y2="25"/><line x1="11.3" y1="15.5" x2="12" y2="15.5"/>
+    <line x1="11.3" y1="6" x2="12" y2="6"/>
+  </g>
+  <!-- tick labels (6 pt, muted) -->
+  <g font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b">
+    <text x="12" y="28.0" text-anchor="middle">0.001</text>
+    <text x="30.75" y="28.0" text-anchor="middle">0.01</text>
+    <text x="49.5" y="28.0" text-anchor="middle">0.1</text>
+    <text x="68.25" y="28.0" text-anchor="middle">1</text>
+    <text x="87" y="28.0" text-anchor="middle">10</text>
+    <text x="10.3" y="25.74" text-anchor="end">0</text>
+    <text x="10.3" y="16.24" text-anchor="end">0.5</text>
+    <text x="10.3" y="6.74" text-anchor="end">1</text>
+  </g>
+  <!-- dotted IC50 reference (0.5 pt, muted, 1 2 pt dash) -->
+  <line x1="12" y1="15.5" x2="87" y2="15.5" stroke="#6b707b" stroke-width="0.176" stroke-dasharray="0.35 0.71"/>
+  <text x="86.5" y="14.7" font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b" text-anchor="end">IC₅₀</text>
+  <!-- curves (1 pt): sensitive in prussian, resistant in context; viability
+       falls as dose rises (form 04), both sigmoids span the full domain -->
+  <path d="M 12,6.3 L 22,6.3 C 32,6.3 30,24.6 44,24.6 L 87,24.6" fill="none" stroke="#1f4e79" stroke-width="0.353" stroke-linecap="round"/>
+  <path d="M 12,6.3 L 52,6.3 C 68,6.3 72,24.6 84,24.6 L 87,24.6" fill="none" stroke="#a3a8b1" stroke-width="0.353" stroke-linecap="round"/>
+  <!-- direct labels (7 pt, 400, ink), set beside their own curve -->
+  <g font-family="IBM Plex Sans" font-size="2.47" fill="#16181d">
+    <text x="60" y="23.2">sensitive</text>
+    <text x="36" y="8.6">resistant</text>
+  </g>
+  <!-- axis titles (7 pt, 500, ink-2) -->
+  <text x="87" y="30.8" font-family="IBM Plex Sans" font-size="2.47" font-weight="500" fill="#4a4e58" text-anchor="end">Drug (µM)</text>
+  <text x="3.4" y="15.5" transform="rotate(-90 3.4 15.5)" font-family="IBM Plex Sans" font-size="2.47" font-weight="500" fill="#4a4e58" text-anchor="middle">Viability (fraction)</text>
+  <!-- note (6 pt, muted), in the empty lower-left corner -->
+  <text x="13.5" y="23.4" font-family="IBM Plex Sans" font-size="2.117" fill="#6b707b">schematic</text>
+</svg>
