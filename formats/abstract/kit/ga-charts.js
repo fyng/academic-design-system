@@ -1,4 +1,4 @@
-// Chart layer for the graphical abstract kit (see artifacts/charts.md).
+// Chart layer for the graphical abstract kit (see core/charts.md).
 //
 //   const ch = GA.chart(ga, { x, y, w, h, xd: [0, 1], yd: [0, 1], xTitle, yTitle, at });
 //   ch.line([[0, 0], [1, 1]], { color: "var(--accent)" });
@@ -34,7 +34,7 @@
     let frame = "";
     if (o.grid === "y" && o.yTicks) for (const t of o.yTicks) frame += `<path d="M${X0} ${sy(t)}H${X1}" stroke="var(--rule)" stroke-width="1"/>`;
     if (o.grid === "x" && o.xTicks) for (const t of o.xTicks) frame += `<path d="M${sx(t)} ${Y0}V${Y1}" stroke="var(--rule)" stroke-width="1"/>`;
-    const axes = o.axes || "xy";
+    const axes = o.axes ?? "xy";
     if (axes.includes("y")) frame += `<path d="M${X0} ${Y0}V${Y1}" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`;
     if (axes.includes("x")) frame += `<path d="M${X0} ${Y1}H${X1}" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`;
     for (const t of o.xTicks || []) frame += `<path d="M${sx(t)} ${Y1}v5" stroke="var(--ink-2)" stroke-width="1.5"/>`;
@@ -144,16 +144,106 @@
       });
     };
     // Heatmap. matrix[row][col] in [lo, hi]; ramp: array of hex from lo to hi.
-    // Cells separated by a 2px paper gap; labels optional.
+    // Cells separated by a 2px paper gap; labels optional. Values beyond the
+    // domain take the end colour (a capped scale); null cells stay blank.
+    //   groups: [{label, n}] splits columns into runs of n with a 7px gap and
+    //           names each run above the grid
+    //   dense:  true drops the gaps between columns (hundreds of columns)
     ch.heat = (matrix, ramp, m = {}) => {
       const [lo, hi] = m.domain || [-1, 1];
-      const nr = matrix.length, nc = matrix[0].length, cw = W / nc, rh = H / nr;
+      const nr = matrix.length, nc = matrix[0].length, rh = H / nr;
+      const groups = m.groups || [{ n: nc }], GAP = m.groups ? 7 : 0;
+      const cw = (W - GAP * (groups.length - 1)) / nc;
+      const cx = [];
+      groups.forEach((g, k) => { for (let j = 0; j < g.n; j++) cx.push(X0 + (cx.length * cw) + k * GAP); });
       const pick = (v) => ramp[Math.max(0, Math.min(ramp.length - 1, Math.round(((v - lo) / (hi - lo)) * (ramp.length - 1))))];
+      const gx = m.dense ? 0 : 1;
       let s = "";
-      matrix.forEach((row, i) => row.forEach((v, j) => (s += `<rect x="${X0 + j * cw + 1}" y="${Y0 + i * rh + 1}" width="${cw - 2}" height="${rh - 2}" rx="2" fill="${pick(v)}"/>`)));
+      matrix.forEach((row, i) => row.forEach((v, j) => {
+        if (v === null || v === undefined) return;
+        s += `<rect x="${cx[j] + gx}" y="${Y0 + i * rh + 1}" width="${cw - 2 * gx + (m.dense ? 0.5 : 0)}" height="${rh - 2}"${m.dense ? "" : ' rx="2"'} fill="${pick(v)}"/>`;
+      }));
       ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      let j0 = 0;
+      if (m.groups) for (const g of groups) {
+        if (g.label) ga.text(g.label, { x: cx[j0], y: Y0 - 24, role: "tick", at, anim: "fade" });
+        j0 += g.n;
+      }
       (m.rowLabels || []).forEach((l, i) => ga.text(l, { x: X0 - 10, y: Y0 + (i + 0.5) * rh - 8, role: "label", size: 14, anchor: "end", at, anim: "fade" }));
-      (m.colLabels || []).forEach((l, j) => ga.text(l, { x: X0 + (j + 0.5) * cw, y: Y1 + 8, role: "tick", anchor: "middle", at, anim: "fade" }));
+      (m.colLabels || []).forEach((l, j) => ga.text(l, { x: cx[j] + cw / 2, y: Y1 + 8, role: "tick", anchor: "middle", at, anim: "fade" }));
+    };
+    // Summary mark (median or mean) at data (x, y): a short ink bar, 3px, with a
+    // paper halo so it reads over points. hw = half-width in px.
+    ch.summary = (x, y, m = {}) => {
+      const hw = m.hw || 20, X = sx(x), Y = sy(y);
+      return ga.raw(`<path d="M${X - hw} ${Y}H${X + hw}" stroke="var(--paper)" stroke-width="6" stroke-linecap="round"/><path d="M${X - hw} ${Y}H${X + hw}" stroke="${m.color || "var(--ink)"}" stroke-width="3"/>`, { at: m.at ?? (mt === undefined ? undefined : mt + 0.6), anim: "fade", t: 0.4 });
+    };
+    // Beeswarm: every observation as a point, placed without overlap around its
+    // group's x, with a summary bar. groups: [{x, values, color}]
+    //   r: point radius (4.5 to ~50 per group, 3-3.5 to ~100); summary: "median" | "mean" | false
+    ch.swarm = (groups, m = {}) => {
+      const r = m.r || 4.5, D = 2 * r + 0.5;
+      for (const g of groups) {
+        const X = sx(g.x), placed = [], pts = [];
+        for (const v of [...g.values].sort((a, b) => a - b)) {
+          const Y = sy(v), near = placed.filter((p) => Math.abs(p.y - Y) < D);
+          const cand = [0];
+          for (const p of near) { const dx = Math.sqrt(D * D - (p.y - Y) ** 2); cand.push(p.dx + dx, p.dx - dx); }
+          cand.sort((a, b) => Math.abs(a) - Math.abs(b));
+          const dx = cand.find((c) => near.every((p) => (p.dx - c) ** 2 + (p.y - Y) ** 2 >= D * D - 0.01));
+          placed.push({ dx, y: Y });
+          pts.push([o.xd[0] + ((X + dx - X0) / W) * (o.xd[1] - o.xd[0]), v, g.color || m.color || "var(--ink-2)"]);
+        }
+        ch.dots(pts, { r, at: m.at });
+        if (m.summary !== false) {
+          const s = [...g.values].sort((a, b) => a - b), n = s.length;
+          const c = m.summary === "mean" ? s.reduce((a, b) => a + b, 0) / n : n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2;
+          const spread = Math.max(...placed.map((p) => Math.abs(p.dx)));
+          ch.summary(g.x, c, { hw: m.hw || Math.max(14, Math.min(44, spread + r + 4)), at: m.at === undefined ? undefined : m.at + 0.6 });
+        }
+      }
+    };
+    // Vertical bars from a zero baseline. rows: [{x, v, color}]; width in px
+    // (default half the band). Rounded at the data end, square at the baseline.
+    ch.vbars = (rows, m = {}) => {
+      const bw = m.width || Math.abs(sx(1) - sx(0)) / 2, rr = 4;
+      rows.forEach((r, i) => {
+        const X = sx(r.x) - bw / 2, yb = sy(0), h = yb - sy(r.v), q = Math.min(rr, h);
+        const t = m.at ?? (mt === undefined ? undefined : mt + i * 0.08);
+        ga.raw(`<path d="M${X} ${yb}V${yb - h + q}a${q} ${q} 0 0 1 ${q} ${-q}h${bw - 2 * q}a${q} ${q} 0 0 1 ${q} ${q}V${yb}Z" fill="${r.color || m.color || "var(--context)"}"/>`, { at: t, anim: "rise", t: 0.7 });
+      });
+    };
+    // Lollipop: one row per item, a 2px rule stem from the reference (m.ref, default 0)
+    // to a dot at the value. rows: [{label, v, color}]; the dot has a 1px ink-2 ring.
+    ch.lollipop = (rows, m = {}) => {
+      const band = H / rows.length, x0 = sx(m.ref ?? 0);
+      rows.forEach((r, i) => {
+        const cy = Y0 + band * (i + 0.5), t = m.at ?? (mt === undefined ? undefined : mt + i * 0.08);
+        ga.raw(`<path d="M${x0} ${cy}H${sx(r.v)}" stroke="var(--rule)" stroke-width="2"/><circle cx="${sx(r.v)}" cy="${cy}" r="${m.r || 5.5}" fill="${r.color || "var(--ink)"}" stroke="var(--ink-2)" stroke-width="1"/>`, { at: t, anim: "fade", t: 0.5 });
+        ga.text(r.label, { x: X0 - 10, y: cy - 8, role: "label", size: 14, anchor: "end", at: o.at, anim: "fade" });
+      });
+    };
+    // 100% stacked columns for many samples. cols: [[..fractions..]], colors per part.
+    // groups: [{label, n, color}] splits the columns into runs with a 5px gap and names
+    // each run beneath the plot. Parts touch within a column; columns keep a 1px gap.
+    ch.columns = (cols, colors, m = {}) => {
+      const groups = m.groups || [{ n: cols.length }], GAP = m.groups ? 5 : 0;
+      const cw = (W - GAP * (groups.length - 1)) / cols.length;
+      let j = 0, s = "";
+      groups.forEach((g, k) => {
+        const gx = X0 + j * cw + k * GAP;
+        for (let q = 0; q < g.n; q++, j++) {
+          const x = X0 + j * cw + k * GAP, tot = cols[j].reduce((a, b) => a + b, 0);
+          let acc = 0;
+          cols[j].forEach((p, i) => {
+            const ya = Y1 - (acc / tot) * H, yb = Y1 - ((acc + p) / tot) * H;
+            s += `<rect x="${x}" y="${yb}" width="${Math.max(0.5, cw - 1)}" height="${ya - yb + 0.3}" fill="${colors[i]}"/>`;
+            acc += p;
+          });
+        }
+        if (g.label) ga.text(g.label, { x: gx, y: Y1 + 8, role: "tick", color: g.color, at, anim: "fade" });
+      });
+      ga.raw(s, { at: m.at ?? mt, anim: "rise", t: 0.8 });
     };
     // Line key: short line swatch + label per series, stacked at canvas px (x, y).
     // For when end labels would collide (converging curves).

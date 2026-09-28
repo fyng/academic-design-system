@@ -5,7 +5,7 @@
 // Every animation on the page is paused and seeked to an exact time, so each
 // frame is deterministic; the poster is simply the frame at --poster seconds.
 //
-//   node <design-system>/kit/render.cjs precision-safety.html [--fps 30] [--poster 14.5] [--still] [--force]
+//   node <design-system>/formats/abstract/kit/render.cjs precision-safety.html [--fps 30] [--poster 14.5] [--still] [--force]
 //
 // Output goes to an out/ folder beside the figure's HTML.
 //

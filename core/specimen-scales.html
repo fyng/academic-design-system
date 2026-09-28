@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina scale check</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../formats/abstract/kit/ga-kit.css">
+<script src="../formats/abstract/kit/icons.js"></script>
+<script src="../formats/abstract/kit/ga-kit.js"></script>
+<script src="../formats/abstract/kit/ga-charts.js"></script>
+</head>
+<body>
+<script>
+// Scale check for core/color.md: every scale in normal vision, greyscale and
+// simulated protanopia and deuteranopia (Machado et al. 2009, full severity),
+// with its OKLab lightness. Colours are read from tokens.css.
+GA.build({ duration: 4, poster: 3.5, title: "Lamina scale check", desc: "Every colour scale in normal vision, greyscale, protanopia and deuteranopia, with its OKLab lightness." }, (ga) => {
+  const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
+  const ramp = (h, steps) => steps.map((s) => tok(`${h}-${s}`));
+
+  // ---- colour math -----------------------------------------------------------
+  const lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const gam = (c) => { c = Math.max(0, Math.min(1, c)); return c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055; };
+  const rgb = (hex) => [1, 3, 5].map((i) => lin(parseInt(hex.slice(i, i + 2), 16) / 255));
+  const hex = (v) => "#" + v.map((c) => Math.round(gam(c) * 255).toString(16).padStart(2, "0")).join("");
+  const mul = (M, v) => M.map((r) => r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
+  const MACHADO = {
+    prot: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
+    deut: [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.01182, 0.04294, 0.968881]],
+  };
+  const L = (v) => {
+    const [l, m, s] = mul([[0.4122214708, 0.5363325363, 0.0514459929], [0.2119034982, 0.6806995451, 0.1073969566], [0.0883024619, 0.2817188376, 0.6299787005]], v).map(Math.cbrt);
+    return 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  };
+  const views = [
+    { name: "NORMAL VISION", f: (c) => c },
+    { name: "GREYSCALE", f: (c) => { const y = L(rgb(c)) ** 3; return hex([y, y, y]); } },
+    { name: "PROTANOPIA", f: (c) => hex(mul(MACHADO.prot, rgb(c))) },
+    { name: "DEUTERANOPIA", f: (c) => hex(mul(MACHADO.deut, rgb(c))) },
+  ];
+
+  // ---- scales ------------------------------------------------------------------
+  const arm = [800, 700, 600, 500, 400, 300, 200];
+  const seq = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+  const scales = [
+    { name: "QUANTITY", sub: "teal 100 → 900", c: ramp("teal", seq) },
+    { name: "HARM", sub: "vermilion 100 → 900", c: ramp("vermilion", seq) },
+    { name: "BENEFIT", sub: "blue 100 → 900", c: ramp("blue", seq) },
+    { name: "VALENCE", sub: "blue · wash · vermilion", c: [...ramp("blue", arm), tok("wash"), ...ramp("vermilion", [...arm].reverse())] },
+    { name: "DIRECTION", sub: "violet · wash · ochre", c: [...ramp("violet", arm), tok("wash"), ...ramp("ochre", [...arm].reverse())] },
+    { name: "CATEGORICAL", sub: "slots 1 → 7", c: [1, 2, 3, 4, 5, 6, 7].map((i) => tok(`cat-${i}`)), cat: true },
+    { name: "CIVIDIS", sub: "dense images only", c: ["#00224e", "#123570", "#3b496c", "#575d6d", "#707173", "#8a8678", "#a59c74", "#c3b369", "#e1cc55", "#fee838"] },
+  ];
+
+  ga.text("LAMINA · SCALE CHECK", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("Every scale, seen four ways", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+
+  const VX = 330, VW = 214, VG = 34, LX = 1340, LW = 196, T0 = 184, RH = 86, SH = 30;
+  views.forEach((v, k) => ga.text(v.name, { x: VX + k * (VW + VG), y: 142, role: "step", color: "var(--muted)", at: 0.2 }));
+  ga.text("OKLAB LIGHTNESS", { x: LX, y: 142, role: "step", color: "var(--muted)", at: 0.2 });
+
+  scales.forEach((s, i) => {
+    const y = T0 + i * RH, at = 0.3 + i * 0.1;
+    ga.text(s.name, { x: ga.M, y: y + 2, role: "step", at });
+    ga.text(s.sub, { x: ga.M, y: y + 22, role: "cap", size: 14, at });
+    views.forEach((v, k) => {
+      const x0 = VX + k * (VW + VG), n = s.c.length, gap = s.cat ? 4 : 0, w = (VW - gap * (n - 1)) / n;
+      ga.raw(s.c.map((c, j) => `<rect x="${x0 + j * (w + gap)}" y="${y + 4}" width="${w + (s.cat ? 0 : 0.5)}" height="${SH}"${s.cat ? ' rx="3"' : ""} fill="${v.f(c)}"/>`).join(""), { at, anim: "fade" });
+    });
+    // lightness along the scale: normal (solid) and deuteranopia (dotted)
+    const ch = GA.chart(ga, { x: LX, y: y - 4, w: LW, h: 48, xd: s.cat ? [-0.5, s.c.length - 0.5] : [0, s.c.length - 1], yd: [0, 1], axes: "xy", at });
+    const Ls = (f) => s.c.map((c, j) => [j, L(rgb(f(c)))]);
+    if (s.cat) {
+      ch.dots(Ls(views[0].f).map((p, j) => [...p, s.c[j]]), { r: 4 });
+    } else {
+      ch.line(Ls(views[3].f), { color: "var(--muted)", width: 1.5, dash: "2 3", lint: false });
+      ch.line(Ls(views[0].f), { color: "var(--ink)", width: 2, lint: false });
+    }
+  });
+  ga.text("L from 0 to 1 along each scale. Solid: normal vision; dotted: deuteranopia, hidden where they agree.", { x: LX, y: T0 + scales.length * RH - 20, w: LW, role: "cap", size: 12, at: 1 });
+
+  ga.text("Sequential scales darken steadily in every view, so their order survives greyscale print and colour-vision deficiency. Diverging scales lighten symmetrically to the midpoint. Categorical slots share one lightness and differ by hue (adjacent pairs keep CVD ΔE ≥ 8, color.md, Validation), so in greyscale they need their labels.", { x: ga.M, y: 818, w: 1220, role: "cap", size: 14, at: 1 });
+});
+</script>
+</body>
+</html>

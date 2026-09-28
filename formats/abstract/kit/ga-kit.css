@@ -1,6 +1,6 @@
 /* Graphical abstract kit: tokens, type roles and motion primitives. */
-@import url("../artifacts/tokens.css");
-/* Kit aliases over the design tokens (artifacts/tokens.css is generated) */
+@import url("../../../core/tokens.css");
+/* Kit aliases over the design tokens (core/tokens.css is generated) */
 :root {
   --blue-wash: var(--benefit-wash);
 }
@@ -49,12 +49,14 @@ svg.ga tspan.em { font-style: italic; }
 
 /* Motion: every animated wrapper carries --d (delay) and optional --t (duration).
    The renderer pauses and seeks all animations, so keep motion in CSS keyframes. */
-.a-in, .a-pop, .a-draw, .a-grow, .a-fade, .a-zoom, .a-sweep, .a-move { animation-fill-mode: both; animation-delay: var(--d, 0s); animation-timing-function: cubic-bezier(.2, .7, .2, 1); }
+.a-in, .a-pop, .a-draw, .a-grow, .a-rise, .a-fade, .a-zoom, .a-sweep, .a-move { animation-fill-mode: both; animation-delay: var(--d, 0s); animation-timing-function: cubic-bezier(.2, .7, .2, 1); }
 .a-in   { animation-name: ga-in;   animation-duration: var(--t, .7s); }
 .a-fade { animation-name: ga-fade; animation-duration: var(--t, .6s); }
 .a-pop  { animation-name: ga-pop;  animation-duration: var(--t, .45s); transform-box: fill-box; transform-origin: center; }
 .a-draw { animation-name: ga-draw; animation-duration: var(--t, .8s); stroke-dasharray: 1; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 .a-grow { animation-name: ga-grow; animation-duration: var(--t, .8s); transform-box: fill-box; transform-origin: left center; }
+/* rise: a vertical bar or column grows up from its baseline */
+.a-rise { animation-name: ga-rise; animation-duration: var(--t, .8s); transform-box: fill-box; transform-origin: center bottom; }
 /* zoom: an inset grows out of its source (--zx/--zy = source minus inset centre) */
 .a-zoom { animation-name: ga-zoom; animation-duration: var(--t, .9s); transform-box: fill-box; transform-origin: center; }
 /* move: a group travels into place from --mx/--my away (assembling, clustering) */
@@ -66,6 +68,7 @@ svg.ga tspan.em { font-style: italic; }
 @keyframes ga-pop  { 0% { opacity: 0; transform: scale(.3); } 70% { transform: scale(1.1); } 100% { opacity: 1; transform: none; } }
 @keyframes ga-draw { 0% { stroke-dashoffset: 1; opacity: 0; } 1% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
 @keyframes ga-grow { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes ga-rise { from { transform: scaleY(0); } to { transform: none; } }
 @keyframes ga-zoom { from { opacity: 0; transform: translate(var(--zx), var(--zy)) scale(.08); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes ga-move { from { transform: translate(var(--mx), var(--my)); } to { transform: none; } }
 @keyframes ga-sweep { from { stroke-dasharray: 0 1; } to { stroke-dasharray: var(--p) 1; } }
