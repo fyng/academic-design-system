@@ -1,0 +1,54 @@
+/*******************************************************************************
+ * Instrument / Prussian — tokens.
+ * Framework-agnostic values: fonts and the light/dark palettes.
+ * Documented in website/DESIGN.md. Adapters (e.g. _al-folio.scss) map these
+ * onto a framework's own variables.
+ ******************************************************************************/
+
+$font-display: "Instrument Serif", "Times New Roman", serif;
+$font-body:
+  "IBM Plex Sans",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  sans-serif;
+$font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+$light: (
+  bg: #ffffff,
+  card-bg: #ffffff,
+  text: #16181d,
+  text-light: #707480,
+  theme: #1f4e79, // Prussian blue
+  hover: #c2412d, // vermilion
+  hover-text: #ffffff,
+  divider: #e8e8ea,
+  code-bg: #f4f5f7,
+  footer-bg: #ffffff,
+  footer-text: #8a8e98,
+  footer-link: #16181d,
+);
+
+$dark: (
+  bg: #111317,
+  card-bg: #16191e,
+  text: #e6e6e3,
+  text-light: #8b8f98,
+  theme: #86acd6,
+  hover: #ef7a5f,
+  hover-text: #111317,
+  divider: #262a31,
+  code-bg: #1b1f25,
+  footer-bg: #111317,
+  footer-text: #7b808a,
+  footer-link: #e6e6e3,
+);
+
+// Emit a palette as CSS custom properties: --<prefix><name>.
+// Adapters that need a framework's own variable names map them explicitly
+// (see _al-folio.scss).
+@mixin custom-properties($palette, $prefix: "") {
+  @each $name, $value in $palette {
+    --#{$prefix}#{$name}: #{$value};
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina colour specimens</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../kit/ga-kit.css">
+<script src="../kit/icons.js"></script>
+<script src="../kit/ga-kit.js"></script>
+<script src="../kit/ga-bio.js"></script>
+</head>
+<body>
+<script>
+// Specimen sheet for artifacts/color.md. Every swatch reads its value from tokens.css.
+GA.build({ duration: 6, poster: 5.5, title: "Lamina colour specimens", desc: "Neutrals, hue ramps, semantic roles, categorical order, entity colours and scales." }, (ga) => {
+  const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
+  const sw = (x, y, w, h, c, extra = "") => ga.raw(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${c}"${extra}/>`, { at: 0.3, anim: "fade" });
+  const at = 0.2;
+
+  ga.text("LAMINA · COLOUR", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("Colour does one job at a time", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+  const [c1, c2, c3] = ga.columns(3, { top: 140, bottom: 860 });
+  const step = (c, s) => ga.text(s, { x: c.x0, y: c.top, role: "step", at });
+  const sub = (c, y, s) => ga.text(s, { x: c.x0, y, role: "axis", at });
+
+  // ---- column 1: neutrals + ramps ----------------------------------------
+  step(c1, "01 · NEUTRALS & RAMPS");
+  const neutrals = ["ink", "ink-2", "muted", "context", "rule", "wash", "paper", "prussian"];
+  neutrals.forEach((n, i) => {
+    const x = c1.x0 + (i % 4) * 108, y = 176 + Math.floor(i / 4) * 64;
+    sw(x, y, 26, 26, tok(n), n === "paper" ? ` stroke="var(--rule)"` : "");
+    ga.text(n, { x: x + 32, y: y - 2, role: "tick", color: "var(--ink)", at });
+    ga.text(tok(n), { x: x + 32, y: y + 14, role: "tick", size: 11, at });
+  });
+  const fams = ["blue", "vermilion", "teal", "ochre", "violet", "moss", "rose", "slate"];
+  const steps = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+  const RX = c1.x0 + 78, RY = 330, SW = 36, SG = 3;
+  steps.forEach((s, j) => ga.text(String(s), { x: RX + j * (SW + SG) + SW / 2, y: RY - 22, role: "tick", size: 11, anchor: "middle", at }));
+  fams.forEach((f, i) => {
+    const y = RY + i * 34;
+    ga.text(f, { x: c1.x0, y: y + 3, role: "tick", color: "var(--ink-2)", at });
+    steps.forEach((s, j) => sw(RX + j * (SW + SG), y, SW, 26, tok(`${f}-${s}`)));
+  });
+  ga.text("OKLCH ramps: a step has the same lightness in every hue. 500 = marks; 600 = text on paper (≥ 5:1); 100 = washes.", { x: c1.x0, y: RY + 8 * 34 + 12, w: c1.w, role: "cap", size: 14, at });
+
+  // ---- column 2: semantic roles --------------------------------------------
+  step(c2, "02 · MEANING");
+  const trio = (y, name, what, keys) => {
+    ga.text(name, { x: c2.x0, y, role: "label", size: 15, weight: 500, at });
+    ga.text(what, { x: c2.x0, y: y + 20, role: "tick", at });
+    keys.forEach((k, i) => {
+      const x = c2.x0 + 176 + i * 86;
+      sw(x, y + 2, 26, 26, tok(k));
+      ga.text(k.includes("-") ? k.split("-").pop() : "mark", { x: x + 32, y: y + 7, role: "tick", size: 12, at });
+    });
+  };
+  trio(176, "Harm", "toxicity, risk, resistance", ["harm", "harm-text", "harm-wash"]);
+  trio(230, "Benefit", "response, sensitivity", ["benefit", "benefit-text", "benefit-wash"]);
+  trio(284, "Accent", "the one thing to look at", ["accent", "accent-text", "accent-wash"]);
+  trio(338, "Quantity", "magnitude, no judgement", ["quantity", "quantity-wash"]);
+
+  sub(c2, 412, "Categorical: fixed order, never cycled");
+  for (let i = 1; i <= 7; i++) {
+    const x = c2.x0 + (i - 1) * 60;
+    sw(x, 440, 50, 30, tok(`cat-${i}`));
+    ga.text(String(i), { x: x + 25, y: 476, role: "tick", anchor: "middle", at });
+    ga.text("Aa", { x: x + 25, y: 494, role: "label", size: 15, weight: 500, anchor: "middle", color: tok(`cat-${i}-text`), at });
+  }
+  ga.text("Top: marks. Bottom: the text-safe step for direct labels. Slots 1–3 are distinct under every CVD simulation in any pairing; beyond 3, scatter and small multiples need labels.", { x: c2.x0, y: 522, w: c2.w, role: "cap", size: 14, at });
+
+  sub(c2, 616, "Entities keep their colour in every figure");
+  const organs = [["lungs", "lungs", "lung"], ["liver", "liver", "liver"], ["colon", "colon", "colon"], ["adrenal", "adrenal", "adrenal"], ["thyroid", "thyroid", "thyroid"], ["kidney", "kidneys", "kidney"]];
+  organs.forEach(([k, icon, name], i) => {
+    const cx = c2.x0 + 30 + i * 72;
+    ga.icon(icon, { cx, cy: 676, size: 48, color: tok(`organ-${k}`), at: 0.3 });
+    ga.text(name, { x: cx, y: 708, role: "tick", anchor: "middle", at });
+  });
+  // cell types: one hue family, drawn as the cell glyph (nucleus + cytoplasm)
+  const B = GA.bio(ga);
+  for (let k = 1; k <= 4; k++) {
+    const cx = c2.x0 + 30 + (k - 1) * 72;
+    B.cell({ cx, cy: 758, r: 20, k, at: 0.3 });
+    ga.text(`cell ${k}`, { x: cx, y: 788, role: "tick", anchor: "middle", at });
+  }
+  ga.text("Organs: registry in tokens.mjs (entity.organ). Cell types: the family palette (family.cell), four at most.", { x: c2.x0, y: 820, w: c2.w, role: "cap", size: 14, at });
+
+  // ---- column 3: scales ------------------------------------------------------------
+  step(c3, "03 · SCALES");
+  const strip = (y, cols, lo, hi, mid) => {
+    const w = c3.w / cols.length;
+    ga.raw(cols.map((c, i) => `<rect x="${c3.x0 + i * w}" y="${y}" width="${w + 0.4}" height="22" fill="${c}"/>`).join(""), { at: 0.3, anim: "fade" });
+    ga.text(lo, { x: c3.x0, y: y + 28, role: "tick", at });
+    ga.text(hi, { x: c3.x1, y: y + 28, role: "tick", anchor: "end", at });
+    if (mid) ga.text(mid, { x: c3.x0 + c3.w / 2, y: y + 28, role: "tick", anchor: "middle", at });
+  };
+  const seq = (h) => steps.map((s) => tok(`${h}-${s}`));
+  sub(c3, 176, "Sequential: one hue, light → dark");
+  strip(204, seq("teal"), "quantity (default)", "teal");
+  strip(262, seq("vermilion"), "harm: risk, toxicity", "vermilion");
+  strip(320, seq("blue"), "benefit: response", "blue");
+  ga.text("Continuous fields use 100–900. Discrete ordered classes use 400–800 (every class ≥ 2:1 on paper).", { x: c3.x0, y: 372, w: c3.w, role: "cap", size: 14, at });
+
+  sub(c3, 450, "Diverging: two arms, grey midpoint");
+  const div = (a, b) => [...[800, 700, 600, 500, 400, 300, 200].map((s) => tok(`${a}-${s}`)), tok("wash"), ...[200, 300, 400, 500, 600, 700, 800].map((s) => tok(`${b}-${s}`))];
+  strip(478, div("blue", "vermilion"), "benefit", "harm", "valence");
+  strip(536, div("violet", "ochre"), "down", "up", "direction");
+  ga.text("Valence when one side is better (sensitivity, survival). Direction when neither is (fold change, bias).", { x: c3.x0, y: 588, w: c3.w, role: "cap", size: 14, at });
+
+  sub(c3, 666, "Validation");
+  ga.text("Categorical, adjacent pairs: CVD ΔE ≥ 8.7, normal ΔE ≥ 19.4\nSlots 1–3, all pairs: CVD ΔE ≥ 14.4\nCell family, all pairs: CVD ΔE ≥ 10.7, normal ΔE ≥ 15\nEvery mark ≥ 3:1 on paper · every text step ≥ 5:1", { x: c3.x0, y: 694, w: c3.w, role: "tick", size: 13, color: "var(--ink-2)", at });
+});
+</script>
+</body>
+</html>

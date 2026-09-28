@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina type and canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../kit/ga-kit.css">
+<script src="../kit/icons.js"></script>
+<script src="../kit/ga-kit.js"></script>
+</head>
+<body>
+<script>
+// Specimen sheet for artifacts/typography.md and the canvas section of DESIGN.md.
+GA.build({ duration: 6, poster: 5.5, title: "Lamina type and canvas", desc: "Type roles at actual size, the 1600 by 900 canvas grid, and the default motion timeline." }, (ga) => {
+  const at = 0.2;
+  ga.text("LAMINA · TYPE & CANVAS", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("One family, eleven roles", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+
+  // ---- type roles at actual size --------------------------------------------
+  ga.text("01 · TYPE ROLES, ACTUAL SIZE ON THE 1600 × 900 CANVAS", { x: ga.M, y: 140, role: "step", at });
+  const R = GA.ROLE;
+  const rows = [
+    ["kicker", "Sans 500 · caps · +12% · muted", "PRECISION SAFETY · MEDRXIV 2026"],
+    ["title", "Sans 500 · −1.5% · a question", "Can we predict adverse event risk?"],
+    ["step", "Sans 500 · caps · +12% · prussian", "02 · CLINICAL RISK"],
+    ["head", "Sans 500 · −1% · panel noun", "Adverse event–specific risk"],
+    ["body", "Sans 400 · ink · findings", "Germline variants predict *propensity* for adrenal insufficiency"],
+    ["label", "Sans 400 · ink-2 · names", "lung cancer · immunotherapy"],
+    ["cap", "Sans 400 · muted · scale, n", "cumulative incidence (schematic)"],
+    ["tag", "Mono 500 · literal codes only", "PT A · HLA-DRB1*15"],
+    ["axis", "Sans 500 · ink-2 · axis titles", "Months on ICI"],
+    ["tick", "Sans 400 · tabular figures", "0 · 6 · 12 · 18 · 24 · 1,284 · −0.42"],
+    ["take", "Sans 400 · accent 500 italic", "A {*precision safety*} paradigm"],
+  ];
+  let y = 176;
+  for (const [role, spec, sample] of rows) {
+    const r = R[role];
+    ga.text(role, { x: ga.M, y: y + (r.size - 13) * 0.55, role: "tag", color: "var(--prussian)", at });
+    ga.text(`${r.size}/${Math.round(r.size * r.lh)} · ${spec}`, { x: ga.M + 64, y: y + (r.size - 13) * 0.55, role: "tick", size: 12, at });
+    const s = ga.text(sample, { x: ga.M + 330, y, role, w: 470, at });
+    y = s.b + (role === "title" || role === "take" || role === "head" ? 18 : 16);
+  }
+  ga.text("Nothing smaller than 13 px on the canvas: at 800 px wide on a phone that is still 6.5 px, the floor for reading.", { x: ga.M, y: y + 6, w: 760, role: "cap", size: 14, at });
+
+  // ---- canvas anatomy -----------------------------------------------------------
+  const X = 912, Y = 176, k = 0.38; // diagram origin and scale
+  ga.text("02 · CANVAS", { x: X, y: 140, role: "step", at });
+  const sx = (v) => X + v * k, sy = (v) => Y + v * k;
+  let d = `<rect x="${sx(0)}" y="${sy(0)}" width="${1600 * k}" height="${900 * k}" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1"/>`;
+  d += `<rect x="${sx(64)}" y="${sy(44)}" width="${1472 * k}" height="${(187 - 44) * k}" fill="var(--wash)"/>`;
+  const cw = (1472 - 160) / 3;
+  for (let i = 0; i < 3; i++) d += `<rect x="${sx(64 + i * (cw + 80))}" y="${sy(204)}" width="${cw * k}" height="${562 * k}" fill="var(--benefit-wash)"/>`;
+  d += `<rect x="${sx(64)}" y="${sy(812)}" width="${1472 * k}" height="${48 * k}" fill="var(--accent-wash)"/>`;
+  d += `<path d="M${sx(64)} ${sy(187)}H${sx(1536)}M${sx(64)} ${sy(794)}H${sx(1536)}" stroke="var(--rule)" stroke-width="1.5"/>`;
+  for (let i = 1; i < 3; i++) d += `<path d="M${sx(64 + i * (cw + 80) - 40)} ${sy(204)}V${sy(766)}" stroke="var(--rule)" stroke-width="1.5"/>`;
+  ga.raw(d, { at, anim: "fade" });
+  const lab = (s, x, yy, o = {}) => ga.text(s, { x, y: yy, role: "tick", size: 12, ...o, at });
+  lab("header · kicker + title question", sx(80), sy(96));
+  lab("panel 1", sx(64 + cw / 2), sy(470), { anchor: "middle" });
+  lab("panel 2", sx(64 + cw * 1.5 + 80), sy(470), { anchor: "middle" });
+  lab("panel 3", sx(64 + cw * 2.5 + 160), sy(470), { anchor: "middle" });
+  lab("take-home, one sentence", sx(80), sy(822));
+  const spec = [
+    "1600 × 900 (16:9); margins 64; everything on an 8 px grid",
+    "Header 44–187: kicker, title (≤ 2 lines), hairline",
+    "Panels 204–766: 3 columns of 437, gutter 80, hairline dividers",
+    "Each panel: step · head · caption, visual, conclusion at the foot",
+    "Take-home 812–860 under a hairline at 794",
+  ];
+  ga.text(spec.join("\n"), { x: X, y: sy(900) + 18, role: "tick", size: 13, color: "var(--ink-2)", at });
+
+  // ---- motion timeline --------------------------------------------------------------
+  const TY = 682, T0 = X, TW = 1600 * k, s2x = (t) => T0 + (t / 16) * TW;
+  ga.text("03 · MOTION, 16 s LOOP", { x: X, y: TY - 20, role: "step", at });
+  const segs = [[0, 1, "header", "var(--slate-400)"], [1, 5, "panel 1", "var(--blue-500)"], [5, 9, "panel 2", "var(--blue-500)"], [9, 13, "panel 3", "var(--blue-500)"], [13.4, 14, "", "var(--accent)"], [14, 15.5, "hold", "var(--rule)"], [15.5, 16, "", "var(--slate-600)"]];
+  let m = "";
+  for (const [a, b, , c] of segs) m += `<rect x="${s2x(a) + 1}" y="${TY + 12}" width="${s2x(b) - s2x(a) - 2}" height="16" rx="2" fill="${c}"/>`;
+  for (const t of [0, 4, 8, 12, 16]) m += `<path d="M${s2x(t)} ${TY + 32}v5" stroke="var(--ink-2)" stroke-width="1.5"/>`;
+  ga.raw(m, { at, anim: "fade" });
+  for (const [a, b, name] of segs) if (name) ga.text(name, { x: (s2x(a) + s2x(b)) / 2, y: TY - 4 + 0, role: "tick", size: 12, anchor: "middle", at, lint: false });
+  for (const t of [0, 4, 8, 12, 16]) ga.text(`${t}s`, { x: s2x(t), y: TY + 40, role: "tick", size: 12, anchor: "middle", at });
+  ga.text("take-home 13.4 s · poster frame 15 s · fade 15.5–16 s", { x: X, y: TY + 62, role: "tick", size: 13, color: "var(--ink-2)", at });
+  ga.text("Within a panel: header, then visual left → right in reading order, then the conclusion last. Enter 0.6–0.8 s, lines draw 0.8–1.2 s, 80 ms stagger.", { x: X, y: TY + 88, w: TW, role: "cap", size: 14, at });
+});
+</script>
+</body>
+</html>

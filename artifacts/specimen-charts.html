@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina chart specimens</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../kit/ga-kit.css">
+<script src="../kit/icons.js"></script>
+<script src="../kit/ga-kit.js"></script>
+<script src="../kit/ga-charts.js"></script>
+</head>
+<body>
+<script>
+// Specimen sheet for artifacts/charts.md. All data here are synthetic.
+GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens", desc: "Eight common chart forms drawn with the kit's chart layer, on synthetic data." }, (ga) => {
+  const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
+  const ramp = (h, steps) => steps.map((s) => tok(`${h}-${s}`));
+  const rnd = GA.rng(7);
+
+  ga.text("LAMINA · CHART SPECIMENS · SYNTHETIC DATA", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("Common forms, one grammar", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+
+  // 4 x 2 cells
+  const CW = 326, GUT = (1600 - 2 * ga.M - 4 * CW) / 3;
+  const cell = (i) => ({ x: ga.M + (i % 4) * (CW + GUT), T: i < 4 ? 138 : 506 });
+  const head = (c, n, name) => ga.text(`${String(n).padStart(2, "0")} · ${name}`, { x: c.x, y: c.T, role: "step", at: 0.2 });
+  const note = (c, s) => ga.text(s, { x: c.x, y: c.T + 298, w: CW, role: "cap", size: 14, at: 0.4 });
+  const PH = 172; // plot height
+  const at = 0.3;
+
+  // 01 ranked bars: emphasis = one accent bar, the rest context grey
+  {
+    const c = cell(0); head(c, 1, "RANKED BARS");
+    const ch = GA.chart(ga, { x: c.x + 96, y: c.T + 60, w: CW - 140, h: PH, xd: [0, 0.4], yTitle: "Predicted risk", yTitleX: c.x, axes: "", at });
+    ch.hbars([
+      { label: "adrenal", v: 0.31, color: "var(--accent)", valueColor: "var(--accent-text)" },
+      { label: "colitis", v: 0.22 }, { label: "hepatitis", v: 0.17 }, { label: "thyroid", v: 0.12 }, { label: "pneumonitis", v: 0.07 },
+    ], { fmt: (v) => `${Math.round(v * 100)}%` });
+    note(c, "Sorted. One accent, the rest in context grey. Values at the tips replace the x-axis.");
+  }
+
+  // 02 forest plot: log scale, null line at 1, hollow = n.s.
+  {
+    const c = cell(1); head(c, 2, "FOREST / INTERVALS");
+    const ch = GA.chart(ga, { x: c.x + 90, y: c.T + 60, w: CW - 104, h: PH, xd: [0.25, 8], xlog: true, xTicks: [0.25, 1, 4], axes: "x", xTitle: "Odds ratio", yTitle: "HLA allele", yTitleX: c.x, at });
+    ch.ref("x", 1);
+    ch.intervals([
+      { label: "DRB1*15", est: 3.1, lo: 1.9, hi: 5.2, color: "var(--harm)" },
+      { label: "DRB1*04", est: 1.4, lo: 0.8, hi: 2.4, sig: false, color: "var(--ink-2)" },
+      { label: "DQB1*06", est: 1.2, lo: 0.7, hi: 2.0, sig: false, color: "var(--ink-2)" },
+      { label: "B*27", est: 0.9, lo: 0.5, hi: 1.7, sig: false, color: "var(--ink-2)" },
+      { label: "A*02", est: 0.42, lo: 0.28, hi: 0.66, color: "var(--benefit)" },
+    ]);
+    note(c, "Log scale, dotted null line at 1. Filled = CI excludes null; hollow = not significant. Colour carries direction of risk.");
+  }
+
+  // 03 cumulative incidence: focus vs context, step curves, CI ribbon
+  {
+    const c = cell(2); head(c, 3, "CUMULATIVE INCIDENCE");
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 124, h: PH, xd: [0, 24], yd: [0, 0.12], xTicks: [0, 6, 12, 18, 24], yTicks: [0, 0.05, 0.1], yFmt: (v) => `${Math.round(v * 100)}%`, xTitle: "Months on ICI", yTitle: "Cumulative incidence", at });
+    const curve = (k, s) => { const pts = [[0, 0]]; let y = 0; for (let m = 1; m <= 24; m++) { y += k * Math.exp(-m / 9) * (0.6 + rnd() * 0.8); pts.push([m, y]); } return pts; };
+    const car = curve(0.011, 1), non = curve(0.0022, 2);
+    ch.ribbon(car.map(([x, y]) => [x, y * 0.72]), car.map(([x, y]) => [x, y * 1.28]), { curve: "step", color: "var(--harm)" });
+    ch.line(non, { curve: "step", color: "var(--context)" });
+    ch.line(car, { curve: "step", color: "var(--harm)" });
+    ch.label("carriers", 24, car.at(-1)[1], { dx: 10, color: "var(--harm-text)" });
+    ch.label("non-carriers", 24, non.at(-1)[1], { dx: 10, color: "var(--muted)" });
+    note(c, "Steps, not smoothed. Focus series in the finding's colour, comparator in context grey. Labels just past the line ends.");
+  }
+
+  // 04 dose-response: log concentration, IC50 drop lines
+  {
+    const c = cell(3); head(c, 4, "DOSE–RESPONSE");
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [0.001, 10], xlog: true, yd: [0, 1.1], xTicks: [0.001, 0.01, 0.1, 1, 10], xFmt: (v) => (v >= 1 ? String(v) : v.toString().replace("0.", ".")), yTicks: [0, 0.5, 1], xTitle: "Drug (µM)", yTitle: "Viability", at });
+    const hill = (ic, n = 1.4) => (x) => 1 / (1 + (x / ic) ** n);
+    ch.fn(hill(1.8), { color: "var(--context)" });
+    ch.fn(hill(0.03), { color: "var(--benefit)" });
+    ch.ref("y", 0.5);
+    ch.label("resistant", 0.82, 0.75, { anchor: "end", dx: -10, color: "var(--muted)" });
+    ch.label("sensitive", 0.055, 0.3, { anchor: "end", dx: -10, color: "var(--benefit-text)" });
+    note(c, "Log dose, fitted curve only. IC₅₀ shown by the dotted 50% line. Sensitivity is a benefit, so blue.");
+  }
+
+  // 05 ROC: model vs baseline, chance diagonal
+  {
+    const c = cell(4); head(c, 5, "ROC");
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: PH + 20, h: PH, xd: [0, 1], yd: [0, 1], xTicks: [0, 0.5, 1], yTicks: [0, 0.5, 1], xTitle: "1 − specificity", yTitle: "Sensitivity", at });
+    ch.ref("diag");
+    const roc = (a) => (x) => 1 - (1 - x) ** a;
+    ch.fn(roc(1.7), { color: "var(--context)" });
+    ch.fn(roc(4.2), { color: "var(--prussian)" });
+    ch.lineKey([{ label: "model  AUROC .81", color: "var(--prussian)" }, { label: "baseline  .64", color: "var(--context)" }], { x: ch.x1 + 16, y: ch.y1 - 44 });
+    note(c, "Square plot, chance diagonal dotted. Curves converge, so a line key replaces end labels. AUROC to 2 figures.");
+  }
+
+  // 06 volcano: direction without judgement (violet down, ochre up)
+  {
+    const c = cell(5); head(c, 6, "VOLCANO");
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [-4, 4], yd: [0, 12], xTicks: [-4, -2, 0, 2, 4], yTicks: [0, 5, 10], xTitle: "log₂ fold change", yTitle: "−log₁₀ P", at });
+    const pts = [];
+    for (let i = 0; i < 260; i++) {
+      const fc = (rnd() - 0.5) * 2 * (rnd() < 0.85 ? 1.4 : 3.8), p = Math.abs(fc) * (1.2 + rnd() * 2.2) + rnd() * 1.2;
+      const sig = p > 3 && Math.abs(fc) > 1;
+      pts.push([fc, Math.min(p, 11.8), sig ? (fc > 0 ? "var(--ochre-500)" : "var(--violet-500)") : "var(--context)"]);
+    }
+    ch.ref("y", 3); ch.ref("x", -1); ch.ref("x", 1);
+    ch.dots(pts.filter((p) => p[2] === "var(--context)"), { r: 3, opacity: 0.55 });
+    ch.dots(pts.filter((p) => p[2] !== "var(--context)"), { r: 3.5 });
+    ch.label("down", -4, 0, { dx: 6, dy: -24, color: "var(--violet-600)" });
+    ch.label("up", 4, 0, { anchor: "end", dx: -6, dy: -24, color: "var(--ochre-600)" });
+    note(c, "Direction palette (violet ↔ ochre): up and down without judging either. Non-hits recede.");
+  }
+
+  // 07 heatmap: diverging valence (blue = sensitive, vermilion = resistant)
+  {
+    const c = cell(6); head(c, 7, "HEATMAP");
+    const rows = ["breast", "colorectal", "lung", "melanoma", "AML"], cols = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    const m = rows.map(() => cols.map(() => (rnd() - 0.5) * 2.4));
+    m[4][2] = -2.6; m[4][3] = -2.1; m[3][6] = -2.3; m[1][0] = 2.4;
+    const div = [...ramp("blue", [700, 600, 500, 400, 300, 200]), tok("wash"), ...ramp("vermilion", [200, 300, 400, 500, 600, 700])];
+    const ch = GA.chart(ga, { x: c.x + 86, y: c.T + 60, w: CW - 96, h: PH - 24, axes: "", yTitle: "Tissue × drug, z-score", yTitleX: c.x, at });
+    ch.heat(m, div, { domain: [-2.5, 2.5], rowLabels: rows, colLabels: cols });
+    ch.key(div, { x: c.x + 86, y: c.T + 60 + PH + 6, w: CW - 96, lo: "sensitive", mid: "0", hi: "resistant" });
+    note(c, "Diverging valence: blue = benefit, vermilion = harm, grey midpoint. 2px paper gaps; key under the grid.");
+  }
+
+  // 08 composition: 100% stacked, categorical slots in order
+  {
+    const c = cell(7); head(c, 8, "COMPOSITION");
+    const cats = [1, 2, 3, 4, 5].map((i) => tok(`cat-${i}`));
+    const ch = GA.chart(ga, { x: c.x + 60, y: c.T + 60, w: CW - 60, h: PH - 40, axes: "", yTitle: "Cell-type proportion per spot", yTitleX: c.x, at });
+    ch.stack([1, 2, 3, 4, 5].map((i) => ({ label: `spot ${i}`, parts: [0, 1, 2, 3, 4].map(() => 0.2 + rnd() ** 2 * 1.8) })), cats);
+    const names = ["T cell", "B cell", "stroma", "tumour", "myeloid"];
+    let lx = c.x + 60, ly = c.T + 60 + PH - 24;
+    names.forEach((n, i) => {
+      if (lx + 14 + n.length * 7.5 > c.x + CW) { lx = c.x + 60; ly += 20; }
+      ga.raw(`<rect x="${lx}" y="${ly + 3}" width="10" height="10" rx="2" fill="${cats[i]}"/>`, { at, anim: "fade" });
+      const t = ga.text(n, { x: lx + 14, y: ly, role: "tick", at, anim: "fade" });
+      lx = t.r + 14;
+    });
+    note(c, "Categorical slots 1→5 in fixed order. >5 parts: fold into “other”. Legend in stack order.");
+  }
+});
+</script>
+</body>
+</html>

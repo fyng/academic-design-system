@@ -1,0 +1,12 @@
+{
+  "name": "academic-design-system",
+  "private": true,
+  "description": "Instrument / Prussian (websites) and Lamina (figures): the shared design system for fyng's projects.",
+  "scripts": {
+    "tokens": "node artifacts/tokens.mjs",
+    "render": "node kit/render.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
