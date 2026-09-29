@@ -1,4 +1,6 @@
-# academic-design-system
+# kare
+
+Named for Susan Kare.
 
 The shared design system for Feiyang Huang's academic work: websites, journal
 figures, graphical abstracts, charts and schematics. Projects pull it in as a git
@@ -37,7 +39,7 @@ mm and pt; the abstract adds a canvas, an arc and motion.
 Add it as a submodule at `design-system/` (the name the docs and the reference site use):
 
 ```bash
-git submodule add https://github.com/fyng/academic-design-system.git design-system
+git submodule add https://github.com/fyng/kare.git design-system
 git config -f .gitmodules submodule.design-system.branch main
 ```
 

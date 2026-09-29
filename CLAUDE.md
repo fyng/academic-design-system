@@ -1,4 +1,4 @@
-# academic-design-system: notes for agents
+# kare: notes for agents
 
 This repo is the shared design system for Feiyang Huang's projects. It is usually
 checked out as a git submodule at `design-system/` inside another project
