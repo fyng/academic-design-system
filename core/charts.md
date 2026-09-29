@@ -315,6 +315,7 @@ in `specimen-multitrack-timeline.typ`.
 
 - One time axis on top. Tracks stack below in groups (risk, events, treatment, sites,
   labs), each group opened by a header in the `group` role.
+- A black rule at the start time runs from the axis through every track.
 - Observed data are vermilion 500 with a paper ring: event dots, interval bars
   (round-capped), and lab measurements.
 - Predicted data are blue: lines in blue 600, probabilities as a heat strip on the

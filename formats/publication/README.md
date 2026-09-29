@@ -204,6 +204,8 @@ PNG. The constants are in `spec-lib.typ`.
   its bottom edge, so neighbouring tracks never collide and no label touches the
   data. Events and lanes carry no axis.
 - Hairlines run from the label column to the plot's right edge; no track has a box.
+- A black 0.5 pt rule marks the start time: it runs down from the time axis through
+  every track, over lanes and under marks, and the value tracks' y axes sit on it.
 - When the tracks do not fit the cell, drop tracks (keep the top-ranked lanes and
   say so in the legend) before shrinking type or track heights.
 
