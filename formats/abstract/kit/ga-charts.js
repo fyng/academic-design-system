@@ -263,6 +263,118 @@
       if (m.hi) ga.text(m.hi, { x: m.x + m.w, y: m.y + 13, role: "tick", anchor: "end", at, anim: "fade" });
       if (m.mid) ga.text(m.mid, { x: m.x + m.w / 2, y: m.y + 13, role: "tick", anchor: "middle", at, anim: "fade" });
     };
+    // Censoring marks on a step curve: short vertical ticks at data points [[x, y]].
+    ch.censor = (pts, m = {}) => {
+      const h = m.h || 6, c = m.color || "var(--ink)";
+      const s = pts.map((p) => `<path d="M${sx(p[0]).toFixed(1)} ${(sy(p[1]) - h / 2).toFixed(1)}v${h}" stroke="${c}" stroke-width="1.5"/>`).join("");
+      return ga.raw(s, { at: m.at ?? (mt === undefined ? undefined : mt + 1), anim: "fade", t: 0.4 });
+    };
+    // Numbers at risk beneath the x axis. rows: [{label, counts, color}], counts at
+    // `times`; m.y is the canvas y of the first row. Labels sit left of the axis in
+    // the row's text colour; counts are tick text under each time.
+    ch.atRisk = (rows, times, m) => {
+      const pitch = m.pitch || 18, lx = X0 - (m.labelGap || 24);
+      if (m.title !== false) ga.text(m.title || "Number at risk", { x: lx, y: m.y - pitch, role: "tick", anchor: "end", color: "var(--muted)", at, anim: "fade" });
+      rows.forEach((r, i) => {
+        const y = m.y + i * pitch;
+        ga.text(r.label, { x: lx, y, role: "tick", anchor: "end", color: r.color, at, anim: "fade" });
+        times.forEach((t, j) => ga.text(String(r.counts[j]), { x: sx(t), y, role: "tick", anchor: "middle", at, anim: "fade" }));
+      });
+    };
+    // Hexagonal density bins. pts: [[x, y]]; ramp from lo to hi; m.r hexagon radius
+    // in px; m.domain [lo, hi] counts, capped at hi (the key's end reads "> hi").
+    // Empty bins stay paper. Returns the largest count.
+    ch.hexbin = (pts, ramp, m = {}) => {
+      const r = m.r || 6, w = Math.sqrt(3) * r, hstep = 1.5 * r, bins = new Map();
+      for (const p of pts) {
+        const X = sx(p[0]) - X0, Y = sy(p[1]) - Y0;
+        if (X < 0 || X > W || Y < 0 || Y > H) continue;
+        const row = Math.round(Y / hstep), col = Math.round((X - (row % 2 ? w / 2 : 0)) / w);
+        const k = `${row},${col}`;
+        bins.set(k, (bins.get(k) || 0) + 1);
+      }
+      const max = Math.max(...bins.values());
+      const [lo, hi] = m.domain || [1, max];
+      let s = "";
+      for (const [k, n] of bins) {
+        const [row, col] = k.split(",").map(Number);
+        const cx = X0 + col * w + (row % 2 ? w / 2 : 0), cy = Y0 + row * hstep;
+        const f = Math.max(0, Math.min(1, (n - lo) / (hi - lo)));
+        const c = ramp[Math.round(f * (ramp.length - 1))];
+        const d = [...Array(6)].map((_, i) => { const a = Math.PI / 6 + (i * Math.PI) / 3; return `${(cx + (r - 0.5) * Math.cos(a)).toFixed(1)} ${(cy + (r - 0.5) * Math.sin(a)).toFixed(1)}`; });
+        s += `<path d="M${d.join("L")}Z" fill="${c}"/>`;
+      }
+      ga.raw(`<svg x="${X0}" y="${Y0}" width="${W}" height="${H}" viewBox="${X0} ${Y0} ${W} ${H}" overflow="hidden">${s}</svg>`, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      return max;
+    };
+    // Marginal strip (a composite panel's satellite): a histogram of `values` along
+    // the shared axis, on the "top" or "right" of the plot, `depth` px deep and
+    // `gap` px from it, in context grey. The strip's scale runs to the round number
+    // at or above the peak count (1, 2, 2.5, 5 × 10^k); m.peak: true labels that
+    // tick in the main axis's tick column, a string labels it verbatim.
+    ch.marginal = (side, values, m = {}) => {
+      const depth = m.depth || 30, gap = m.gap || 8, nb = m.bins || 24;
+      const d = side === "top" ? o.xd || [0, 1] : o.yd || [0, 1];
+      const cnt = new Array(nb).fill(0);
+      for (const v of values) { const i = Math.floor(((v - d[0]) / (d[1] - d[0])) * nb); if (i >= 0 && i < nb) cnt[i]++; }
+      const peak = Math.max(...cnt), c = m.color || "var(--context)";
+      const e = 10 ** Math.floor(Math.log10(peak));
+      const top = [1, 2, 2.5, 5, 10].map((k) => k * e).find((v) => v >= peak);
+      let s = "";
+      cnt.forEach((n, i) => {
+        const len = (n / top) * depth;
+        if (side === "top") {
+          const xa = X0 + (i / nb) * W, bw = W / nb;
+          s += `<rect x="${xa + 0.5}" y="${Y0 - gap - len}" width="${Math.max(0, bw - 1)}" height="${len}" fill="${c}"/>`;
+        } else {
+          const ya = Y1 - ((i + 1) / nb) * H, bh = H / nb;
+          s += `<rect x="${X1 + gap}" y="${ya + 0.5}" width="${len}" height="${Math.max(0, bh - 1)}" fill="${c}"/>`;
+        }
+      });
+      if (side === "top") s += `<path d="M${X0} ${Y0 - gap}V${Y0 - gap - depth}h-5" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`;
+      else s += `<path d="M${X1 + gap} ${Y1}H${X1 + gap + depth}v5" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`;
+      ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.6 });
+      const pk = m.peak === true ? (top >= 1000 ? `${+(top / 1000).toFixed(1)}k` : String(top)) : m.peak;
+      if (pk) {
+        if (side === "top") ga.text(pk, { x: X0 - 10, y: Y0 - gap - depth - 8, role: "tick", anchor: "end", at, anim: "fade" });
+        else ga.text(pk, { x: X1 + gap + depth, y: Y1 + 9, role: "tick", anchor: "middle", at, anim: "fade" });
+      }
+      return top;
+    };
+    // Dumbbell (paired comparison) on the x scale. rows: [{label, a, b, p}], a the
+    // comparator (context), b the model (m.color, default prussian), joined by a 2px
+    // rule stem. b is hollow when p >= .05. m.values prints a and b at the outer
+    // ends; m.p: "exact" prints P, "stars" prints stars, false none, right-aligned
+    // in one column ending at m.pRight (default: the plot's right edge). m.pitch
+    // fixes the row pitch in px (default: the plot height over the rows).
+    ch.dumbbell = (rows, m = {}) => {
+      const pitch = m.pitch || H / rows.length, cb = m.color || "var(--prussian)", ca = m.colorA || "var(--context)";
+      const fv = m.fmt || ((v) => v.toFixed(2).replace(/^0/, ""));
+      const stars = (p) => (p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "ns");
+      const fp = (p) => (p < 0.001 ? "*P* < 0.001" : `*P* = ${p < 0.01 ? p.toFixed(3) : p.toFixed(2)}`);
+      rows.forEach((r, i) => {
+        const cy = Y0 + pitch * (i + 0.5), xa = sx(r.a), xb = sx(r.b), ns = r.p !== undefined && r.p >= 0.05;
+        const t = m.at ?? (mt === undefined ? undefined : mt + i * 0.08);
+        const dot = (x, c, hollow) => (hollow
+          ? `<circle cx="${x}" cy="${cy}" r="4.75" fill="var(--paper)" stroke="${c}" stroke-width="1.5"/>`
+          : `<circle cx="${x}" cy="${cy}" r="6.5" fill="var(--paper)"/><circle cx="${x}" cy="${cy}" r="5.5" fill="${c}"/>`);
+        ga.raw(`<path d="M${xa} ${cy}H${xb}" stroke="var(--rule)" stroke-width="2"/>${dot(xa, ca, false)}${dot(xb, cb, ns)}`, { at: t, anim: "fade", t: 0.5 });
+        ga.text(r.label, { x: X0 - 10, y: cy - 8, role: "label", size: 14, anchor: "end", at: o.at, anim: "fade" });
+        const [lo, hi] = r.a <= r.b ? [r.a, r.b] : [r.b, r.a];
+        if (m.values) {
+          ga.text(fv(lo), { x: sx(lo) - 12, y: cy - 8, role: "tick", anchor: "end", at: t, anim: "fade" });
+          ga.text(fv(hi), { x: sx(hi) + 12, y: cy - 8, role: "tick", at: t, anim: "fade" });
+        }
+        if (m.p && r.p !== undefined) {
+          ga.text(m.p === "stars" ? stars(r.p) : fp(r.p), { x: m.pRight ?? X1, y: cy - 8, role: "tick", anchor: "end", color: "var(--muted)", at: t, anim: "fade" });
+        }
+      });
+    };
+    // Paired-comparison key: a dot and a name per series, in a row at canvas (x, y).
+    ch.dotKey = (rows, m) => rows.reduce((kx, r) => {
+      ga.raw(`<circle cx="${kx + 6}" cy="${m.y + 8}" r="5.5" fill="${r.color}"/>`, { at: m.at ?? at, anim: "fade" });
+      return ga.text(r.label, { x: kx + 18, y: m.y, role: "tick", at: m.at ?? at, anim: "fade" }).r + 18;
+    }, m.x);
     ch.id = ++uid;
     return ch;
   };

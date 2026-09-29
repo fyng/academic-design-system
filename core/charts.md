@@ -10,6 +10,8 @@ Reference sheets, synthetic data:
   (`specimen-charts.html`).
 - `out/specimen-chart-forms.png`: forms 09–14 and the grouped heatmap (07)
   (`specimen-chart-forms.html`).
+- `out/specimen-chart-forms-iii.png`: Kaplan–Meier by risk group and with numbers
+  at risk (03), forms 15 and 16 (`specimen-chart-forms-iii.html`).
 
 Sizes below are px on the abstract canvas. `../formats/publication/README.md` gives
 the print equivalents.
@@ -28,9 +30,12 @@ Start from the data's job.
 | Compare named categories, ranked | Ranked horizontal bars (01) |
 | Ranked values that carry a scale (fold change per gene) | Lollipop coloured by the scale (12) |
 | Effect sizes with uncertainty | Forest / interval plot (02) |
+| One metric, two methods, across cohorts | Dumbbell (16) |
 | Time to event | Cumulative incidence or Kaplan–Meier steps (03) |
+| One patient's record against a model's predictions over time | Patient timeline (17) |
 | Response against dose | Dose–response curve, log dose (04) |
 | Classifier performance | ROC (or PR when positives are rare) (05) |
+| A regression's predictions against the measured values | Predicted vs observed (15) |
 | Many tests, effect against significance | Volcano (06) |
 | Matrix of values (tissue × drug, gene × cell) | Heatmap (07), grouped when columns carry an annotation |
 | Parts of a whole, a few units | 100 % stacked bars (08) |
@@ -94,6 +99,9 @@ Start from the data's job.
 - Direction of effect: valence (benefit / harm) or direction (violet / ochre).
 - Identity: categorical slots in order.
 - Ordered categories (doses, stages): the ordinal steps 400, 600, 800 of one ramp.
+- Ordered categories with a judgement (risk groups): the valence arms, benefit 700
+  and 400 for the better half, harm 400 and 700 for the worse (`color.md`, *Magnitude*).
+- A model against comparators: the model in `prussian`, comparators in `context`.
 
 ## Forms
 
@@ -121,7 +129,16 @@ Start from the data's job.
 - Focus group in the finding's colour, comparator in `context`. Labels go just past
   the line ends, so leave about 70 px to the right of the plot.
 - The x-axis is time with its unit ("Months on ICI"). The y-axis is a percentage from 0.
-- In full figures, add a numbers-at-risk row beneath the axis in the `tick` role.
+- In full figures, add a numbers-at-risk row beneath the axis in the `tick` role:
+  one row per group, named left of the axis in the group's text colour, counts under
+  the x ticks, "Number at risk" above in `muted`. With delayed entry (a landmark
+  cohort, left truncation) the counts can rise; the legend says so.
+- Censored observations are short vertical ticks on the curve, in its colour.
+- **Risk groups** (quartiles of a score) are ordered and carry valence: benefit 700
+  and 400, harm 400 and 700, with Q1 the lowest risk. The curves cross, so a line key
+  above the plot replaces end labels.
+- The statistics sit in the plot's empty corner in the `cap` role, one per line:
+  n, the log-rank *P*, and the C-index.
 
 ### 04 · Dose–response
 
@@ -252,3 +269,62 @@ For community, cell-type or ancestry composition over dozens to hundreds of samp
   Within a group, sort by the dominant part's share.
 - Seven categorical slots; further parts fold into "other" in `context`.
 - The legend sits above or below the plot, in stack order.
+
+### 15 · Predicted vs observed
+
+For a regression's predictions against the measured values, over many observations.
+
+- A square plot with one scale on both axes and the same ticks; the measured value
+  on x, the prediction on y. A dotted identity line runs corner to corner.
+- Density as hexagonal bins on the quantity ramp, capped near the 95th percentile of
+  the bin counts; the key sits beside the plot with "> cap" at its end. Empty bins
+  stay paper. Under about 500 points, plot the points instead (r 3, `ink-2`).
+- Marginal strips on the top and right show each axis's distribution, in `context`.
+  They share the main axes, carry one tick at their peak and no title
+  (`../formats/publication/README.md`, *Composite panels*).
+- The metrics (n, MAE, RMSE, with units) sit in the empty corner below the identity
+  line in the `cap` role.
+- Small multiples of several variables keep their own scales; say so in the caption.
+
+### 16 · Dumbbell
+
+For one metric measured by two methods across cohorts or settings: a model against a
+clinical score, before against after treatment.
+
+- One row per cohort, the cohort's name (and n) left of the plot in `label`. A 2 px
+  `rule` stem joins the comparator dot (`context`) to the model's dot (`prussian`).
+- The model's dot is hollow when the difference is not significant, as in form 02.
+- Sparse panels print both values at the outer ends in the `tick` role and the exact
+  *P* in `muted`, right-aligned in one column at the plot's right edge so the column
+  does not stagger with the rows.
+- **Dense panels** (many rows, or rows across small multiples) drop the values and
+  let the shared axis read them. Stars may replace the exact *P*: one for < 0.05, two
+  for < 0.01, three for < 0.001, "ns" otherwise, right-aligned in the same column;
+  the legend defines them and a supplementary table gives the exact values.
+- Groups of rows (therapy classes) become small multiples that keep one row pitch,
+  so a short group ends early rather than spreading its rows.
+- A key of the two dots sits above the plot. The x axis spans the data with a small
+  pad, shared across small multiples, so the dots use the width; a bounded metric
+  need not show its full range.
+
+### 17 · Patient timeline
+
+For one patient's record, observed and predicted, over time: a track stack, the
+composite panel in `../formats/publication/README.md` (*Composite panels*), drawn
+in `specimen-multitrack-timeline.typ`.
+
+- One time axis on top. Tracks stack below in groups (risk, events, treatment, sites,
+  labs), each group opened by a header in the `group` role.
+- Observed data are vermilion 500 with a paper ring: event dots, interval bars
+  (round-capped), and lab measurements.
+- Predicted data are blue: lines in blue 600, probabilities as a heat strip on the
+  blue ramp (100 at 0, 700 at 1), drawn under the observed marks.
+- The risk line takes the valence diverging scale, each segment coloured by its
+  value, with a dotted zero rule when 0 lies in range. It is the only track with
+  valence and sits at the top.
+- Value tracks carry two ticks at round numbers; lanes and events carry none.
+- The patient (ID, age, sex, stage, status) sits top left above the label column,
+  in `muted`.
+- When tracks outnumber the cell, keep the top-ranked lanes and say so in the
+  legend.
+

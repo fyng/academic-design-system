@@ -71,8 +71,12 @@ and colour**. Sizes depend on the medium, so each format sets them:
   negative tick labels automatically.
 - **Thousands:** use a comma (35,669). Use no separator for years and IDs.
 - **Decimals:** drop the leading zero only for bounded metrics (AUROC .81).
-  Keep it elsewhere (0.42 µM).
+  Keep it elsewhere (0.42 µM). Journals that keep it everywhere win in their format
+  (`../formats/publication/README.md`). Ticks on one axis share their decimal
+  places (.50, .75, 1.00).
 - **P values:** *P* italic capital, `P = 3 × 10⁻⁸`. Use superscript digits, not `e-8`.
+  Dense panels may use stars instead (`../formats/publication/README.md`,
+  *Statistics on the page*).
 - **Units:** after a space, in the axis title (`Drug (µM)`, `Months on ICI`).
   Use `µ`, not `u`.
 - **Ranges:** an en dash (`2014–2023`).

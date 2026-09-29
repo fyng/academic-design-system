@@ -154,9 +154,12 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `vbars` | Bars from zero (11) |
 | `lollipop` | Lollipop (12) |
 | `columns` | Stacked columns grouped by dominant part (14) |
+| `censor`, `atRisk` | Censoring ticks and the numbers-at-risk rows of a Kaplan–Meier plot (03) |
+| `hexbin`, `marginal` | Density bins and marginal strips (15) |
+| `dumbbell`, `dotKey` | Dumbbell and its key; `p: "exact"` or `"stars"` (16) |
 
-`../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html` use every
-mark.
+`../../core/specimen-charts.html`, `../../core/specimen-chart-forms.html` and
+`../../core/specimen-chart-forms-iii.html` use every mark.
 
 ## Deliverables per figure
 

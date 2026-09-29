@@ -33,6 +33,7 @@ the same sizes and weights.
 | `label` | 7 pt | 400 | ink | Direct labels, row and column names |
 | `tick` | 5 pt | 400, tabular figures | black | Tick labels, keys |
 | `cap`, `note` | 6 pt | 400 | muted | n, scale bars, callouts |
+| `group` | 5 pt | 500, caps, +12 % tracking | ink | Group headers in a track stack (*Composite panels*) |
 
 - These sizes sit inside Nature's range (5–7 pt, panel letters 8 pt) and Science's
   (from 5 pt). Tick labels at 5 pt are below Cell Press (6–8 pt) and PNAS (from 6 pt):
@@ -157,6 +158,55 @@ ggsave("panel-a.pdf", p, width = 89, height = 34, units = "mm", device = cairo_p
 To assemble panels side by side, give patchwork each column's width:
 `p1 + p2 + plot_layout(widths = unit(c(77.1, 77.1), "mm"))`.
 
+## Composite panels
+
+A composite panel has one letter, one head and one legend sentence over several
+plot areas that share axes: a scatter with marginal histograms, a heatmap with a
+column of counts, a patient timeline's tracks. The panel contract's margins frame
+the whole cell, so the outer axes align with the neighbouring panels; the extra
+plot areas come out of the plot area. Two specimens draw the arrangements at scale with each distance
+dimensioned: `specimen-marginal.typ` (marginal strips) and
+`specimen-multitrack-timeline.typ` (a track stack), compiled to `out/` as PDF and
+PNG. The constants are in `spec-lib.typ`.
+
+**Marginal strips** sit on the top or right of the main plot and share its axis.
+
+| Distance | mm |
+|---|---|
+| Strip to the main plot area | 1.0 |
+| Strip depth (3–6 mm; at most a quarter of the main plot) | 4.0 |
+
+- The shared axis carries ticks only on the main plot.
+- A strip has no axis title; its scale goes in the legend. It carries one tick, at
+  the round number at or just above its peak (80k, 150k), and its scale runs to that
+  tick. The tick sits in the main plot's tick column so it adds no margin.
+- Strips are `context` grey, or the main plot's colour at its middle step.
+
+**A track stack** sets tracks one above another under one shared axis.
+
+| Distance | mm |
+|---|---|
+| Track height: value track (a line, with its own y axis) | 6.0 |
+| Track height: event row, lane (a heat strip or intervals) | 2.5 |
+| Between tracks, with a 0.25 pt `rule` hairline in the gap | 0.5 |
+| Group header row, above each group's first track | 2.5 |
+| Track label to the value ticks, or to the plot | 1.0 |
+
+- One shared axis, on top when the stack reads in time; the x title right-aligns
+  above the tick labels. The bottom margin is then the edge gap alone.
+- Track labels (6 pt, 400, ink) right-align in a label column. The column is as wide
+  as the widest label and grows the left margin; wrap a long label onto two lines
+  before it grows the column past a fifth of the cell.
+- Group headers take the `group` role, flush with the cell's left edge gap.
+- Value tracks carry a y axis with two ticks at round numbers. Their labels sit left
+  of the axis, between the label column and the ticks, and within the track's
+  height: the top label hangs from the track's top edge and the bottom one stands on
+  its bottom edge, so neighbouring tracks never collide and no label touches the
+  data. Events and lanes carry no axis.
+- Hairlines run from the label column to the plot's right edge; no track has a box.
+- When the tracks do not fit the cell, drop tracks (keep the top-ranked lanes and
+  say so in the legend) before shrinking type or track heights.
+
 ## Lines and marks
 
 Canvas px from the core docs become these pt values at print size.
@@ -227,6 +277,17 @@ The legend is the figure's text, set in the paper, not in the figure.
 - Show each observation where n allows (form 09); journals ask for individual points
   at small n, and Nature journals for points or box plots from n > 5.
 - Say in the legend what every error bar is.
+- Nature journals keep the leading zero on every decimal (C-index 0.78,
+  *P* = 0.16), which overrides the core rule for bounded metrics
+  (`../../core/typography.md`). The ticks on one axis share their decimal places
+  (0.50, 0.75, 1.00).
+- A statistics block inside the plot area (n, *P*, C-index) takes the `tick` role,
+  5 pt, so it fits a small panel's empty corner.
+- Give exact *P* values in the figure (`../../core/typography.md`). In a dense
+  panel, where many comparisons share the space (a grouped dumbbell, a row of
+  tests per cohort), stars may stand in: * *P* < 0.05, ** *P* < 0.01,
+  *** *P* < 0.001, and "ns"; the legend defines them and gives the test, and the
+  exact values go in a supplementary table.
 - PNAS asks for numerical axes from zero (log axes excepted); PNAS figures start
   position axes at 0 too.
 
@@ -290,7 +351,7 @@ on a page of `height: auto`.
 | `fig-panel` | The letter in the 5 mm letter zone at the panel's top-left, over content or a `path(…)` file |
 | `fig-letter` | A panel letter in the journal's style |
 | `letter-zone` | The letter zone's side, 5 mm |
-| `head`, `axis`, `label`, `tick`, `cap`, `note` | The type roles |
+| `head`, `axis`, `label`, `tick`, `cap`, `note`, `group` | The type roles |
 
 Build from the project root, where the design system sits at `design-system/`:
 
@@ -334,6 +395,11 @@ divides its width its own way:
 Its raster panel is `specimen-micrograph.html`, a text-free cell field drawn with
 the abstract kit and rendered to `out/specimen-micrograph.png` with
 `../abstract/kit/render.cjs`.
+
+`specimen-marginal.typ` and `specimen-multitrack-timeline.typ` compile to
+`out/specimen-marginal.pdf`, `out/specimen-multitrack-timeline.pdf` and their PNGs: the
+two composite arrangements (*Composite panels*), a scatter with marginal strips at 3×
+and a track stack at 1.8×, with the distances dimensioned in real mm.
 
 ## Graphical abstracts for journals
 

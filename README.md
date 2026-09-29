@@ -29,7 +29,7 @@ mm and pt; the abstract adds a canvas, an arc and motion.
 | `core/fonts/ibm-plex-sans/` | Vendored IBM Plex Sans static TTFs (SIL OFL) for print figures |
 | `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour, scales and charts |
 | `formats/web/scss/instrument-prussian/` | The web format in Sass: `_tokens.scss` (framework-agnostic) and `_al-folio.scss` (al-folio adapter) |
-| `formats/publication/` | The journal figure spec: the panel contract, `fig.typ` that assembles figures in Typst, and the specimens (`specimen-figure.typ`, `specimen-panel.typ`, sharing `spec-lib.typ`) |
+| `formats/publication/` | The journal figure spec: the panel contract, composite panels, `fig.typ` that assembles figures in Typst, and the specimens (`specimen-figure.typ`, `specimen-panel.typ`, `specimen-marginal.typ`, `specimen-multitrack-timeline.typ`, sharing `spec-lib.typ`) |
 | `formats/abstract/kit/` | The abstract kit: `ga-kit.css`/`ga-kit.js` (layout, type roles, motion, lint), `ga-bio.js`, `ga-charts.js`, `icons.js`, and `render.cjs` (PNG/MP4/WebM renderer) |
 
 ## Using it in a project
