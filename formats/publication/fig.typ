@@ -77,6 +77,8 @@
 #let tick(body) = text(size: 5pt, fill: axis-ink, number-type: "lining", number-width: "tabular", body)
 #let cap(body) = text(size: 6pt, fill: muted, body)
 #let note(body) = text(size: 6pt, fill: muted, body)
+// Group header in a composite panel's track stack: caps, tracked, 500.
+#let group(body) = context text(font: _font-500(text.font), size: 5pt, weight: 500, tracking: 0.12em, fill: ink, upper(body))
 
 // Panel letter in the journal's style, bold, ink. The journal comes from the
 // page unless given here.

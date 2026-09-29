@@ -151,6 +151,8 @@ One hue, light to dark.
 
 - **The ends mean something.** The lightest step sits at zero (or the minimum), the
   darkest at the maximum.
+- Ordered classes that also carry a judgement (risk quartiles) take the valence
+  arms instead: benefit 700 and 400, then harm 400 and 700.
 - Continuous fields (heatmaps, spatial maps) use the full 100–900. Discrete ordered
   classes (grades 1–4, tiers, doses, stages) use steps 400–800, so the lightest class
   is still ≥ 2:1 on paper and the order shows in the colour.

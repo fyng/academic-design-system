@@ -133,8 +133,9 @@
       for (const w of parse(str)) {
         if (w.br) { cur = newLine(); continue; }
         const span = el("tspan", { class: [w.em && "em", w.acc && "acc"].filter(Boolean).join(" ") || null }, cur);
-        // no space before closing punctuation that follows a styled run ("{*…*}.")
-        span.textContent = (cur.childNodes.length > 1 && !/^[.,;:!?)]/.test(w.text) ? " " : "") + w.text;
+        // no space before closing punctuation that follows a styled run ("{*…*}."),
+        // but keep it before a number without its leading zero (".81")
+        span.textContent = (cur.childNodes.length > 1 && !/^[.,;:!?)](?!\d)/.test(w.text) ? " " : "") + w.text;
         if (o.w && cur.childNodes.length > 1 && cur.getComputedTextLength() > o.w) {
           span.remove();
           cur = newLine();

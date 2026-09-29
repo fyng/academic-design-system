@@ -138,3 +138,29 @@
 
 // The plot area of a cell with default margins, dashed.
 #let plot-guide(w, h) = plot-rect(w, h, margins(w, h))
+
+// ---- composite panels -----------------------------------------------------
+
+// Composite panels (README, *Composite panels*): one cell, one letter, several
+// plot areas that share axes. Distances in mm; none scale with the panel.
+#let sat-gap = 1mm // satellite to the main plot area
+#let marginal-depth = 4mm // a marginal strip, across its short side
+#let track-gap = 0.5mm // between tracks of a stack; the hairline sits in it
+#let group-gap = 2.5mm // above each group: its header and the gap
+#let label-gap = 1mm // track label to the value ticks, or to the plot
+#let track-h = (value: 6mm, event: 2.5mm, lane: 2.5mm) // track heights by kind
+#let hairline = 0.25pt + rgb(tokens.neutral.rule)
+
+// Plot areas of a main plot with marginal strips on its top and right, in a
+// w x h cell. The contract's margins frame the whole; the strips come out of
+// the main area. Returns rects (x, y, w, h) from the cell's top-left.
+#let marginal-areas(w, h, m, top: true, right: true) = {
+  let dx = if right { marginal-depth + sat-gap } else { 0mm }
+  let dy = if top { marginal-depth + sat-gap } else { 0mm }
+  let main = (x: m.l, y: m.t + dy, w: w - m.l - m.r - dx, h: h - m.t - m.b - dy)
+  (
+    main: main,
+    top: if top { (x: main.x, y: m.t, w: main.w, h: marginal-depth) } else { none },
+    right: if right { (x: main.x + main.w + sat-gap, y: main.y, w: marginal-depth, h: main.h) } else { none },
+  )
+}
