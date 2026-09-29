@@ -1,6 +1,6 @@
 # kare
 
-Named for Susan Kare.
+Named for [Susan Kare](https://en.wikipedia.org/wiki/Susan_Kare).
 
 The shared design system for Feiyang Huang's academic work: websites, journal
 figures, graphical abstracts, charts and schematics. Projects pull it in as a git
