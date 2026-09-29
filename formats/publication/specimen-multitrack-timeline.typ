@@ -104,7 +104,7 @@
           axes-y(l, y, tr.h)
           for (f, s) in ((0, [−2]), (1, [2])) {
             put(l - tick-len, y + tr.h - f * tr.h, line(length: tick-len, stroke: axes))
-            // labels stay inside the track: the top one hangs from its top edge
+            // labels left of the axis, within the track: the top one hangs from its top edge
             put(l - tick-len - G.kgap - G.vw, y + (1 - f) * (tr.h - cap-tick), box(width: G.vw, align(right, tick(s))))
           }
           let n = 60
@@ -143,6 +143,8 @@
         }
       }
     }
+    // start-time rule: from the axis through every track
+    put(l, ty, line(angle: 90deg, length: G.st.h, stroke: axes))
   })
 }
 
@@ -173,6 +175,6 @@
     }
   }
   put(box-x, boy + bh * SB + 5mm, box(width: 190mm, text(size: 6pt, fill: guide-text)[
-    Track stack, #SB×. One time axis, on top; tracks #fmt(track-gap) mm apart with a 0.25 pt `rule` hairline in the gap; each group opens with a #fmt(group-gap) mm header row (5 pt, 500, caps, tracked). Track labels (6 pt, ink) right-align in a label column that grows the left margin; value tracks carry a y axis with two ticks at round numbers, labelled left of the axis within the track's height; events and lanes carry none. Colour follows form 17: observed in vermilion, predicted in blue (lines, and probability on the blue ramp), risk on the valence scale. Lengths in mm, real size.
+    Track stack, #SB×. One time axis, on top; tracks #fmt(track-gap) mm apart with a 0.25 pt `rule` hairline in the gap; each group opens with a #fmt(group-gap) mm header row (5 pt, 500, caps, tracked). Track labels (6 pt, ink) right-align in a label column that grows the left margin; value tracks carry a y axis with two ticks at round numbers, labelled left of the axis within the track's height; events and lanes carry none. A black rule at the start time runs through every track. Colour follows form 17: observed in vermilion, predicted in blue (lines, and probability on the blue ramp), risk on the valence scale. Lengths in mm, real size.
   ]))
 }
