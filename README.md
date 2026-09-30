@@ -115,6 +115,10 @@ The system draws on these works. Thanks to their authors.
 - [IBM Plex](https://github.com/IBM/plex) (SIL Open Font License) and
   [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif) (SIL Open Font License)
 - [Health Icons](https://healthicons.org) (MIT), via `@iconify-json/healthicons`
+- The body map's anatomy: the male anatomogram from [Expression Atlas](https://www.ebi.ac.uk/gxa/),
+  EMBL-EBI ([`@ebi-gene-expression-group/anatomogram`](https://www.npmjs.com/package/@ebi-gene-expression-group/anatomogram)
+  2.4.0), CC BY 4.0; curated to an outline, a silhouette and twelve organs in
+  `formats/abstract/kit/anatomy.js`
 - Björn Ottosson, [OKLab](https://bottosson.github.io/posts/oklab/): the space the hue ramps are built in
 - Machado, Oliveira and Fernandes, [a physiologically based model for simulating colour
   vision deficiency](https://doi.org/10.1109/TVCG.2009.113), IEEE TVCG 2009: the CVD check

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../formats/abstract/kit/ga-kit.css">
 <script src="../formats/abstract/kit/icons.js"></script>
 <script src="../formats/abstract/kit/ga-kit.js"></script>
+<script src="../formats/abstract/kit/anatomy.js"></script>
 <script src="../formats/abstract/kit/ga-bio.js"></script>
 <script src="../formats/abstract/kit/ga-charts.js"></script>
 </head>
@@ -30,7 +31,7 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VI", desc: "
   {
     const x = ga.M, CW = 470;
     ga.text("22 · BODY MAP", { x, y: T, role: "step", at: 0.2 });
-    const body = B.body({ cx: x + CW / 2, y: T + 44, h: 520, at });
+    const body = B.body({ cx: x + 250, y: T + 60, h: 420, at });
     const org = (n) => tok(`organ-${n}`), ink2 = tok("ink-2");
     B.bubbles(body, [
       { site: "brain", n: 22, color: ink2, label: "Brain" },
@@ -54,7 +55,7 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VI", desc: "
   {
     const x = ga.M + 520, CW = 330;
     ga.text("22 · BODY MAP, REGION DIALS", { x, y: T, role: "step", at: 0.2 });
-    const body = B.body({ cx: x + 150, y: T + 70, h: 470, at });
+    const body = B.body({ cx: x + 150, y: T + 70, h: 420, at });
     const intra = { x: x + 150 - 30, y: body.site("lung R").y + 8 }, extra = { x: x + 150 + 20, y: body.site("small bowel").y + 12 };
     B.dial({ ...intra, r: 38, share: [32, 121], ring: tok("cat-5"), color: tok("teal-600"), at: at + 0.3 });
     B.dial({ ...extra, r: 38, share: [19, 137], ring: tok("cat-2"), color: tok("teal-600"), at: at + 0.3 });
@@ -66,10 +67,10 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VI", desc: "
     name("Intrathoracic", intra, -66, 5);
     name("Extrathoracic", extra, 48, 2);
     // the test between the two regions, as a bracket beside them
-    const bx = x + 262;
+    const bx = x + 296;
     ga.raw(`<path d="M${bx - 5} ${intra.y}H${bx}V${extra.y}H${bx - 5}" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`, { at, anim: "fade" });
     ga.text("*P* = 0.013", { x: bx + 6, y: (intra.y + extra.y) / 2 - 8, role: "tick", size: 12, at, anim: "fade" });
-    GA.glyphKey(ga, [{ kind: "circle", fill: tok("teal-600"), label: "seeding" }, { kind: "circle", fill: "var(--paper)", ring: "var(--context)", ringW: 1, label: "non-seeding" }], { x, y: body.bottom + 50, at });
+    GA.glyphKey(ga, [{ kind: "circle", fill: tok("teal-600"), label: "seeding" }, { kind: "circle", fill: "var(--paper)", ring: "var(--context)", ringW: 1, label: "non-seeding" }], { x, y: body.bottom + 16, at });
     note(x, CW, "Regions, not sites: a dial per region, its ring in the region's colour and a wedge for the share that seeds, clockwise from 12 o'clock, with both counts inside. The test sits on a bracket.");
   }
 
@@ -99,7 +100,7 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VI", desc: "
       { kind: "circle", size: 14, fill: "var(--paper)", ring: "var(--muted)", ringW: 2.5, text: "M", textColor: "var(--ink)", label: "seeds from a metastasis" },
     ], { x: x + 16, y: T + 452, pitch: 22, at });
     // the route map
-    const body = B.body({ cx: x + 455, y: T + 44, h: 540, at });
+    const body = B.body({ cx: x + 420, y: T + 60, h: 440, at });
     const s = (n) => body.site(n);
     const mets = [
       { site: "liver", c: A }, { site: "adrenal", c: A }, { site: "lung L", c: Bv }, { site: "brain", c: B2 }, { site: "soft tissue", c: B2 },
@@ -111,7 +112,8 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VI", desc: "
     let dots = mets.map((m) => GA.glyph("circle", s(m.site).x, s(m.site).y, { size: 13, fill: m.c })).join("");
     dots += GA.glyph("circle", s("lung R").x, s("lung R").y, { size: 16, fill: "var(--paper)", ring: "var(--ink)", ringW: 2.5 });
     ga.raw(dots, { at: at + 0.4, anim: "pop" });
-    ga.text("primary", { x: s("lung R").x - 14, y: s("lung R").y - 8, role: "tick", size: 12, anchor: "end", color: "var(--ink-2)", at, anim: "fade" });
+    const pl = ga.text("primary", { x: s("lung R").x - 14, y: s("lung R").y - 8, role: "tick", size: 12, anchor: "end", color: "var(--ink-2)", at, anim: "fade" });
+    pl.node.querySelectorAll("text").forEach((t) => t.setAttribute("style", `${t.getAttribute("style")};stroke:var(--paper);stroke-width:3px;paint-order:stroke`));
     note(x, CW, "The tree says which clones seeded; the body says where they went. Fill is where a clone lives, a ring and a letter its seeding role. Each seeding lineage takes one hue, lighter for its descendants, and its arrows share it: from the open primary to each site, bowing to one side.");
   }
 });

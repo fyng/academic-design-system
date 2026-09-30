@@ -1,6 +1,7 @@
 // Explanatory layer for the graphical abstract kit (see core/illustration.md).
 //
 //   const B = GA.bio(ga);
+//   B.body({ cx, y, h });  B.bubbles(body, rows);  B.dial({...})   // needs kit/anatomy.js
 //   B.cell({ cx, cy, r: 18, k: 1 });                 // nucleus + cytoplasm glyph, family colour k
 //   const t = B.tissue({ cx, cy, w, h });            // tissue silhouette + spot lattice
 //   B.spots(t, { at });  B.dials(t, (s) => p, { k, at })
@@ -253,42 +254,34 @@
     };
 
     // ---- body map: a neutral anterior torso with named sites ------------------------
-    // Drawn like tissue: wash fill, a context outline, organ cores in slate 200 so
-    // colour stays free for the findings placed on it. Anatomical sides: the
-    // patient's right is the viewer's left. { cx, y (top of the head), h, at }.
-    // body.site(name) returns canvas {x, y}; SITES lists the names.
+    // The anatomy is the Expression Atlas anatomogram (kit/anatomy.js, CC BY 4.0),
+    // cropped from the head to the upper thighs. Drawn like tissue: wash silhouette,
+    // context outline, organs in rule, so colour stays free for the findings placed
+    // on it. The patient's right is the viewer's left. { cx, y (top of the crop),
+    // h (the crop's height), at }. body.site(name) returns canvas {x, y}; SITES
+    // lists the names. Needs kit/anatomy.js loaded before this file.
+    const CROP = [22, 0, 62, 104]; // x, y, w, h in anatomogram units
     const SITES = {
-      brain: [0, 0.06], thyroid: [0, 0.155], "lymph node": [0, 0.3], "lung R": [-0.078, 0.33], "lung L": [0.078, 0.33],
-      pleura: [0.125, 0.405], cardiac: [0.03, 0.375], bone: [-0.165, 0.255], breast: [0.14, 0.29], liver: [-0.065, 0.47],
-      gastric: [0.06, 0.465], adrenal: [0.045, 0.515], kidney: [0.078, 0.555], "small bowel": [-0.02, 0.61],
-      "large bowel": [0.075, 0.645], peritoneum: [-0.085, 0.64], bladder: [0, 0.725], "soft tissue": [0.14, 0.7], subcutaneous: [-0.15, 0.73],
+      brain: [53, 8], thyroid: [53, 25], "lymph node": [53, 36.5], "lung R": [45.5, 45], "lung L": [60.5, 45],
+      pleura: [66.5, 51], cardiac: [53.5, 47.5], bone: [31, 41], breast: [64, 38], liver: [46, 62],
+      gastric: [56, 63.5], spleen: [65, 62.5], adrenal: [60.5, 56], kidney: [61.5, 66.5], "small bowel": [53, 80],
+      "large bowel": [63.5, 82], peritoneum: [43, 81], bladder: [53, 90.5], "soft tissue": [66, 98], subcutaneous: [37.5, 74],
     };
     B.SITES = Object.keys(SITES);
     B.body = (o) => {
-      const { cx, y: top, h } = o, X = (u) => cx + u * h, Y = (v) => top + v * h;
-      // right half of the outline from the neck to the midline at the base; mirrored
-      const half = [[0.036, 0.12], [0.042, 0.168], [0.1, 0.197], [0.172, 0.222], [0.2, 0.262], [0.185, 0.35], [0.158, 0.44], [0.148, 0.52], [0.168, 0.63], [0.17, 0.72], [0.135, 0.79], [0.06, 0.822], [0, 0.826]];
-      const ring = [...half, ...half.slice(0, -1).reverse().map(([u, v]) => [-u, v])];
-      // closed Catmull-Rom spline through the ring, as cubic Béziers
-      const P = ring.map(([u, v]) => [X(u), Y(v)]), n = P.length;
-      let d = `M${f1(P[0][0])} ${f1(P[0][1])}`;
-      for (let i = 0; i < n; i++) {
-        const p0 = P[(i - 1 + n) % n], p1 = P[i], p2 = P[(i + 1) % n], p3 = P[(i + 2) % n];
-        d += `C${f1(p1[0] + (p2[0] - p0[0]) / 6)} ${f1(p1[1] + (p2[1] - p0[1]) / 6)} ${f1(p2[0] - (p3[0] - p1[0]) / 6)} ${f1(p2[1] - (p3[1] - p1[1]) / 6)} ${f1(p2[0])} ${f1(p2[1])}`;
-      }
-      const ell = (u, v, rx, ry, rot = 0) => `<ellipse cx="${f1(X(u))}" cy="${f1(Y(v))}" rx="${f1(rx * h)}" ry="${f1(ry * h)}" transform="rotate(${rot} ${f1(X(u))} ${f1(Y(v))})"/>`;
-      const head = (attrs) => `<ellipse cx="${f1(X(0))}" cy="${f1(Y(0.066))}" rx="${f1(0.058 * h)}" ry="${f1(0.07 * h)}" ${attrs}/>`;
-      let m = `<path d="${d}Z" fill="none" stroke="var(--context)" stroke-width="3"/>${head(`fill="none" stroke="var(--context)" stroke-width="3"`)}`;
-      m += `<path d="${d}Z" fill="var(--wash)"/>${head(`fill="var(--wash)"`)}`;
-      m += `<g fill="var(--slate-200)" opacity=".7">${[
-        ell(0, 0.058, 0.042, 0.046), ell(-0.077, 0.33, 0.056, 0.088, 8), ell(0.077, 0.33, 0.056, 0.088, -8), ell(0.028, 0.378, 0.034, 0.028, -20),
-        ell(-0.058, 0.468, 0.076, 0.034, -10), ell(0.062, 0.468, 0.038, 0.028, 15), ell(-0.072, 0.548, 0.021, 0.034), ell(0.072, 0.548, 0.021, 0.034),
-        ell(0, 0.628, 0.105, 0.058), ell(0, 0.728, 0.032, 0.022),
-      ].join("")}</g>`;
+      const A = window.GA_ANATOMY, [cx0, cy0, cw, chh] = CROP, k = o.h / chh;
+      const X = (u) => o.cx + (u - (cx0 + cw / 2)) * k, Y = (v) => o.y + (v - cy0) * k;
+      const id = `body-${Math.round(o.cx)}-${Math.round(o.y)}`;
+      const organs = Object.values(A.organs).join("");
+      const m = `<defs><clipPath id="${id}"><rect x="${cx0}" y="${cy0}" width="${cw}" height="${chh}"/></clipPath></defs>` +
+        `<g transform="translate(${f1(X(0))} ${f1(Y(0))}) scale(${k.toFixed(4)})" clip-path="url(#${id})">` +
+        `<g fill="var(--wash)">${A.silhouette}</g>` +
+        `<g fill="var(--rule)" stroke="var(--wash)" stroke-width="${(1.2 / k).toFixed(3)}" stroke-linejoin="round">${organs}</g>` +
+        `<g fill="var(--context)">${A.outline}</g></g>`;
       const it = ga.raw(m, { at: o.at, anim: "fade", t: 0.5 });
       Object.assign(it, { kind: "icon", name: "body", lint: o.lint ?? false });
       it.site = (name) => { const s = SITES[name]; if (!s) throw new Error(`unknown site: ${name}`); return { x: X(s[0]), y: Y(s[1]) }; };
-      it.left = X(-0.2); it.right = X(0.2); it.bottom = Y(0.826);
+      it.left = X(cx0); it.right = X(cx0 + cw); it.bottom = Y(cy0 + chh); it.mid = X(53);
       return it;
     };
     // Site bubbles (form 22): one circle per site, AREA proportional to n, the count
@@ -306,7 +299,7 @@
       // name columns: ordered by height, pushed apart to one line pitch
       const pitch = o.pitch || 20, t = o.at === undefined ? undefined : o.at + 0.3;
       for (const side of ["l", "r"]) {
-        const col = placed.filter((p) => (p.side || (p.x < body.site("brain").x ? "l" : "r")) === side).sort((a, b) => a.y - b.y);
+        const col = placed.filter((p) => (p.side || (p.x < body.mid ? "l" : "r")) === side).sort((a, b) => a.y - b.y);
         let yPrev = -Infinity;
         const lx = side === "l" ? body.left - gapL : body.right + gapL;
         let lead = "";
