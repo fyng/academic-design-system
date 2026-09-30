@@ -7,7 +7,7 @@ gives the print equivalents.
 
 ## Drawing biology
 
-The abstract kit's `GA.bio` layer (`../formats/abstract/kit/ga-bio.js`) draws
+The kit's `GA.bio` layer (`../kit/ga-bio.js`) draws
 each of these.
 
 - **Cells.** A round cytoplasm in the cell type's tint with a 1.5 px outline in its
@@ -18,11 +18,11 @@ each of these.
   anatomy, outlined in `context`. Tissue stays neutral, so colour is kept for the
   cell types measured in it.
 - **Body maps.** An anterior body from the head to the upper thighs: the Expression
-  Atlas anatomogram (CC BY 4.0, vendored in `kit/anatomy.js`), drawn as tissue is:
+  Atlas anatomogram (CC BY 4.0, vendored in `../kit/anatomy.js`), drawn as tissue is:
   a wash silhouette, a `context` outline, and twelve organs (brain, lungs, heart,
   liver, stomach, spleen, pancreas, kidneys, adrenals, colon, small intestine,
   bladder) in `rule`, parted by 1 px wash lines. It carries findings, not
-  colour: site bubbles, dials, routes (`charts.md`, forms 22 and 23). The patient's
+  colour: site bubbles, dials, routes (`charts/forms/22-body-map.md`, `charts/forms/23-route-map.md`). The patient's
   right is the viewer's left, and the sites have fixed places (`GA.bio`'s
   `B.SITES`), so a site sits in the same spot in every figure.
 - **Model systems.** Drawn neutral (wash fill, ink-2 outline and nucleus), because the

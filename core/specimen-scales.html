@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lamina scale check</title>
+<title>kare scale check</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../formats/abstract/kit/ga-kit.css">
-<script src="../formats/abstract/kit/icons.js"></script>
-<script src="../formats/abstract/kit/ga-kit.js"></script>
-<script src="../formats/abstract/kit/ga-charts.js"></script>
+<link rel="stylesheet" href="../kit/ga-kit.css">
+<script src="../kit/icons.js"></script>
+<script src="../kit/ga-kit.js"></script>
+<script src="../kit/ga-charts.js"></script>
 </head>
 <body>
 <script>
 // Scale check for core/color.md: every scale in normal vision, greyscale and
 // simulated protanopia and deuteranopia (Machado et al. 2009, full severity),
 // with its OKLab lightness. Colours are read from tokens.css.
-GA.build({ duration: 4, poster: 3.5, title: "Lamina scale check", desc: "Every colour scale in normal vision, greyscale, protanopia and deuteranopia, with its OKLab lightness." }, (ga) => {
+GA.build({ duration: 4, poster: 3.5, title: "kare scale check", desc: "Every colour scale in normal vision, greyscale, protanopia and deuteranopia, with its OKLab lightness." }, (ga) => {
   const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
   const ramp = (h, steps) => steps.map((s) => tok(`${h}-${s}`));
 

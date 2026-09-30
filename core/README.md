@@ -7,17 +7,17 @@ What every format shares: the principles, the voice, and five elements. The form
 |---|---|---|
 | Colour | [`color.md`](color.md) | Palettes grouped by meaning, and how they were validated |
 | Typography | [`typography.md`](typography.md) | One family (IBM Plex), type roles, numbers and units |
-| Charts | [`charts.md`](charts.md) | Chart grammar, glyphs and twenty-six forms |
+| Charts | [`charts/`](charts/README.md) | Choosing a form, the chart grammar and glyphs; one file per form in `charts/forms/` (26 forms) |
 | Icons | [`icons.md`](icons.md) | Health Icons, custom glyphs, when an icon takes colour |
 | Illustration | [`illustration.md`](illustration.md) | Cells, tissue, body maps, model systems, zooms, arrows and method boxes |
 | Tokens | `tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit the `.mjs`, run `node core/tokens.mjs` |
-| Specimens | `specimen-*.html` → `out/specimen-*.png`; `formats/publication/specimen-*.typ` → `out/specimen-figure.png`, `out/specimen-panel.png`, `out/specimen-marginal.png`, `out/specimen-multitrack-timeline.png` | Reference sheets for colour, scales and charts (drawn with the abstract kit), and the journal figure, panel and composite panel (drawn with Typst) |
+| Specimens | `specimen-color.html`, `specimen-scales.html`, `specimen-forms-<numbers>.html` → `out/*.png` | Reference sheets for colour, scales and the chart forms, drawn with the kit (`../kit/`). Each chart specimen is named by the forms it draws. The journal figure specimens are Typst, in `../formats/publication/` |
 
 | Format | For | Adds |
 |---|---|---|
 | [Web](../formats/web/README.md) | Personal and project websites | A serif display face, light and dark themes, page chrome |
 | [Publication](../formats/publication/README.md) | Journal figures | Sizes in mm and pt, panel letters, export |
-| [Abstract](../formats/abstract/README.md) | Graphical abstracts, animated or still | The 1600 × 900 canvas, the three-panel arc, motion, the HTML kit |
+| [Abstract](../formats/abstract/README.md) | Graphical abstracts, animated or still | The 1600 × 900 canvas, the three-panel arc, motion |
 
 ## What we make
 
@@ -30,7 +30,7 @@ states the finding with the paper's hedges intact.
 1. **Ink is for data and argument.** Flat marks on white paper. A wash fill groups
    things.
 2. **Show the data.** Plot the observations themselves where they fit, with the
-   summary on top. Choose the form by the data's job (`charts.md`).
+   summary on top. Choose the form by the data's job (`charts/README.md`).
 3. **Colour means something, or it is grey.** Every coloured mark has a role from
    `color.md`: valence, emphasis, identity, magnitude or direction. Everything else
    uses ink or context grey. One accent per figure.
@@ -45,7 +45,7 @@ states the finding with the paper's hedges intact.
 8. **Accessible by construction.** Palettes are validated for colour-vision
    deficiency, text meets contrast minimums, and colour always has a second cue
    (a label, a position or a shape).
-9. **Checked, not eyeballed.** Tools check what they can (the abstract kit's lint,
+9. **Checked, not eyeballed.** Tools check what they can (the kit's lint,
    the token validation). Look at the data before choosing the form: its n, its
    modes, its range per group, its outliers.
 

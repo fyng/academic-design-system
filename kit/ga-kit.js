@@ -1,4 +1,4 @@
-// Graphical abstract kit.
+// The kare kit: graphical abstracts and every HTML specimen, drawn in SVG.
 //
 // A small builder over SVG that owns the fiddly parts of a figure:
 //   - a layout grid (margins, columns, dividers) shared by every abstract

@@ -1,10 +1,11 @@
 {
   "name": "kare",
   "private": true,
-  "description": "Instrument / Prussian (websites) and Lamina (figures): the shared design system for fyng's projects.",
+  "description": "kare: the shared design system for fyng's projects (web, journal figures, graphical abstracts).",
   "scripts": {
     "tokens": "node core/tokens.mjs",
-    "render": "node formats/abstract/kit/render.cjs"
+    "render": "node kit/render.cjs",
+    "check": "node tools/index.mjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
