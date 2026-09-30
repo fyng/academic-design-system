@@ -9,7 +9,7 @@ arc, its kinds of text, type sizes, motion and the kit that implements them.
 |---|---|
 | `kit/ga-kit.css`, `kit/ga-kit.js` | Layout, type roles, motion, lint |
 | `kit/ga-bio.js` | Cells, tissue, zooms (`../../core/illustration.md`) |
-| `kit/ga-charts.js` | Chart forms 01–08 (`../../core/charts.md`) |
+| `kit/ga-charts.js` | Chart forms (`../../core/charts.md`) |
 | `kit/icons.js` | Icons (`../../core/icons.md`) |
 | `kit/render.cjs` | PNG / MP4 / WebM renderer |
 | `specimen-type.html` → `out/specimen-type.png` | Type roles and the canvas |
@@ -156,10 +156,15 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `columns` | Stacked columns grouped by dominant part (14) |
 | `censor`, `atRisk` | Censoring ticks and the numbers-at-risk rows of a Kaplan–Meier plot (03) |
 | `hexbin`, `marginal` | Density bins and marginal strips (15) |
-| `dumbbell`, `dotKey` | Dumbbell and its key; `p: "exact"` or `"stars"` (16) |
+| `dumbbell`, `dotKey` | Dumbbell and its key; `p: "exact"` or `"stars"` (16); `square: true` keys bars |
+| `counts`, `upText` | Count matrix with totals and a 100 % bar per row (18); column names reading upward |
+| `dotMatrix`, `sizeKey` | Dot matrix, area for share and colour for magnitude, and its size key (19) |
+| `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud (20) |
+| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20) |
+| `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack (21) |
 
-`../../core/specimen-charts.html`, `../../core/specimen-chart-forms.html` and
-`../../core/specimen-chart-forms-iii.html` use every mark.
+`../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html`,
+`-iii.html`, `-iv.html` and `-v.html` use every mark.
 
 ## Deliverables per figure
 

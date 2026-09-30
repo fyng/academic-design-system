@@ -82,6 +82,17 @@ The system draws on these works. Thanks to their authors.
 - Chenxin Li, [*Friends Don't Let Friends Make Bad Graphs*](https://github.com/cxli233/FriendsDontLetFriends)
   ([doi:10.5281/zenodo.7542491](https://doi.org/10.5281/zenodo.7542491)), MIT licence.
   The source of chart forms 09–14, the grouped heatmap and the capped scale.
+- The figures that chart forms 18–21 are drawn from:
+  - count matrix (18) and radial track stack (21): The ICGC/TCGA Pan-Cancer Analysis
+    of Whole Genomes Consortium, [Pan-cancer analysis of whole genomes](https://doi.org/10.1038/s41586-020-1969-6),
+    *Nature* 2020, Fig. 2
+  - dot matrix (19): Alexandrov et al., [The repertoire of mutational signatures in
+    human cancer](https://doi.org/10.1038/s41586-020-1943-3), *Nature* 2020, Fig. 3
+  - labelled embedding (20): Bergen et al., [Generalizing RNA velocity to transient
+    cell states through dynamical modeling](https://doi.org/10.1038/s41587-020-0591-3),
+    *Nature Biotechnology* 2020, Fig. 2a; the atlas: [A multimodal and temporal
+    foundation model for virtual patient representations at healthcare system
+    scale](https://arxiv.org/abs/2604.18570), arXiv 2026, Fig. 2a–c
 
 **Journal figure guidelines** (`formats/publication/README.md`)
 

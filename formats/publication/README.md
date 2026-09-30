@@ -209,6 +209,39 @@ PNG. The constants are in `spec-lib.typ`.
 - When the tracks do not fit the cell, drop tracks (keep the top-ranked lanes and
   say so in the legend) before shrinking type or track heights.
 
+**Magnified insets** zoom a dense region of a plot, or of an embedding, into a
+second plot area beside it (form 20's atlas; a scatter's dense corner). This and the
+radial stack below are drawn at canvas scale in `../../core/specimen-chart-forms-v.html`
+and `-iv.html`; the values here are their print sizes.
+
+| Distance | mm |
+|---|---|
+| Inset side (square; at least twice the source region's side) | 15–25 |
+| Inset to the next inset, stacked | 2.0 |
+| Inset to its callout column | 2.5 |
+| Callout pitch | 3.0 |
+
+- The source region is framed 0.25 pt ink; two straight 0.25 pt ink-2 leaders join
+  its facing corners to the inset's, and cross nothing but the plot they leave.
+- An inset of a chart keeps two ticks per axis, at its start and end, so its scale
+  reads; an inset of an embedding has none.
+- Insets sit in the same panel as their source, under one letter.
+
+**A radial stack** (form 21) is square: the circle and its sector names fill the
+cell's width, and the ring key sits in a corner the circle leaves free.
+
+| Distance | mm |
+|---|---|
+| Bar ring depth | 4.0 |
+| Sector ring depth | 0.8 |
+| Heat ring depth | 1.5–2.0 |
+| Between rings | 0.3 |
+| Sector gap / opening at 12 o'clock | 1.5° / 8° |
+| Sector name to the bar ring | 1.5 |
+
+- The inner radius stays at least 40 % of the outer, so the innermost ring's slices
+  keep their width; drop rings before shrinking it.
+
 ## Lines and marks
 
 Canvas px from the core docs become these pt values at print size.
@@ -223,6 +256,10 @@ Canvas px from the core docs become these pt values at print size.
 | Point, dense beeswarm | r 3 | r 1 pt |
 | Summary bar | 3 px | 1 pt, with a 0.5 pt paper halo |
 | Paper gap (segments, cells) | 2 px | 0.5 pt |
+| Count in a matrix cell (18) | `tick`, 11 px | 5 pt, tabular |
+| Embedding point (20) | r 2, no ring | r 0.6 pt, no ring |
+| Magnified inset point (20) | r 3, 1 px paper ring | r 1 pt, 0.25 pt paper ring |
+| Zoom frame and leaders (20) | 1 px | 0.25 pt, ink and ink-2 |
 
 Strokes stay between 0.5 and 1 pt, which every journal accepts (Nature 0.25–1 pt,
 Science from 0.5 pt, Cell Press 0.5–1.5 pt).
