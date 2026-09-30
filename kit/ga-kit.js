@@ -12,6 +12,8 @@
 //     figure that fails, and ?debug outlines every measured box.
 //
 // Usage:  GA.build({ duration: 16, poster: 15 }, (ga) => { ga.text(...); ... });
+//         A figure smaller than the 1600x900 canvas passes width, height and margin
+//         (a chart form's figure block: core/charts/README.md, *Figures*).
 (function () {
   const NS = "http://www.w3.org/2000/svg";
   const W = 1600, H = 900, MARGIN = 64;
@@ -77,27 +79,27 @@
       this.dividers = [];
       this.duration = opts.duration || 16;
       this.poster = opts.poster ?? this.duration - 1;
-      this.svg = el("svg", { class: "ga", viewBox: `0 0 ${W} ${H}`, role: "img", "aria-labelledby": "ga-t ga-d", style: `--dur:${this.duration}s` });
+      this.W = opts.width || W; this.H = opts.height || H; this.M = opts.margin ?? MARGIN;
+      this.svg = el("svg", { class: "ga", viewBox: `0 0 ${this.W} ${this.H}`, role: "img", "aria-labelledby": "ga-t ga-d", style: `--dur:${this.duration}s` });
       el("title", { id: "ga-t" }, this.svg).textContent = opts.title || "";
       el("desc", { id: "ga-d" }, this.svg).textContent = opts.desc || "";
       this.stage = el("g", { class: "ga-stage" }, this.svg);
       document.body.appendChild(this.svg);
-      this.W = W; this.H = H; this.M = MARGIN;
     }
 
     // ---- structure -------------------------------------------------------
     // n equal columns between the margins; returns [{x0, x1, w, cx}]
     columns(n, { gutter = 80, top = 200, bottom = 760, dividers = true } = {}) {
-      const w = (W - 2 * MARGIN - gutter * (n - 1)) / n;
+      const w = (this.W - 2 * this.M - gutter * (n - 1)) / n;
       const cols = [];
       for (let i = 0; i < n; i++) {
-        const x0 = MARGIN + i * (w + gutter);
+        const x0 = this.M + i * (w + gutter);
         cols.push({ x0, x1: x0 + w, w, cx: x0 + w / 2, top, bottom });
         if (dividers && i > 0) this.vrule(x0 - gutter / 2, top, bottom);
       }
       return cols;
     }
-    hrule(y, x0 = MARGIN, x1 = W - MARGIN) { el("line", { x1: x0, y1: y, x2: x1, y2: y, class: "hair" }, this.stage); }
+    hrule(y, x0 = this.M, x1 = this.W - this.M) { el("line", { x1: x0, y1: y, x2: x1, y2: y, class: "hair" }, this.stage); }
     vrule(x, y0, y1) { el("line", { x1: x, y1: y0, x2: x, y2: y1, class: "hair" }, this.stage); this.dividers.push({ x, y0, y1 }); }
 
     wrap(at, anim, t) {
@@ -274,7 +276,9 @@
       const texts = L.filter((i) => i.kind === "text");
       const solids = L.filter((i) => i.kind === "icon" || i.kind === "rect");
       const name = (i) => `${i.kind}${i.str ? ` "${i.str.slice(0, 32)}"` : i.name ? ` ${i.name}` : ""}`;
-      const safe = box(MARGIN - 1, 24, W - MARGIN + 1, H - 24);
+      // the vertical margin is 24 on the full canvas, and the margin itself on a smaller figure
+      const v = this.opts.margin ?? 24;
+      const safe = box(this.M - 1, v, this.W - this.M + 1, this.H - v);
 
       for (const t of texts) {
         if (!inside(t.box, safe)) flag(`outside margins: ${name(t)}`, t);

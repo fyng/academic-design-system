@@ -107,8 +107,8 @@ found.
 
 ## The kit
 
-The kit lives at the repo root, `../../kit/`, because the core specimens are drawn
-with it too. `../../kit/README.md` covers loading it, rendering, `GA.chart` and the
+The kit lives at the repo root, `../../kit/`, because the core specimens and the chart
+forms' figures are drawn with it too. `../../kit/README.md` covers loading it, rendering, `GA.chart` and the
 mark for each chart form.
 
 ## Deliverables per figure

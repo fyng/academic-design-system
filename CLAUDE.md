@@ -16,8 +16,9 @@ it is always current; start there when you do not know where something lives.
 | Type roles, numbers, units | `core/typography.md` |
 | Which chart form fits the data | `core/charts/README.md`, *Choosing the form* |
 | Axes, marks, labels, glyphs shared by every chart | `core/charts/README.md`, *Grammar* |
-| Everything about one chart form | `core/charts/forms/NN-name.md` (`grep -l "id: form-22" core/charts/forms/*`) |
-| Chart forms of one kind | `grep -l "family: anatomy" core/charts/forms/*` |
+| Everything about one chart form, its figures included | `core/charts/forms/NN-name.md` (`grep -l "id: form-22" core/charts/forms/*`) |
+| Chart forms of one kind | `grep -l "family: anatomy" core/charts/forms/*`; the family's contact sheet, `core/charts/out/sheet-anatomy.png` |
+| The form for a job | `grep -l "job:.*anatomical site" core/charts/forms/*` |
 | Cells, tissue, body maps, arrows, method boxes | `core/illustration.md` |
 | Icons | `core/icons.md`; code in `kit/icons.js` |
 | Drawing a figure in HTML; the kit API and renderer | `kit/README.md` |
@@ -36,25 +37,30 @@ it is always current; start there when you do not know where something lives.
   (graphical abstracts) add only what their medium needs. Read the core element and
   the format README before designing anything.
 - **Chart forms.** One file per form in `core/charts/forms/`, named `NN-name.md`
-  with a 1–3 word name. Its front matter (`id`, `name`, `family`, `specimens`, `kit`,
-  `sources`, `see_also`) is what `tools/index.mjs` reads. A form's print sizes and
-  kit calls live in its file, under *In each format*. Numbers are permanent: a new
-  form takes the next number, and a retired one is never reused.
+  with a 1–3 word name, holding its rules and its figures (`core/charts/README.md`,
+  *Figures*). Its front matter (`id`, `name`, `kind`, `family`, `job`, `kit`,
+  `sources`, `see_also`, and `specimens` for a form drawn outside the kit) is what
+  `tools/index.mjs` reads. Each figure is a `js figure=<name> w= h=` block under the
+  image it renders to; a variant is a `##` section and its figure takes the
+  section's slug. A form's print sizes live in its file, under *In each format*.
+  Numbers are permanent: a new form takes the next number, and a retired one is
+  never reused.
 - **Positive templates.** Describe what to do and show it (a specimen, a form spec).
   Write a constraint only when it is necessary.
 - **Generated files.** `core/tokens.css` and `core/tokens.json` come from
   `core/tokens.mjs`; edit the `.mjs` and run `node core/tokens.mjs`. `INDEX.md` comes
   from `tools/index.mjs`; run `npm run check` after adding, moving or renaming a
-  file, and fix what it reports.
+  file, and fix what it reports. `npm run figures` renders the figure blocks whose
+  code changed and rewrites the contact sheets; the check fails on a stale one.
 - **What belongs here.** Tokens, rules, framework adapters, the kit, the renderer,
   the index tool and the vendored fonts (`core/fonts/`).
   Project content (figure sources, page layouts, publish scripts) stays in the
   consuming project, and explorations stay out of the repo.
 - **Code only where it is the system.** The token generator, the Sass, the kit, the
-  renderer and the index tool ship here. Specimens are HTML pages drawn with the kit,
-  or Typst sources in `formats/publication/` (compiled to `out/`), and every image
-  in an `out/` folder is rendered from one, so no image outlives its source. A chart
-  specimen is named by the forms it draws (`specimen-forms-22-24.html`). A second
+  renderer and the index tool ship here. Specimens are figure blocks in the form
+  files, HTML pages drawn with the kit (`specimen-color.html`), or Typst sources in
+  `formats/publication/`, and every image in an `out/` folder is rendered from one,
+  so no image outlives its source. A second
   plotting stack (e.g. a matplotlib adapter) joins only as a maintained format
   adapter, with its own specimen.
 - **Contributing from a consumer.** Branch inside the submodule, commit and push

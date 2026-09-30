@@ -1,7 +1,9 @@
 ---
 id: form-17
 name: Patient timeline
+kind: chart
 family: time
+job: ["One patient's record against a model's predictions over time"]
 specimens: [formats/publication/specimen-multitrack-timeline.typ]
 kit: []
 see_also: [form-25, form-03]
@@ -32,9 +34,8 @@ in `../../../formats/publication/specimen-multitrack-timeline.typ`.
 - When tracks outnumber the cell, keep the top-ranked lanes and say so in the
   legend.
 
-## In each format
+![One patient's record and a model's predictions as a track stack, at print scale](../../../formats/publication/out/specimen-multitrack-timeline.png)
 
-- Specimens: `../../../formats/publication/specimen-multitrack-timeline.typ` → `../../../formats/publication/out/specimen-multitrack-timeline.png`.
-- Kit: none; the specimen is drawn in Typst.
-
-The track stack's distances in print are the publication format's composite panel (`../../../formats/publication/README.md`, *Composite panels*).
+The form has no kit figure: its specimen is the Typst source above, and the track
+stack's distances in print are the publication format's composite panel
+(`../../../formats/publication/README.md`, *Composite panels*).
