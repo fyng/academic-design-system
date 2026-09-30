@@ -9,8 +9,9 @@
 //
 // House conventions baked in (core/charts/ explains each):
 //   - left + bottom axes only, 1.5px ink-2; 5px outward ticks
-//   - y title horizontal, above the axis, left-aligned to it
-//   - x title right-aligned under the tick labels, at the high end
+//   - axis titles centred on their axis: the x title under the tick labels, the
+//     y title reading upward left of them. A chart with no y axis line (rows of
+//     names: ranked bars, forest, heatmap) sets yTitle as a heading above the plot.
 //   - gridlines off unless asked for (grid: "y" | "x"); 1px rule, solid
 //   - reference lines are the one dotted element (1.5px, 2 4)
 //   - motion: frame fades in at `at`; marks draw from `at + 0.4`
@@ -43,9 +44,13 @@
 
     const xf = o.xFmt || fmtDefault, yf = o.yFmt || fmtDefault;
     for (const t of o.xTicks || []) ga.text(xf(t), { x: sx(t), y: Y1 + 9, role: "tick", anchor: "middle", at, anim: "fade" });
-    for (const t of o.yTicks || []) ga.text(yf(t), { x: X0 - 10, y: sy(t) - 8, role: "tick", anchor: "end", at, anim: "fade" });
-    if (o.yTitle) ga.text(o.yTitle, { x: o.yTitleX ?? X0, y: Y0 - 30, role: "axis", at, anim: "fade" });
-    if (o.xTitle) ga.text(o.xTitle, { x: X1, y: Y1 + (o.xTicks ? 30 : 10), role: "axis", anchor: "end", at, anim: "fade" });
+    const yLabels = (o.yTicks || []).map((t) => ga.text(yf(t), { x: X0 - 10, y: sy(t) - 8, role: "tick", anchor: "end", at, anim: "fade" }));
+    if (o.yTitle && axes.includes("y")) {
+      // reads upward, centred on the axis; its baseline sits 10px left of the widest tick label
+      const bx = o.yTitleX ?? Math.min(X0 - 10, ...yLabels.map((it) => it.l)) - 10, cy = (Y0 + Y1) / 2;
+      ga.raw(`<text x="${bx}" y="${cy}" transform="rotate(-90 ${bx} ${cy})" font-size="${GA.ROLE.axis.size}" text-anchor="middle" class="t-axis">${o.yTitle}</text>`, { at, anim: "fade" });
+    } else if (o.yTitle) ga.text(o.yTitle, { x: o.yTitleX ?? X0, y: Y0 - 30, role: "axis", at, anim: "fade" });
+    if (o.xTitle) ga.text(o.xTitle, { x: (X0 + X1) / 2, y: Y1 + (o.xTicks ? 30 : 10), role: "axis", anchor: "middle", at, anim: "fade" });
 
     const drawAttrs = (t, dur) => (t === undefined ? "" : ` pathLength="1" class="a-draw" style="--d:${t}s;--t:${dur}s"`);
 

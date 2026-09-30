@@ -91,7 +91,7 @@
       put(l + f * pw, ty - tick-len, line(angle: 90deg, length: tick-len, stroke: axes))
       put(l + f * pw - 10mm, ty - tick-len - G.kgap - cap-tick, box(width: 20mm, align(center, tick(s))))
     }
-    put(l, G.edge + cap-title + desc + G.tgap, box(width: pw, align(right, axis[Years since diagnosis])))
+    put(l, G.edge + cap-title + desc + G.tgap, box(width: pw, align(center, axis[Years since diagnosis])))
     for gr in G.st.groups {
       let gy = t + gr.y
       put(G.edge, gy, line(length: bw - G.r - G.edge, stroke: hairline))
@@ -175,6 +175,6 @@
     }
   }
   put(box-x, boy + bh * SB + 5mm, box(width: 190mm, text(size: 6pt, fill: guide-text)[
-    Track stack, #SB×. One time axis, on top; tracks #fmt(track-gap) mm apart with a 0.25 pt `rule` hairline in the gap; each group opens with a #fmt(group-gap) mm header row (5 pt, 500, caps, tracked). Track labels (6 pt, ink) right-align in a label column that grows the left margin; value tracks carry a y axis with two ticks at round numbers, labelled left of the axis within the track's height; events and lanes carry none. A black rule at the start time runs through every track. Colour follows form 17: observed in vermilion, predicted in blue (lines, and probability on the blue ramp), risk on the valence scale. Lengths in mm, real size.
+    Track stack, #SB×. One time axis, on top; tracks #fmt(track-gap) mm apart with a 0.25 pt `rule` hairline in the gap; each group opens with a #fmt(group-gap) mm header row (5 pt, 500, caps, tracked). Track labels (6 pt, ink) right-align in a label column that grows the left margin; value tracks carry a y axis with two ticks at round numbers, labelled left of the axis within the track's height; events and lanes carry none. An ink rule at the start time runs through every track. Colour follows form 17: observed in vermilion, predicted in blue (lines, and probability on the blue ramp), risk on the valence scale. Lengths in mm, real size.
   ]))
 }

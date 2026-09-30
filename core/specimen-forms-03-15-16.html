@@ -60,7 +60,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
   // 03 Kaplan-Meier by risk group: ordered groups on the valence arms
   {
     const c = cell(0); head(c, 3, "KAPLAN–MEIER, RISK GROUPS");
-    const ch = GA.chart(ga, { x: c.x + 52, y: c.T + 76, w: CW - 68, h: 160, xd: [0, 60], yd: [0, 1], xTicks: [0, 12, 24, 36, 48, 60], yTicks: [0, 0.5, 1], yFmt: pct, xTitle: "Months from landmark", yTitle: "Overall survival", at });
+    const ch = GA.chart(ga, { x: c.x + 72, y: c.T + 76, w: CW - 88, h: 160, xd: [0, 60], yd: [0, 1], xTicks: [0, 12, 24, 36, 48, 60], yTicks: [0, 0.5, 1], yFmt: pct, xTitle: "Months from landmark", yTitle: "Overall survival", at });
     const groups = [
       { label: "Q1", rate: 0.004, color: tok("blue-700") },
       { label: "Q2", rate: 0.009, color: tok("blue-400") },
@@ -106,8 +106,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
   // 15 predicted vs observed: density bins, identity line, marginal strips
   {
     const c = cell(2); head(c, 15, "PREDICTED VS OBSERVED");
-    const ch = GA.chart(ga, { x: c.x + 44, y: c.T + 100, w: 142, h: 142, xd: [1, 5], yd: [1, 5], xTicks: [1, 3, 5], yTicks: [1, 3, 5], xTitle: "Measured (g/dL)", at });
-    ga.text("Predicted (g/dL)", { x: ch.x0, y: c.T + 34, role: "axis", at, anim: "fade" });
+    const ch = GA.chart(ga, { x: c.x + 44, y: c.T + 100, w: 142, h: 142, xd: [1, 5], yd: [1, 5], xTicks: [1, 3, 5], yTicks: [1, 3, 5], xTitle: "Measured (g/dL)", yTitle: "Predicted (g/dL)", at });
     const pts = Array.from({ length: 5000 }, () => {
       const x = rnd() < 0.8 ? normal(3.9, 0.35) : normal(3.0, 0.6);
       return [x, 0.75 * x + 0.95 + normal(0, 0.22)];

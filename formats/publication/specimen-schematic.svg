@@ -14,7 +14,7 @@
     <line x1="8.99" y1="34.88" x2="9.49" y2="34.88"/>
   </g>
   <g font-family="IBM Plex Sans" font-size="1.764" fill="#000000">
-    <text x="9.49" y="37.28" text-anchor="middle">.001</text>
+    <text x="9.49" y="37.28" text-anchor="middle">0.001</text>
     <text x="18.8" y="37.28" text-anchor="middle">0.01</text>
     <text x="28.11" y="37.28" text-anchor="middle">0.1</text>
     <text x="37.42" y="37.28" text-anchor="middle">1</text>
@@ -27,6 +27,6 @@
   <path d="M 9.49,4.61 L 14.4,4.61 C 19.47,4.61 18.39,34.24 25.31,34.24 L 46.73,34.24" fill="none" stroke="#1f4e79" stroke-width="0.353" stroke-linecap="round"/>
   <path d="M 9.49,4.61 L 29.3,4.61 C 37.27,4.61 39.13,34.24 45.12,34.24 L 46.73,34.24" fill="none" stroke="#a3a8b1" stroke-width="0.353" stroke-linecap="round"/>
   <g font-family="IBM Plex Sans" font-size="2.47" fill="#16181d"><text x="19.2" y="10.27">sensitive</text><text x="39.8" y="29.6" text-anchor="end">resistant</text></g>
-  <text x="46.73" y="39.56" font-family="IBM Plex Sans" font-size="2.117" font-weight="500" fill="#000000" text-anchor="end">Drug (µM)</text>
+  <text x="28.11" y="39.56" font-family="IBM Plex Sans" font-size="2.117" font-weight="500" fill="#000000" text-anchor="middle">Drug (µM)</text>
   <text x="2.81" y="19.5" transform="rotate(-90 2.81 19.5)" font-family="IBM Plex Sans" font-size="2.117" font-weight="500" fill="#000000" text-anchor="middle">Viability</text>
 </svg>

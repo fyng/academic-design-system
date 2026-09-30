@@ -65,7 +65,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 07, 08 (variants)"
     const x = ga.M + 820, CW = 1600 - ga.M - x;
     ga.text("08 · COMPOSITION, A NAMED PART", { x, y: T, role: "step", at: 0.2 });
     const shares = { Amp: [42, 19, 18, 21], LOH: [32, 17, 14, 37], Mut: [44, 6, 16, 34] }, n = { Amp: 59, LOH: 453, Mut: 196 };
-    const ch = GA.chart(ga, { x: x + 44, y: T + 80, w: 190, h: 330, xd: [0, 3], yd: [0, 100], yTicks: [0, 25, 50, 75, 100], yTitle: "Share of alterations (%)", axes: "y", at });
+    const ch = GA.chart(ga, { x: x + 60, y: T + 80, w: 190, h: 330, xd: [0, 3], yd: [0, 100], yTicks: [0, 25, 50, 75, 100], yTitle: "Share of alterations (%)", axes: "y", at });
     let s = "";
     Object.entries(shares).forEach(([g, parts], j) => {
       const cx = ch.x0 + 18 + j * 62, w = 44;

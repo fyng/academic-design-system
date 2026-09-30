@@ -73,10 +73,13 @@ Start from the data's job.
 
 - Left and bottom axes, 1.5 px `ink-2`, with 5 px outward ticks. The plot area is
   open on the top and right.
-- **y title:** horizontal, above the axis, left-aligned to it. Each format may set its
-  own; publication rotates it into the left margin (`../../formats/publication/README.md`).
-- **x title:** right-aligned under the ticks, at the high end of the axis.
-  Units go in parentheses.
+- **Axis titles are centred on their axis**, in every form and format. The x title
+  sits under the tick labels, centred on the x axis. The y title reads upward in the
+  left margin, left of the tick labels, centred on the y axis. Units go in
+  parentheses.
+- A plot without a y axis line, whose rows are named instead (ranked bars, forest
+  plot, heatmap, composition bars), names its rows or its measure in a title above
+  the plot, left-aligned.
 - **Ticks:** 3–5 per axis, at round values, in the `tick` role (tabular, muted).
   Drop an axis when every value is labelled directly (bars).
 - **Baselines:** a bar's axis starts at 0, because its length carries the value.

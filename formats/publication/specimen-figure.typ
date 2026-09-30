@@ -204,7 +204,7 @@
       place(top + left, dx: x0, dy: m.t, curve(stroke: 1pt + prussian, curve.move((0pt, ph * 0.9)), curve.line((pw * 0.5, ph * (0.7 - 0.12 * k))), curve.line((pw, ph * (0.5 - 0.1 * k)))))
       place(top + left, dx: x0 - 0.4mm, dy: m.t + ph + tick-len + m.kgap, tick[0])
       place(top + left, dx: x0 + pw - 2.2mm, dy: m.t + ph + tick-len + m.kgap, tick[6])
-      place(top + left, dx: x0, dy: h - m.edge - desc - cap-title, box(width: pw, align(right, axis[Time (d)])))
+      place(top + left, dx: x0, dy: h - m.edge - desc - cap-title, box(width: pw, align(center, axis[Time (d)])))
       if guides { place(top + left, dx: x0, dy: m.t, rect(width: pw, height: ph, stroke: (paint: guide-col, thickness: 0.35pt, dash: "dashed"))) }
     }
     place(top + left, dx: m.l - tick-len - m.kgap - 8mm, dy: m.t + ph - cap-tick / 2, box(width: 8mm, align(right, tick[0])))

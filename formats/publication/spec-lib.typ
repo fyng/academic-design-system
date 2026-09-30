@@ -130,7 +130,7 @@
       place(top + left, dx: l - tick-len, dy: t + ph - f * ph, line(length: tick-len, stroke: axes))
       place(top + left, dx: l - tick-len - m.kgap - m.yw, dy: t + ph - f * ph - cap-tick / 2, box(width: m.yw, align(right, tick(s))))
     }
-    if xtitle != none { place(top + left, dx: l, dy: h - m.edge - desc - cap-title, box(width: pw, align(right, axis(xtitle)))) }
+    if xtitle != none { place(top + left, dx: l, dy: h - m.edge - desc - cap-title, box(width: pw, align(center, axis(xtitle)))) }
     if ytitle != none { place(top + left, dx: 0mm, dy: t, band-label(2 * m.edge + cap-title, ph, axis(ytitle))) }
     if guide { plot-rect(w, h, m) }
   })

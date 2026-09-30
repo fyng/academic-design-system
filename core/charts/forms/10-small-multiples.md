@@ -17,7 +17,8 @@ For factorial experiments and for any comparison repeated across levels.
 - Row and column names are `label` text beside and above the grid.
 - Panels share the y scale, so heights compare across the grid. When levels differ
   by orders of magnitude, give each panel its own scale and say so in the caption.
-- Label the y-axis once, on the first panel, and the x title once, on the last.
+- Label the y-axis once, on the first panel, and the x title once, on the last;
+  each is centred on its own panel's axis.
 
 ## In each format
 

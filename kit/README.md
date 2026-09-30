@@ -47,7 +47,11 @@ ch.label("carriers", 24, 0.08, { dx: 10, color: "var(--harm-text)" });
 
 `x, y, w, h` place the **plot area**; titles and ticks sit outside it. All chart text
 goes through `ga.text`, so the lint covers it, and a label sitting on a curve fails the
-render. `axes: "x"`, `"y"` or `""` keeps only those axes.
+render. `axes: "x"`, `"y"` or `""` keeps only those axes. Axis titles are centred on
+their axis: `xTitle` under the tick labels, `yTitle` reading upward left of the widest
+y tick label (`yTitleX` sets its baseline instead). Leave the plot's `x` enough room
+on the left for it. On a chart with no y axis line, `yTitle` is a heading above the
+plot, left-aligned at `yTitleX`.
 
 | Mark | Form (`../core/charts/forms/`) |
 |---|---|

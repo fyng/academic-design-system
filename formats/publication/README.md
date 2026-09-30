@@ -95,9 +95,9 @@ baseline, and descenders hang 0.5 mm below.
   9.9 mm.
 - Titles sit against the cell edge and tick text against the ticks, so both keep
   their place when labels change.
-- The y title reads upward, rotated in the left margin and centred on the axis; the
-  x title is right-aligned under the ticks. The rotated y title is this format's
-  rule; core keeps it horizontal above the axis (`../../core/charts/README.md`).
+- Axis titles are centred on their axis, as in core (`../../core/charts/README.md`,
+  *Frame*): the y title reads upward, rotated in the left margin; the x title sits
+  under the tick labels.
 - `specimen-panel.typ` draws the reference panel at 5× with each distance
   dimensioned (`out/specimen-panel.pdf`, `.png`). `margins()` in `spec-lib.typ`
   computes the margins from the measured tick labels; the figure specimen shares it.
@@ -192,7 +192,7 @@ PNG. The constants are in `spec-lib.typ`.
 | Group header row, above each group's first track | 2.5 |
 | Track label to the value ticks, or to the plot | 1.0 |
 
-- One shared axis, on top when the stack reads in time; the x title right-aligns
+- One shared axis, on top when the stack reads in time; the x title is centred on it,
   above the tick labels. The bottom margin is then the edge gap alone.
 - Track labels (6 pt, 400, ink) right-align in a label column. The column is as wide
   as the widest label and grows the left margin; wrap a long label onto two lines
