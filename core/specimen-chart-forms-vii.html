@@ -38,41 +38,42 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VII", desc: 
     for (let i = 0; i < n; i++) {
       const end = Math.round(300 + (2600 * (i + rnd() * 0.6)) / n), rel = Math.round(end * (0.25 + 0.4 * rnd()));
       const events = [{ t: 0, kind: "diamond", fill: "var(--prussian)", text: String(2 + Math.floor(rnd() * 7)), size: 13 }];
-      if (rnd() < 0.6) for (let c = 0; c < 2 + Math.floor(rnd() * 3); c++) events.push({ t: 50 + c * 32, kind: "circle", fill: "var(--context)", size: 7 });
-      events.push({ t: rel, kind: "cross", size: 10 });
-      if (rnd() < 0.7) events.push({ t: rel + 40, kind: "triangle", fill: "var(--paper)", ring: "var(--ink)", size: 11 });
       const bars = [];
+      if (rnd() < 0.6) bars.push({ t0: 40, t1: 150, color: tx.chemo }); // adjuvant chemotherapy
+      // a biopsy at relapse: a sample, so a circle in its site's colour, on the line
+      if (rnd() < 0.7) events.push({ t: rel + 40, kind: "circle", fill: site[siteKeys[Math.floor(rnd() * siteKeys.length)]], size: 9 });
       let t0 = rel + 90;
       for (const k of ["chemo", "immuno", "targeted"]) {
         if (rnd() < 0.55 && t0 < end - 120) { const t1 = Math.min(end - 60, t0 + 100 + rnd() * 500); bars.push({ t0, t1, color: tx[k] }); t0 = t1 + 60; }
       }
-      if (rnd() < 0.5 && t0 < end - 60) events.push({ t: t0 + 20, kind: "square", fill: "var(--paper)", ring: "var(--ink)", size: 10 });
+      if (rnd() < 0.5 && t0 < end - 60) events.push({ t: t0 + 20, kind: "circle", fill: site[siteKeys[Math.floor(rnd() * siteKeys.length)]], size: 9 });
       if (rnd() < 0.6) events.push({ t: Math.round(rel + (end - rel) * rnd()), kind: "diamond", fill: "var(--ink)", size: 8 });
       const ns = 3 + Math.floor(rnd() * 12);
       const samples = Array.from({ length: ns }, (_, k) => site[siteKeys[k < ns * 0.4 ? 0 : Math.floor(rnd() * siteKeys.length)]]);
-      rows.push({ label: `P-${String(11 + i * 7).padStart(2, "0")}`, end, dead: true, events, bars, samples, strips: [histo[Math.floor(rnd() * 3)], stage[Math.floor(rnd() * 3)], smoke[Math.floor(rnd() * 3)]] });
+      rows.push({ label: `P-${String(11 + i * 7).padStart(2, "0")}`, end, dead: true, relapse: rel, events, bars, samples, strips: [histo[Math.floor(rnd() * 3)], stage[Math.floor(rnd() * 3)], smoke[Math.floor(rnd() * 3)]] });
     }
     const X0 = x + 144, pitch = 22;
     const ch = GA.chart(ga, { x: X0, y: T + 96, w: 600, h: n * pitch, xd: [0, 3000], xTicks: [0, 1000, 2000, 3000], xFmt: (v) => v.toLocaleString("en-GB"), xTitle: "Days after surgery", axes: "x", at });
     ch.swimmer(rows, { stripX: [x + 60, x + 60 + pitch, x + 60 + 2 * pitch], stripLabels: ["Histology", "Stage", "Smoking"] });
     // keys: events and treatment right of the plot; strips and samples beneath
     const kx = X0 + 700; // keys
-    const ky = GA.glyphKey(ga, [
+    let ky = GA.glyphKey(ga, [
+      { line: { color: "var(--rule)", width: 1.5 }, label: "no evidence of disease" },
+      { line: { color: "var(--ink-2)", width: 2.5 }, label: "after relapse" },
+    ], { x: kx, y: T + 30, title: "Follow-up", at });
+    ky = GA.glyphKey(ga, [
       { kind: "diamond", fill: "var(--prussian)", text: "4", size: 13, label: "surgery (regions)" },
-      { kind: "circle", fill: "var(--context)", size: 7, label: "adjuvant cycle" },
-      { kind: "cross", size: 10, label: "relapse" },
-      { kind: "triangle", fill: "var(--paper)", ring: "var(--ink)", size: 11, label: "relapse sample" },
-      { kind: "square", fill: "var(--paper)", ring: "var(--ink)", size: 10, label: "progression sample" },
       { kind: "diamond", fill: "var(--ink)", size: 8, label: "radiotherapy" },
+      { kind: "circle", fill: "var(--ink-2)", size: 9, label: "biopsy (site colour)" },
       { kind: "tick", size: 12, label: "death" },
-    ], { x: kx, y: T + 30, title: "Event", at });
+    ], { x: kx, y: ky + 12, title: "Event", at });
     GA.glyphKey(ga, [{ bar: tx.chemo, label: "chemotherapy" }, { bar: tx.immuno, label: "immunotherapy" }, { bar: tx.targeted, label: "targeted" }], { x: kx, y: ky + 12, title: "Treatment", at });
     const key = (title, labels, cols, xx) => GA.glyphKey(ga, labels.map((l, i) => ({ kind: "square", fill: cols[i], size: 10, ring: cols[i] === tok("wash") ? "var(--context)" : undefined, ringW: 1, label: l })), { x: xx, y: ch.y1 + 58, pitch: 18, title, at });
     key("Histology", ["LUAD", "LUSC", "other"], histo, x);
     key("Stage", ["I", "II", "III"], stage, x + 130);
     key("Smoking", ["never", "ex", "current"], smoke, x + 240);
     GA.glyphKey(ga, siteKeys.map((k) => ({ kind: "circle", fill: site[k], size: 9, label: k === "other" ? "other site" : k })), { x: x + 370, y: ch.y1 + 58, pitch: 18, title: "Autopsy sample", at });
-    note(x, 960, "One row per patient, shortest survival first. Shape says what happened (surgery, relapse, a sample, death), a digit inside how many, and treatment runs as slate bars on the follow-up line. Colour has one job: the sampled site, the same as on the body map, so each row ends with its autopsy samples coloured where they came from.");
+    note(x, 960, "One row per patient, shortest survival first. The line carries the disease state: a hairline until relapse, heavier after it. Few glyphs: a diamond for a procedure (surgery, with the regions sampled inside), a circle for every sample, a tick for death; treatments are slate bars. Colour has one job, the sampled site as on the body map: biopsies sit on the line, autopsy samples after its end.");
   }
 
   // 26 unit columns: metastases per patient, by what was done with each

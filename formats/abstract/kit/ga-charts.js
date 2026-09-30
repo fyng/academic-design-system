@@ -496,11 +496,13 @@
       });
       ga.raw(s, { at, anim: "fade" });
     };
-    // ---- records (25-27) -------------------------------------------------------------
+    // ---- records (07, 25, 26) -------------------------------------------------------------
     // Swimmer plot (25): one row per patient on a shared time axis. rows: [{label,
-    // end, dead, strips: [colour], bars: [{t0, t1, color}], events: [{t, kind, ...glyph}],
-    // samples: [colour]}]. A 1.5px rule line runs from 0 to `end`; treatment bars
-    // (8px) sit on it; event glyphs over them; a 12px ink tick ends a row at death.
+    // end, dead, relapse, strips: [colour], bars: [{t0, t1, color}], events: [{t, kind,
+    // ...glyph}], samples: [colour]}]. The follow-up line runs from 0 to `end`: 1.5px
+    // rule, then 2.5px ink-2 from `relapse` on, so the disease state reads off the
+    // line. Treatment bars (8px) sit on it; event glyphs over them; a 12px ink tick
+    // ends a row at death.
     // `samples` are dots after the row's end, two rows deep, in the site's colour.
     // strips are annotation squares left of the plot at m.stripX (canvas x per strip),
     // named upward above them (m.stripLabels), with the patient's label left of them.
@@ -510,6 +512,7 @@
       rows.forEach((r, i) => {
         const cy = Y0 + (i + 0.5) * pitch;
         line += `<path d="M${sx(0)} ${cy}H${sx(r.end)}" stroke="var(--rule)" stroke-width="1.5"/>`;
+        if (r.relapse !== undefined) line += `<path d="M${sx(r.relapse)} ${cy}H${sx(r.end)}" stroke="var(--ink-2)" stroke-width="2.5"/>`;
         for (const b of r.bars || []) bars += `<rect x="${sx(b.t0)}" y="${cy - 4}" width="${Math.max(2, sx(b.t1) - sx(b.t0))}" height="8" fill="${b.color}"/>`;
         for (const e of r.events || []) ev += GA.glyph(e.kind, sx(e.t), cy, { size: gs, ...e });
         if (r.dead) ev += GA.glyph("tick", sx(r.end), cy, { size: 12 });
@@ -547,8 +550,9 @@
       });
       ga.raw(s, { at: t, anim: "rise", t: 0.8 });
     };
-    // Oncoprint (27): alterations per gene (rows) and patient (columns). Every cell is
-    // a wash square; an altered cell is filled in its class's colour, inset 1px.
+    // Categorical heatmap, the oncoprint (07): alterations per gene (rows) and
+    // patient (columns). Every cell is a wash square; an altered cell is filled in
+    // its class's colour, inset 1px.
     // cell: null | {cls, mark} — mark: true adds a small paper ring with a 1px ink
     // edge, the glyph for a second event in the same gene (a biallelic hit).
     // m.classColors[cls]; m.groups [{label, n}] split rows (10px gap), named upward
@@ -765,7 +769,8 @@
   // One mark for one kind of event or state, the same everywhere in a figure.
   // Shape says the kind, fill the class, a ring the role, and a digit or letter
   // inside a count or a role. GA.glyph returns SVG markup centred on (x, y).
-  //   kind: "circle" | "diamond" | "triangle" | "square" | "cross" | "tick"
+  //   kind: "circle" (a sample or measurement) | "diamond" (a procedure) |
+  //         "square" (a swatch in keys and strips) | "tick" (death, an end)
   //   o: size (px, the glyph's side; default 11), fill, ring (colour), ringW,
   //      text (a digit or letter inside), textColor
   const g1 = (v) => +v.toFixed(1);
@@ -776,21 +781,22 @@
     if (kind === "circle") m = `<circle cx="${g1(x)}" cy="${g1(y)}" r="${g1(h)}" fill="${fill}"${edge}/>`;
     else if (kind === "square") m = `<rect x="${g1(x - h)}" y="${g1(y - h)}" width="${s}" height="${s}" fill="${fill}"${edge}/>`;
     else if (kind === "diamond") { const k = h * 1.25; m = `<path d="M${g1(x)} ${g1(y - k)}L${g1(x + k)} ${g1(y)}L${g1(x)} ${g1(y + k)}L${g1(x - k)} ${g1(y)}Z" fill="${fill}"${edge}/>`; }
-    else if (kind === "triangle") { const k = h * 1.2; m = `<path d="M${g1(x)} ${g1(y - k)}L${g1(x + k)} ${g1(y + k * 0.75)}L${g1(x - k)} ${g1(y + k * 0.75)}Z" fill="${fill}"${edge} stroke-linejoin="round"/>`; }
-    else if (kind === "cross") m = `<path d="M${g1(x - h * 0.8)} ${g1(y - h * 0.8)}L${g1(x + h * 0.8)} ${g1(y + h * 0.8)}M${g1(x + h * 0.8)} ${g1(y - h * 0.8)}L${g1(x - h * 0.8)} ${g1(y + h * 0.8)}" stroke="${o.fill || "var(--ink)"}" stroke-width="1.5" stroke-linecap="round"/>`;
     else if (kind === "tick") m = `<path d="M${g1(x)} ${g1(y - h)}V${g1(y + h)}" stroke="${o.fill || "var(--ink)"}" stroke-width="1.5"/>`;
     if (o.text !== undefined) m += `<text x="${g1(x)}" y="${g1(y + s * 0.26)}" font-size="${g1(s * 0.72)}" font-weight="500" text-anchor="middle" style="fill:${o.textColor || "var(--paper)"}">${o.text}</text>`;
     return m;
   };
   // Glyph key: one row per glyph (drawn as it is used) and its name, at canvas
   // (x, y), `pitch` px apart, with an optional title above. rows: [{kind, label, ...glyph options}];
-  // a row with bar: colour draws a short bar instead (treatment intervals).
+  // a row with bar: colour draws a short bar instead (treatment intervals), and one
+  // with line: {color, width} a short line (a state of the follow-up line).
   GA.glyphKey = (ga, rows, o) => {
     const pitch = o.pitch || 20, at = o.at;
     let y = o.y, s = "";
     if (o.title) { ga.text(o.title, { x: o.x, y, role: "tick", color: "var(--muted)", at, anim: "fade" }); y += pitch; }
     for (const r of rows) {
-      s += r.bar ? `<rect x="${o.x}" y="${y + 4}" width="16" height="8" fill="${r.bar}"/>` : GA.glyph(r.kind, o.x + 8, y + 8, r);
+      s += r.bar ? `<rect x="${o.x}" y="${y + 4}" width="16" height="8" fill="${r.bar}"/>`
+        : r.line ? `<path d="M${o.x} ${y + 8}h16" stroke="${r.line.color}" stroke-width="${r.line.width}"/>`
+        : GA.glyph(r.kind, o.x + 8, y + 8, r);
       ga.text(r.label, { x: o.x + 24, y, role: "tick", size: 12, at, anim: "fade" });
       y += pitch;
     }
@@ -847,16 +853,6 @@
       s += `<path d="M${g1(hx(Math.PI - 0.5))} ${g1(hy(Math.PI - 0.5))}L${g1(ex)} ${g1(ey)}L${g1(hx(Math.PI + 0.5))} ${g1(hy(Math.PI + 0.5))}" fill="none" stroke="${rt.color || "var(--prussian)"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
     }
     return ga.raw(s, { at: o.at, anim: "fade", t: 0.6 });
-  };
-
-  // Segment callout (charts.md, *Labels*): a flare from one segment of a bar out to
-  // a block of text that names what the segment holds. The segment is outlined
-  // 1.5px ink; the flare, in the segment's wash, widens from the segment's height
-  // to the text's. a: the segment's box, b: the text block's box (canvas px).
-  GA.flare = (ga, a, b, o = {}) => {
-    const mx = (a.x1 + b.x0) / 2;
-    const d = `M${a.x1 + 3} ${a.y0}C${mx} ${a.y0} ${mx} ${b.y0} ${b.x0 - 6} ${b.y0}V${b.y1}C${mx} ${b.y1} ${mx} ${a.y1} ${a.x1 + 3} ${a.y1}Z`;
-    return ga.raw(`<path d="${d}" fill="${o.color || "var(--wash)"}"/><rect x="${a.x0}" y="${a.y0}" width="${a.x1 - a.x0}" height="${a.y1 - a.y0}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`, { at: o.at, anim: "fade", t: 0.6 });
   };
 
   // Deterministic pseudo-random numbers for schematic data (mulberry32)

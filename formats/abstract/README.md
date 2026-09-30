@@ -160,14 +160,14 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `counts`, `upText` | Count matrix with totals and a 100 % bar per row (18); column names reading upward |
 | `dotMatrix`, `sizeKey` | Dot matrix, area for share and colour for magnitude, and its size key (19) |
 | `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud (20) |
-| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20) |
+| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20); a named part of a bar (08) |
 | `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack (21) |
-| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside (*Glyphs*) |
+| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside; keys with glyph, bar and line rows (*Glyphs*) |
 | `GA.bio` → `body`, `bubbles`, `dial` | Body map with site bubbles or region dials (22) |
 | `GA.routes`, `GA.cloneTree` | Route map (23) and clone tree (24) |
-| `swimmer` | Swimmer plot (25) |
+| `swimmer` | Swimmer plot, the follow-up line carrying relapse (25) |
 | `units` | Unit columns (26) |
-| `oncoprint`, `GA.flare` | Oncoprint (27); segment callout (*Labels*) |
+| `oncoprint` | Heatmap with categorical cells, the oncoprint (07) |
 
 `../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html`,
 `-iii.html` through `-viii.html` use every mark.

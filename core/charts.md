@@ -18,8 +18,8 @@ Reference sheets, synthetic data:
 - `out/specimen-chart-forms-vi.png`: forms 22–24, findings on the body
   (`specimen-chart-forms-vi.html`).
 - `out/specimen-chart-forms-vii.png`: forms 25 and 26 (`specimen-chart-forms-vii.html`).
-- `out/specimen-chart-forms-viii.png`: form 27 and the segment callout
-  (`specimen-chart-forms-viii.html`).
+- `out/specimen-chart-forms-viii.png`: the categorical heatmap (07) and a
+  composition with a named part (08) (`specimen-chart-forms-viii.html`).
 
 Sizes below are px on the abstract canvas. `../formats/publication/README.md` gives
 the print equivalents.
@@ -46,6 +46,7 @@ Start from the data's job.
 | A regression's predictions against the measured values | Predicted vs observed (15) |
 | Many tests, effect against significance | Volcano (06) |
 | Matrix of values (tissue × drug, gene × cell) | Heatmap (07), grouped when columns carry an annotation |
+| Matrix of classes (alterations per gene and patient, and when each arose) | Heatmap with categorical cells, the oncoprint (07) |
 | Counts in a matrix (patients per gene × tumour type) | Count matrix (18) |
 | Two measures per cell of a matrix (how many have it, how much) | Dot matrix (19) |
 | Observations in a learned space (cells, patients, codes) | Labelled embedding (20) |
@@ -55,7 +56,6 @@ Start from the data's job.
 | Where a tumour's clones spread, and which clones seeded | Route map (23) beside its clone tree (24) |
 | A cohort's clinical course, patient by patient | Swimmer plot (25) |
 | A few items per unit, each with a state (metastases per patient) | Unit columns (26) |
-| Alterations per gene and patient, with when each arose | Oncoprint (27) |
 | Parts of a whole, a few units | 100 % stacked bars (08) |
 | Parts of a whole, many samples | Stacked columns grouped by dominant part (14) |
 | One share per location in space | Proportion dials in small multiples (`illustration.md`) |
@@ -108,11 +108,6 @@ Start from the data's job.
 - Label text uses the series' **text step** (`--harm-text`, `--cat-n-text`) or
   `muted`. Journal figures set labels in ink with a colour swatch
   (`../formats/publication/README.md`).
-- **Segment callout.** To name what one part of a bar holds (the actionable
-  drivers among the truncal mutations), outline the part 1.5 px `ink` and open a
-  flare from it to a short list set beside the bar: a pale wash (slate 100 or the
-  part's 100 step) that widens from the part's height to the list's. The list's
-  title is `muted`; its items are `ink`, gene names italic.
 
 **Glyphs**
 
@@ -120,9 +115,14 @@ Records of events and states (a patient's course, a clone's role, a second hit i
 gene) are drawn as glyphs, one mark per kind, so a reader learns them once and reads
 them in every panel.
 
-- **Shape says the kind**: a diamond for a procedure (surgery), a circle for a
-  measurement or a sample from a known site, a triangle and a square for samples taken
-  at relapse and at progression, × for relapse, a short vertical tick for death.
+- **Shape says the kind, and there are few**: a diamond for a procedure (surgery,
+  radiotherapy), a circle for a sample or a measurement, a short vertical tick for
+  death, a bar for an interval (a treatment). Samples of different kinds (at
+  relapse, at progression) share the circle; their place on the timeline tells them
+  apart.
+- **A change of state changes the line, not a glyph**: the follow-up line is a
+  hairline until relapse and heavier after it, as the track stack's lanes carry
+  state (form 17).
 - **Fill says the class** (where a clone lives, which site a sample came from), from
   one palette per job (`color.md`).
 - **A ring says the role**: 2.5 px `ink` for the primary role (seeds from the
@@ -135,7 +135,7 @@ them in every panel.
   of the cell's class (a biallelic hit in an oncoprint).
 - A glyph means one thing across the figure. The key draws each glyph as it is used,
   grouped under a title per kind (Event, Treatment, Sample).
-- Sizes: 11 px glyphs (7–8 px for minor, repeated events such as treatment cycles),
+- Sizes: 11 px glyphs (8–9 px for minor events such as radiotherapy or a biopsy),
   13 px when they carry a digit.
 
 **Colour** (see `color.md`)
@@ -227,6 +227,20 @@ them in every panel.
 - The key sits beneath the grid, with labelled ends and midpoint. When the scale is
   capped (`color.md`, *Magnitude*), the key's end reads "> 2". Put numbers in the
   cells when the matrix is 5 × 5 or smaller.
+- **Categorical cells (the oncoprint).** When each cell holds a class rather than a
+  value (alterations per gene and patient, and when each arose):
+  - Every cell is a `wash` square, as in form 19, so an unaltered cell reads as
+    tested and wild type; an untested one has no square.
+  - An altered cell is filled by its class. For clonal timing, use the clone tree's
+    location classes (24): truncal `context`, shared subclonal `blue-300`,
+    primary-unique `blue-700`, metastasis-unique `teal-500`.
+  - A second event in the same gene (a biallelic hit) is a small ring inside the
+    cell: paper fill, 1 px `ink` edge (*Glyphs*).
+  - Row groups (amplification, LOH, mutation) part with a 10 px gap and are named
+    as in form 19; gene names are italic and sort by frequency within a group.
+  - Each row's classes stack into a bar at its right on a count axis, as form 18's
+    totals do; annotation strips (histology, treatment) run under the grid, named
+    at the right, as in form 25.
 
 ### 08 · Composition (100 % stacked)
 
@@ -240,6 +254,11 @@ them in every panel.
   tissue with the same colours.
 - When the question is whether a part changed, add a points-and-mean panel per part
   (form 10) beside the stack.
+- **A named part.** To say what one part of a bar holds (the actionable drivers among
+  the truncal mutations), zoom into it as form 20's atlas does: frame the part 1.5 px
+  `ink` and run two straight 1 px `ink-2` leaders from its corners to a short list
+  beside the bar. The list's title is `muted`; its items are `ink`, gene names
+  italic.
 
 ### 09 · Beeswarm + median
 
@@ -533,21 +552,21 @@ metastases.
 For a cohort's clinical course: one row per patient on a shared time axis. Form 17
 is one patient's record in depth; the swimmer plot is every patient's in outline.
 
-- Rows sort by survival (or follow-up), shortest first. A 1.5 px `rule` line runs
-  from time 0 to the row's end; a death ends it with a tick.
-- Events are glyphs on the line (*Glyphs*): surgery a `prussian` diamond with the
-  number of regions sampled inside; adjuvant cycles small `context` circles;
-  relapse ×; samples hollow triangles and squares; radiotherapy a small `ink`
-  diamond.
-- Treatment intervals are 8 px bars on the line, square-cornered.
-- Samples taken at the end (autopsy) sit after the row's end as dots two rows deep,
-  each **coloured by its site as on the body map** (22). Colour then has one job, the
-  site, so treatment bars take slate steps (700, 400, 200) and annotation strips use
-  hues that no site in the figure uses.
+- Rows sort by survival (or follow-up), shortest first. The follow-up line runs from
+  time 0 to the row's end and **carries the disease state**: 1.5 px `rule` until
+  relapse, 2.5 px `ink-2` after it. A death ends the row with a tick.
+- Few glyphs (*Glyphs*): surgery a `prussian` diamond with the number of regions
+  sampled inside; radiotherapy a small `ink` diamond; every sample a circle.
+- Treatments, adjuvant ones included, are 8 px bars on the line, square-cornered.
+- **Every sample is a circle in its site's colour, as on the body map** (22):
+  biopsies sit on the line when they were taken; samples taken at the end (autopsy)
+  sit after the row's end, two rows deep. Colour then has one job, the site, so
+  treatment bars take slate steps (700, 400, 200) and annotation strips use hues that
+  no site in the figure uses.
 - Annotation strips (histology, stage, smoking) are squares left of the plot, one
   column each, named upward above it; the patient's label sits left of them.
-- Keys: events and treatments beside the plot as glyph keys; strips and sample sites
-  beneath it.
+- Keys beside the plot: the two line states, the events, the treatments. Strips and
+  sample sites beneath it.
 
 ### 26 · Unit columns
 
@@ -561,23 +580,3 @@ and sampled or not.
 - Columns sort by total; unit names hang below the axis, reading upward.
 - A key of the states sits above the plot, in stack order.
 - Past about 30 items per column, use stacked bars (08) instead.
-
-### 27 · Oncoprint
-
-For alterations per gene (rows) and patient (columns), and when each arose.
-
-- Every cell is a `wash` square with a 2 px paper gap, so an unaltered cell reads as
-  tested and wild type.
-- An altered cell is filled by its **class**. For clonal timing, use the clone
-  tree's location classes (24): truncal `context`, shared subclonal `blue-300`,
-  primary-unique `blue-700`, metastasis-unique `teal-500`.
-- A **second event** in the same gene (a biallelic hit, loss of the other allele) is
-  a small ring inside the cell: paper fill, 1 px `ink` edge (*Glyphs*).
-- Row groups (amplification, LOH, mutation) part with a 10 px gap and are named
-  upward at the left beside a `rule` bar, as in form 19. Gene names are italic,
-  right-aligned left of the grid, sorted within a group by frequency.
-- Right of each row, its classes stack into a bar on a shared count axis (ticks at 0
-  and the number of patients, above the grid).
-- Annotation strips (histology, treatment) run under the grid in their own palettes
-  and are named at the right; patient names hang below them, reading upward.
-

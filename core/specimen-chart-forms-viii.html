@@ -12,9 +12,10 @@
 </head>
 <body>
 <script>
-// Specimen sheet for core/charts.md: the oncoprint (27) and the segment callout
-// (*Labels*). All data here are synthetic.
-GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc: "Alterations per gene and patient with an in-cell glyph for a second event, and a segment callout naming what one part of a bar holds, on synthetic data." }, (ga) => {
+// Specimen sheet for core/charts.md: two variants of existing forms, the
+// categorical heatmap or oncoprint (07) and a composition with a named part (08).
+// All data here are synthetic.
+GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc: "Variants of the heatmap and the composition bar: categorical cells with an in-cell glyph for a second event, and one part of a bar named by a zoom, on synthetic data." }, (ga) => {
   const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
   const rnd = GA.rng(5);
   const at = 0.3, T = 138;
@@ -30,7 +31,7 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc:
   // 27 oncoprint
   {
     const x = ga.M;
-    ga.text("27 · ONCOPRINT", { x, y: T, role: "step", at: 0.2 });
+    ga.text("07 · HEATMAP, CATEGORICAL (ONCOPRINT)", { x, y: T, role: "step", at: 0.2 });
     const genes = { Amp: ["MYC", "CCND1", "EGFR", "MDM2"], LOH: ["CDKN2A", "ATM", "SMAD4", "KEAP1", "STK11", "PTEN"], Mut: ["TP53", "KRAS", "EGFR", "KEAP1", "SMARCA4", "ARID1A", "NF1"] };
     const rate = { Amp: 0.2, LOH: 0.45, Mut: 0.3 }, np = 14;
     const rows = [], labels = [];
@@ -56,13 +57,13 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc:
     ], { x: kx, y: T + 64, title: "Alteration", at });
     GA.glyphKey(ga, [{ kind: "circle", size: 8, fill: "var(--paper)", ring: "var(--ink)", ringW: 1, label: "second hit (biallelic)" }], { x: kx, y: ky + 12, title: "Mark", at });
     GA.glyphKey(ga, [{ kind: "square", fill: histo[0], label: "LUAD" }, { kind: "square", fill: histo[1], label: "LUSC" }, { kind: "square", fill: histo[2], label: "other" }], { x: kx, y: ky + 80, title: "Histology", at });
-    note(x, 700, "Genes by patients. The cell's fill says when the alteration arose (the clone tree's classes); a small ring inside marks a second hit in the same gene. Row groups part with a gap; each row's classes stack into a bar at its right; annotation strips run underneath.");
+    note(x, 700, "The heatmap with a class in each cell instead of a value. Every cell is a wash square, so an empty one reads as tested; fill says when the alteration arose (the clone tree's classes), a small ring inside a second hit in the same gene. Groups, row totals and strips work as in forms 18 and 19.");
   }
 
   // segment callout: which drivers sit in one part of a bar
   {
     const x = ga.M + 820, CW = 1600 - ga.M - x;
-    ga.text("SEGMENT CALLOUT", { x, y: T, role: "step", at: 0.2 });
+    ga.text("08 · COMPOSITION, A NAMED PART", { x, y: T, role: "step", at: 0.2 });
     const shares = { Amp: [42, 19, 18, 21], LOH: [32, 17, 14, 37], Mut: [44, 6, 16, 34] }, n = { Amp: 59, LOH: 453, Mut: 196 };
     const ch = GA.chart(ga, { x: x + 44, y: T + 80, w: 190, h: 330, xd: [0, 3], yd: [0, 100], yTicks: [0, 25, 50, 75, 100], yTitle: "Share of alterations (%)", axes: "y", at });
     let s = "";
@@ -81,8 +82,10 @@ GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc:
     let yy = tb.y0 + 8;
     ga.text("Actionable drivers", { x: tb.x0, y: tb.y0 - 16, role: "tick", color: "var(--muted)", at: at + 1, anim: "fade" });
     for (const l of lines) { ga.text(l, { x: tb.x0, y: yy, role: "tick", size: 13, color: "var(--ink)", at: at + 1, anim: "fade" }); yy += 20; }
-    GA.flare(ga, seg, { x0: tb.x0, y0: tb.y0 + 4, y1: yy + 4 }, { color: tok("slate-100"), at: at + 0.9 });
-    note(x, CW, "A flare opens from one part of a bar to the list of what it holds. The part is outlined in ink, the flare is a pale wash that widens to the text's height, and the list names each item in the paper's terms.");
+    // the part is framed, and two straight leaders zoom it into its list (as in form 20)
+    ga.raw(`<rect x="${seg.x0}" y="${seg.y0}" width="${seg.x1 - seg.x0}" height="${seg.y1 - seg.y0}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`, { at: at + 0.9, anim: "fade" });
+    GA.leaders(ga, seg, { x0: tb.x0 - 10, x1: tb.x0 + 200, y0: tb.y0 + 6, y1: yy + 2 }, { at: at + 0.9 });
+    note(x, CW, "To name what one part of a bar holds, zoom into it the way the atlas does: frame the part in ink and run two straight leaders from its corners to a short list beside the bar, which names each item in the paper's terms.");
   }
 });
 </script>
