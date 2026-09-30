@@ -76,6 +76,8 @@ See [`CLAUDE.md`](CLAUDE.md) for the same rules written for coding agents.
 ## Sources
 
 The system draws on these works. Thanks to their authors.
+[`ACKNOWLEDGEMENTS.md`](ACKNOWLEDGEMENTS.md) lists the figure behind each of chart
+forms 18–26, the glyph grammar and the variants of forms 07 and 08.
 
 **Charts**
 
