@@ -93,6 +93,10 @@ The system draws on these works. Thanks to their authors.
     *Nature Biotechnology* 2020, Fig. 2a; the atlas: [A multimodal and temporal
     foundation model for virtual patient representations at healthcare system
     scale](https://arxiv.org/abs/2604.18570), arXiv 2026, Fig. 2a–c
+- The glyph grammar and chart forms 22–27 (body map, route map, clone tree,
+  swimmer plot, unit columns, oncoprint) and the segment callout: Hessey, Bunkum,
+  Huebner et al., [Evolutionary characterization of lung cancer
+  metastasis](https://doi.org/10.1038/s41586-026-10428-4), *Nature* 2026, Figs 1–5
 
 **Journal figure guidelines** (`formats/publication/README.md`)
 

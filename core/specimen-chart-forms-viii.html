@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamina chart specimens VIII</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../formats/abstract/kit/ga-kit.css">
+<script src="../formats/abstract/kit/icons.js"></script>
+<script src="../formats/abstract/kit/ga-kit.js"></script>
+<script src="../formats/abstract/kit/ga-charts.js"></script>
+</head>
+<body>
+<script>
+// Specimen sheet for core/charts.md: the oncoprint (27) and the segment callout
+// (*Labels*). All data here are synthetic.
+GA.build({ duration: 8, poster: 7.5, title: "Lamina chart specimens VIII", desc: "Alterations per gene and patient with an in-cell glyph for a second event, and a segment callout naming what one part of a bar holds, on synthetic data." }, (ga) => {
+  const tok = (n) => getComputedStyle(document.documentElement).getPropertyValue(`--${n}`).trim();
+  const rnd = GA.rng(5);
+  const at = 0.3, T = 138;
+  ga.text("LAMINA · CHART SPECIMENS VIII · SYNTHETIC DATA", { x: ga.M, y: 40, role: "kicker", at: 0 });
+  ga.text("Which alterations, when, and which matter", { x: ga.M, y: 64, role: "title", size: 34, at: 0 });
+  ga.hrule(118);
+  const note = (x, w, s) => ga.text(s, { x, y: 722, w, role: "cap", size: 14, at: 0.4 });
+  // location classes, shared with the clone tree (24)
+  const classColors = { truncal: tok("context"), shared: tok("blue-300"), primary: tok("blue-700"), met: tok("teal-500") };
+  const classes = Object.keys(classColors);
+  const pick = (w) => { let r = rnd() * w.reduce((a, b) => a + b, 0); for (let i = 0; i < w.length; i++) if ((r -= w[i]) < 0) return classes[i]; return classes[0]; };
+
+  // 27 oncoprint
+  {
+    const x = ga.M;
+    ga.text("27 · ONCOPRINT", { x, y: T, role: "step", at: 0.2 });
+    const genes = { Amp: ["MYC", "CCND1", "EGFR", "MDM2"], LOH: ["CDKN2A", "ATM", "SMAD4", "KEAP1", "STK11", "PTEN"], Mut: ["TP53", "KRAS", "EGFR", "KEAP1", "SMARCA4", "ARID1A", "NF1"] };
+    const rate = { Amp: 0.2, LOH: 0.45, Mut: 0.3 }, np = 14;
+    const rows = [], labels = [];
+    for (const [g, list] of Object.entries(genes)) list.forEach((gene, i) => {
+      labels.push(gene);
+      const p = gene === "TP53" ? 0.8 : rate[g] * (1 - i * 0.08);
+      rows.push(Array.from({ length: np }, () => rnd() < p ? { cls: pick(g === "Mut" ? [5, 1, 1, 1.5] : [2, 1.5, 1, 2.5]), mark: g === "Mut" && rnd() < 0.35 } : null));
+    });
+    const histo = [tok("violet-600"), tok("rose-500"), tok("context")];
+    const ch = GA.chart(ga, { x: x + 96, y: T + 64, w: np * 26, h: 17 * 19 + 20, axes: "", at });
+    ch.oncoprint(rows, {
+      classColors, classes, rowLabels: labels, totals: true, totalW: 60, totalMax: np,
+      groups: [{ label: "Amp", n: 4 }, { label: "LOH", n: 6 }, { label: "Mut", n: 7 }], groupX: x + 4,
+      annot: [{ label: "Histology", colors: Array.from({ length: np }, () => histo[Math.floor(rnd() * 3)]) }],
+      colLabels: Array.from({ length: np }, (_, j) => `P-${String(11 + j * 7).padStart(2, "0")}`),
+    });
+    const kx = ch.x1 + 110;
+    const ky = GA.glyphKey(ga, [
+      { kind: "square", fill: classColors.truncal, label: "truncal" },
+      { kind: "square", fill: classColors.shared, label: "shared subclonal" },
+      { kind: "square", fill: classColors.primary, label: "primary-unique" },
+      { kind: "square", fill: classColors.met, label: "metastasis-unique" },
+    ], { x: kx, y: T + 64, title: "Alteration", at });
+    GA.glyphKey(ga, [{ kind: "circle", size: 8, fill: "var(--paper)", ring: "var(--ink)", ringW: 1, label: "second hit (biallelic)" }], { x: kx, y: ky + 12, title: "Mark", at });
+    GA.glyphKey(ga, [{ kind: "square", fill: histo[0], label: "LUAD" }, { kind: "square", fill: histo[1], label: "LUSC" }, { kind: "square", fill: histo[2], label: "other" }], { x: kx, y: ky + 80, title: "Histology", at });
+    note(x, 700, "Genes by patients. The cell's fill says when the alteration arose (the clone tree's classes); a small ring inside marks a second hit in the same gene. Row groups part with a gap; each row's classes stack into a bar at its right; annotation strips run underneath.");
+  }
+
+  // segment callout: which drivers sit in one part of a bar
+  {
+    const x = ga.M + 820, CW = 1600 - ga.M - x;
+    ga.text("SEGMENT CALLOUT", { x, y: T, role: "step", at: 0.2 });
+    const shares = { Amp: [42, 19, 18, 21], LOH: [32, 17, 14, 37], Mut: [44, 6, 16, 34] }, n = { Amp: 59, LOH: 453, Mut: 196 };
+    const ch = GA.chart(ga, { x: x + 44, y: T + 80, w: 190, h: 330, xd: [0, 3], yd: [0, 100], yTicks: [0, 25, 50, 75, 100], yTitle: "Share of alterations (%)", axes: "y", at });
+    let s = "";
+    Object.entries(shares).forEach(([g, parts], j) => {
+      const cx = ch.x0 + 18 + j * 62, w = 44;
+      let acc = 0;
+      parts.forEach((p, k) => { s += `<rect x="${cx}" y="${ch.sy(acc + p)}" width="${w}" height="${ch.sy(acc) - ch.sy(acc + p) - (acc + p < 100 ? 1 : 0)}" fill="${classColors[classes[k]]}" transform="translate(0 ${acc ? 0 : 0})"/>`; acc += p; });
+      ga.text(g, { x: cx + w / 2, y: ch.y1 + 8, role: "tick", anchor: "middle", at, anim: "fade" });
+      ga.text(`n = ${n[g]}`, { x: cx + w / 2, y: ch.y1 + 28, role: "tick", size: 12, anchor: "middle", color: "var(--muted)", at, anim: "fade" });
+    });
+    ga.raw(s, { at: at + 0.4, anim: "rise", t: 0.8 });
+    // the actionable drivers inside the truncal part of the mutation column
+    const segX = ch.x0 + 18 + 2 * 62, seg = { x0: segX, x1: segX + 44, y0: ch.sy(44), y1: ch.sy(38) };
+    const lines = ["*EGFR* G719A, A767_V769dup", "*ERBB2* Y772_A775dup", "*KRAS* G12C, G12D", "*SMARCA4* X813, E1061X"];
+    const tb = { x0: ch.x1 + 70, y0: seg.y0 - 44 };
+    let yy = tb.y0 + 8;
+    ga.text("Actionable drivers", { x: tb.x0, y: tb.y0 - 16, role: "tick", color: "var(--muted)", at: at + 1, anim: "fade" });
+    for (const l of lines) { ga.text(l, { x: tb.x0, y: yy, role: "tick", size: 13, color: "var(--ink)", at: at + 1, anim: "fade" }); yy += 20; }
+    GA.flare(ga, seg, { x0: tb.x0, y0: tb.y0 + 4, y1: yy + 4 }, { color: tok("slate-100"), at: at + 0.9 });
+    note(x, CW, "A flare opens from one part of a bar to the list of what it holds. The part is outlined in ink, the flare is a pale wash that widens to the text's height, and the list names each item in the paper's terms.");
+  }
+});
+</script>
+</body>
+</html>

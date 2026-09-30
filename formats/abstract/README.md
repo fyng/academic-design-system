@@ -8,7 +8,7 @@ arc, its kinds of text, type sizes, motion and the kit that implements them.
 | File | What |
 |---|---|
 | `kit/ga-kit.css`, `kit/ga-kit.js` | Layout, type roles, motion, lint |
-| `kit/ga-bio.js` | Cells, tissue, zooms (`../../core/illustration.md`) |
+| `kit/ga-bio.js` | Cells, tissue, body maps, zooms (`../../core/illustration.md`) |
 | `kit/ga-charts.js` | Chart forms (`../../core/charts.md`) |
 | `kit/icons.js` | Icons (`../../core/icons.md`) |
 | `kit/render.cjs` | PNG / MP4 / WebM renderer |
@@ -162,9 +162,15 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud (20) |
 | `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20) |
 | `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack (21) |
+| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside (*Glyphs*) |
+| `GA.bio` → `body`, `bubbles`, `dial` | Body map with site bubbles or region dials (22) |
+| `GA.routes`, `GA.cloneTree` | Route map (23) and clone tree (24) |
+| `swimmer` | Swimmer plot (25) |
+| `units` | Unit columns (26) |
+| `oncoprint`, `GA.flare` | Oncoprint (27); segment callout (*Labels*) |
 
 `../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html`,
-`-iii.html`, `-iv.html` and `-v.html` use every mark.
+`-iii.html` through `-viii.html` use every mark.
 
 ## Deliverables per figure
 

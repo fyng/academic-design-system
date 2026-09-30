@@ -252,6 +252,90 @@
       if (o.label) B.math(o.label, { x: o.x0 + 8, y: o.y0 + 6, size: 14, color: "var(--ink-2)", at: o.at });
     };
 
+    // ---- body map: a neutral anterior torso with named sites ------------------------
+    // Drawn like tissue: wash fill, a context outline, organ cores in slate 200 so
+    // colour stays free for the findings placed on it. Anatomical sides: the
+    // patient's right is the viewer's left. { cx, y (top of the head), h, at }.
+    // body.site(name) returns canvas {x, y}; SITES lists the names.
+    const SITES = {
+      brain: [0, 0.06], thyroid: [0, 0.155], "lymph node": [0, 0.3], "lung R": [-0.078, 0.33], "lung L": [0.078, 0.33],
+      pleura: [0.125, 0.405], cardiac: [0.03, 0.375], bone: [-0.165, 0.255], breast: [0.14, 0.29], liver: [-0.065, 0.47],
+      gastric: [0.06, 0.465], adrenal: [0.045, 0.515], kidney: [0.078, 0.555], "small bowel": [-0.02, 0.61],
+      "large bowel": [0.075, 0.645], peritoneum: [-0.085, 0.64], bladder: [0, 0.725], "soft tissue": [0.14, 0.7], subcutaneous: [-0.15, 0.73],
+    };
+    B.SITES = Object.keys(SITES);
+    B.body = (o) => {
+      const { cx, y: top, h } = o, X = (u) => cx + u * h, Y = (v) => top + v * h;
+      // right half of the outline from the neck to the midline at the base; mirrored
+      const half = [[0.036, 0.12], [0.042, 0.168], [0.1, 0.197], [0.172, 0.222], [0.2, 0.262], [0.185, 0.35], [0.158, 0.44], [0.148, 0.52], [0.168, 0.63], [0.17, 0.72], [0.135, 0.79], [0.06, 0.822], [0, 0.826]];
+      const ring = [...half, ...half.slice(0, -1).reverse().map(([u, v]) => [-u, v])];
+      // closed Catmull-Rom spline through the ring, as cubic Béziers
+      const P = ring.map(([u, v]) => [X(u), Y(v)]), n = P.length;
+      let d = `M${f1(P[0][0])} ${f1(P[0][1])}`;
+      for (let i = 0; i < n; i++) {
+        const p0 = P[(i - 1 + n) % n], p1 = P[i], p2 = P[(i + 1) % n], p3 = P[(i + 2) % n];
+        d += `C${f1(p1[0] + (p2[0] - p0[0]) / 6)} ${f1(p1[1] + (p2[1] - p0[1]) / 6)} ${f1(p2[0] - (p3[0] - p1[0]) / 6)} ${f1(p2[1] - (p3[1] - p1[1]) / 6)} ${f1(p2[0])} ${f1(p2[1])}`;
+      }
+      const ell = (u, v, rx, ry, rot = 0) => `<ellipse cx="${f1(X(u))}" cy="${f1(Y(v))}" rx="${f1(rx * h)}" ry="${f1(ry * h)}" transform="rotate(${rot} ${f1(X(u))} ${f1(Y(v))})"/>`;
+      const head = (attrs) => `<ellipse cx="${f1(X(0))}" cy="${f1(Y(0.066))}" rx="${f1(0.058 * h)}" ry="${f1(0.07 * h)}" ${attrs}/>`;
+      let m = `<path d="${d}Z" fill="none" stroke="var(--context)" stroke-width="3"/>${head(`fill="none" stroke="var(--context)" stroke-width="3"`)}`;
+      m += `<path d="${d}Z" fill="var(--wash)"/>${head(`fill="var(--wash)"`)}`;
+      m += `<g fill="var(--slate-200)" opacity=".7">${[
+        ell(0, 0.058, 0.042, 0.046), ell(-0.077, 0.33, 0.056, 0.088, 8), ell(0.077, 0.33, 0.056, 0.088, -8), ell(0.028, 0.378, 0.034, 0.028, -20),
+        ell(-0.058, 0.468, 0.076, 0.034, -10), ell(0.062, 0.468, 0.038, 0.028, 15), ell(-0.072, 0.548, 0.021, 0.034), ell(0.072, 0.548, 0.021, 0.034),
+        ell(0, 0.628, 0.105, 0.058), ell(0, 0.728, 0.032, 0.022),
+      ].join("")}</g>`;
+      const it = ga.raw(m, { at: o.at, anim: "fade", t: 0.5 });
+      Object.assign(it, { kind: "icon", name: "body", lint: o.lint ?? false });
+      it.site = (name) => { const s = SITES[name]; if (!s) throw new Error(`unknown site: ${name}`); return { x: X(s[0]), y: Y(s[1]) }; };
+      it.left = X(-0.2); it.right = X(0.2); it.bottom = Y(0.826);
+      return it;
+    };
+    // Site bubbles (form 22): one circle per site, AREA proportional to n, the count
+    // inside in paper (beside it when the circle is too small to hold it), and the
+    // site's name in a column left or right of the body, joined by a 1px ink-2 leader.
+    // rows: [{site, n, color, label, side: "l" | "r"}]; o.rmax is the radius at o.max.
+    B.bubbles = (body, rows, o = {}) => {
+      const max = o.max || Math.max(...rows.map((r) => r.n)), rmax = o.rmax || 34, gapL = o.labelGap || 22;
+      const R = (n) => rmax * Math.sqrt(n / max);
+      const placed = rows.map((r) => ({ ...r, ...body.site(r.site), r: R(r.n) })).sort((a, b) => b.r - a.r);
+      let s = "";
+      for (const p of placed) s += `<circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${f1(p.r + 1)}" fill="var(--paper)"/><circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${f1(p.r)}" fill="${p.color || "var(--ink-2)"}"/>`;
+      ga.raw(s, { at: o.at, anim: "pop", t: 0.5 });
+      for (const p of placed) if (p.r >= 8) ga.raw(`<text x="${f1(p.x)}" y="${f1(p.y + 4.5)}" font-size="${p.r >= 14 ? 13 : 11}" text-anchor="middle" class="t-tick" style="fill:${p.textColor || "var(--paper)"} !important">${p.n}</text>`, { at: o.at, anim: "fade" });
+      // name columns: ordered by height, pushed apart to one line pitch
+      const pitch = o.pitch || 20, t = o.at === undefined ? undefined : o.at + 0.3;
+      for (const side of ["l", "r"]) {
+        const col = placed.filter((p) => (p.side || (p.x < body.site("brain").x ? "l" : "r")) === side).sort((a, b) => a.y - b.y);
+        let yPrev = -Infinity;
+        const lx = side === "l" ? body.left - gapL : body.right + gapL;
+        let lead = "";
+        for (const p of col) {
+          const ly = Math.max(p.y, yPrev + pitch);
+          yPrev = ly;
+          const str = (p.label || p.site) + (p.r < 8 ? ` (${p.n})` : "");
+          ga.text(str, { x: lx, y: ly - 8, role: "tick", size: 13, anchor: side === "l" ? "end" : "start", color: "var(--ink-2)", at: t, anim: "fade" });
+          const ang = Math.atan2(ly - p.y, lx - p.x), ex = p.x + (p.r + 1) * Math.cos(ang), ey = p.y + (p.r + 1) * Math.sin(ang);
+          lead += `<path d="M${f1(ex)} ${f1(ey)}L${f1(lx + (side === "l" ? 4 : -4))} ${f1(ly)}" stroke="var(--ink-2)" stroke-width="1" fill="none"/>`;
+        }
+        ga.raw(lead, { at: t, anim: "fade" });
+      }
+    };
+    // Site dial (form 22, regions): a disc on the body for a region of sites, its
+    // outer ring (4px) in the region's colour, a wedge for one share filled
+    // clockwise from 12 o'clock in the share's colour, and the two counts inside.
+    // { x, y, r, share: [k, n], ring, color, at }
+    B.dial = (o) => {
+      const { x, y, r } = o, [k, n] = o.share, p = k / n, a = 2 * Math.PI * p;
+      const ex = x + r * Math.sin(a), ey = y - r * Math.cos(a);
+      let s = `<circle cx="${x}" cy="${y}" r="${r + 3}" fill="none" stroke="${o.ring}" stroke-width="4"/><circle cx="${x}" cy="${y}" r="${r}" fill="var(--paper)"/>`;
+      s += `<path d="M${x} ${y}V${y - r}A${r} ${r} 0 ${p > 0.5 ? 1 : 0} 1 ${f1(ex)} ${f1(ey)}Z" fill="${o.color}"/>`;
+      const mid = (f) => [x + r * 0.55 * Math.sin(2 * Math.PI * f), y - r * 0.55 * Math.cos(2 * Math.PI * f) + 4.5];
+      const [ax, ay] = mid(p / 2), [bx, by] = mid(0.5 + p / 2);
+      s += `<text x="${f1(ax)}" y="${f1(ay)}" font-size="12" text-anchor="middle" class="t-tick" style="fill:var(--paper) !important">${k}</text><text x="${f1(bx)}" y="${f1(by)}" font-size="12" text-anchor="middle" class="t-tick" style="fill:var(--ink) !important">${n - k}</text>`;
+      return ga.raw(s, { at: o.at, anim: "pop", t: 0.5 });
+    };
+
     // ---- note: a muted callout that explains a mark, with a thin leader from the mark
     B.note = (str, o) => {
       const t = ga.text(str, { x: o.x, y: o.y, w: o.w, role: "note", anchor: o.anchor || "middle", at: o.at });
