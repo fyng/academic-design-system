@@ -76,8 +76,6 @@ See [`CLAUDE.md`](CLAUDE.md) for the same rules written for coding agents.
 ## Sources
 
 The system draws on these works. Thanks to their authors.
-[`ACKNOWLEDGEMENTS.md`](ACKNOWLEDGEMENTS.md) lists the figure behind each of chart
-forms 18–26, the glyph grammar and the variants of forms 07 and 08.
 
 **Charts**
 
@@ -95,10 +93,6 @@ forms 18–26, the glyph grammar and the variants of forms 07 and 08.
     *Nature Biotechnology* 2020, Fig. 2a; the atlas: [A multimodal and temporal
     foundation model for virtual patient representations at healthcare system
     scale](https://arxiv.org/abs/2604.18570), arXiv 2026, Fig. 2a–c
-- The glyph grammar, chart forms 22–26 (body map, route map, clone tree, swimmer
-  plot, unit columns), the categorical heatmap (07) and the named part (08): Hessey, Bunkum,
-  Huebner et al., [Evolutionary characterization of lung cancer
-  metastasis](https://doi.org/10.1038/s41586-026-10428-4), *Nature* 2026, Figs 1–5
 
 **Journal figure guidelines** (`formats/publication/README.md`)
 
@@ -117,10 +111,6 @@ forms 18–26, the glyph grammar and the variants of forms 07 and 08.
 - [IBM Plex](https://github.com/IBM/plex) (SIL Open Font License) and
   [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif) (SIL Open Font License)
 - [Health Icons](https://healthicons.org) (MIT), via `@iconify-json/healthicons`
-- The body map's anatomy: the male anatomogram from [Expression Atlas](https://www.ebi.ac.uk/gxa/),
-  EMBL-EBI ([`@ebi-gene-expression-group/anatomogram`](https://www.npmjs.com/package/@ebi-gene-expression-group/anatomogram)
-  2.4.0), CC BY 4.0; curated to an outline, a silhouette and twelve organs in
-  `formats/abstract/kit/anatomy.js`
 - Björn Ottosson, [OKLab](https://bottosson.github.io/posts/oklab/): the space the hue ramps are built in
 - Machado, Oliveira and Fernandes, [a physiologically based model for simulating colour
   vision deficiency](https://doi.org/10.1109/TVCG.2009.113), IEEE TVCG 2009: the CVD check

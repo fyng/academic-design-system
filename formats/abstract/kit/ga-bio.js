@@ -1,7 +1,6 @@
 // Explanatory layer for the graphical abstract kit (see core/illustration.md).
 //
 //   const B = GA.bio(ga);
-//   B.body({ cx, y, h });  B.bubbles(body, rows);  B.dial({...})   // needs kit/anatomy.js
 //   B.cell({ cx, cy, r: 18, k: 1 });                 // nucleus + cytoplasm glyph, family colour k
 //   const t = B.tissue({ cx, cy, w, h });            // tissue silhouette + spot lattice
 //   B.spots(t, { at });  B.dials(t, (s) => p, { k, at })
@@ -251,82 +250,6 @@
     B.plate = (o) => {
       ga.raw(`<rect x="${o.x0}" y="${o.y0}" width="${o.x1 - o.x0}" height="${o.y1 - o.y0}" rx="4" fill="none" stroke="var(--ink-2)" stroke-width="1.5"/>`, { at: o.at, anim: "fade", t: 0.5 });
       if (o.label) B.math(o.label, { x: o.x0 + 8, y: o.y0 + 6, size: 14, color: "var(--ink-2)", at: o.at });
-    };
-
-    // ---- body map: a neutral anterior torso with named sites ------------------------
-    // The anatomy is the Expression Atlas anatomogram (kit/anatomy.js, CC BY 4.0),
-    // cropped from the head to the upper thighs. Drawn like tissue: wash silhouette,
-    // context outline, organs in rule, so colour stays free for the findings placed
-    // on it. The patient's right is the viewer's left. { cx, y (top of the crop),
-    // h (the crop's height), at }. body.site(name) returns canvas {x, y}; SITES
-    // lists the names. Needs kit/anatomy.js loaded before this file.
-    const CROP = [22, 0, 62, 104]; // x, y, w, h in anatomogram units
-    const SITES = {
-      brain: [53, 8], thyroid: [53, 25], "lymph node": [53, 36.5], "lung R": [45.5, 45], "lung L": [60.5, 45],
-      pleura: [66.5, 51], cardiac: [53.5, 47.5], bone: [31, 41], breast: [64, 38], liver: [46, 62],
-      gastric: [56, 63.5], spleen: [65, 62.5], adrenal: [60.5, 56], kidney: [61.5, 66.5], "small bowel": [53, 80],
-      "large bowel": [63.5, 82], peritoneum: [43, 81], bladder: [53, 90.5], "soft tissue": [66, 98], subcutaneous: [37.5, 74],
-    };
-    B.SITES = Object.keys(SITES);
-    B.body = (o) => {
-      const A = window.GA_ANATOMY, [cx0, cy0, cw, chh] = CROP, k = o.h / chh;
-      const X = (u) => o.cx + (u - (cx0 + cw / 2)) * k, Y = (v) => o.y + (v - cy0) * k;
-      const id = `body-${Math.round(o.cx)}-${Math.round(o.y)}`;
-      const organs = Object.values(A.organs).join("");
-      const m = `<defs><clipPath id="${id}"><rect x="${cx0}" y="${cy0}" width="${cw}" height="${chh}"/></clipPath></defs>` +
-        `<g transform="translate(${f1(X(0))} ${f1(Y(0))}) scale(${k.toFixed(4)})" clip-path="url(#${id})">` +
-        `<g fill="var(--wash)">${A.silhouette}</g>` +
-        `<g fill="var(--rule)" stroke="var(--wash)" stroke-width="${(1.2 / k).toFixed(3)}" stroke-linejoin="round">${organs}</g>` +
-        `<g fill="var(--context)">${A.outline}</g></g>`;
-      const it = ga.raw(m, { at: o.at, anim: "fade", t: 0.5 });
-      Object.assign(it, { kind: "icon", name: "body", lint: o.lint ?? false });
-      it.site = (name) => { const s = SITES[name]; if (!s) throw new Error(`unknown site: ${name}`); return { x: X(s[0]), y: Y(s[1]) }; };
-      it.left = X(cx0); it.right = X(cx0 + cw); it.bottom = Y(cy0 + chh); it.mid = X(53);
-      return it;
-    };
-    // Site bubbles (form 22): one circle per site, AREA proportional to n, the count
-    // inside in paper (beside it when the circle is too small to hold it), and the
-    // site's name in a column left or right of the body, joined by a 1px ink-2 leader.
-    // rows: [{site, n, color, label, side: "l" | "r"}]; o.rmax is the radius at o.max.
-    B.bubbles = (body, rows, o = {}) => {
-      const max = o.max || Math.max(...rows.map((r) => r.n)), rmax = o.rmax || 34, gapL = o.labelGap || 22;
-      const R = (n) => rmax * Math.sqrt(n / max);
-      const placed = rows.map((r) => ({ ...r, ...body.site(r.site), r: R(r.n) })).sort((a, b) => b.r - a.r);
-      let s = "";
-      for (const p of placed) s += `<circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${f1(p.r + 1)}" fill="var(--paper)"/><circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="${f1(p.r)}" fill="${p.color || "var(--ink-2)"}"/>`;
-      ga.raw(s, { at: o.at, anim: "pop", t: 0.5 });
-      for (const p of placed) if (p.r >= 8) ga.raw(`<text x="${f1(p.x)}" y="${f1(p.y + 4.5)}" font-size="${p.r >= 14 ? 13 : 11}" text-anchor="middle" class="t-tick" style="fill:${p.textColor || "var(--paper)"} !important">${p.n}</text>`, { at: o.at, anim: "fade" });
-      // name columns: ordered by height, pushed apart to one line pitch
-      const pitch = o.pitch || 20, t = o.at === undefined ? undefined : o.at + 0.3;
-      for (const side of ["l", "r"]) {
-        const col = placed.filter((p) => (p.side || (p.x < body.mid ? "l" : "r")) === side).sort((a, b) => a.y - b.y);
-        let yPrev = -Infinity;
-        const lx = side === "l" ? body.left - gapL : body.right + gapL;
-        let lead = "";
-        for (const p of col) {
-          const ly = Math.max(p.y, yPrev + pitch);
-          yPrev = ly;
-          const str = (p.label || p.site) + (p.r < 8 ? ` (${p.n})` : "");
-          ga.text(str, { x: lx, y: ly - 8, role: "tick", size: 13, anchor: side === "l" ? "end" : "start", color: "var(--ink-2)", at: t, anim: "fade" });
-          const ang = Math.atan2(ly - p.y, lx - p.x), ex = p.x + (p.r + 1) * Math.cos(ang), ey = p.y + (p.r + 1) * Math.sin(ang);
-          lead += `<path d="M${f1(ex)} ${f1(ey)}L${f1(lx + (side === "l" ? 4 : -4))} ${f1(ly)}" stroke="var(--ink-2)" stroke-width="1" fill="none"/>`;
-        }
-        ga.raw(lead, { at: t, anim: "fade" });
-      }
-    };
-    // Site dial (form 22, regions): a disc on the body for a region of sites, its
-    // outer ring (4px) in the region's colour, a wedge for one share filled
-    // clockwise from 12 o'clock in the share's colour, and the two counts inside.
-    // { x, y, r, share: [k, n], ring, color, at }
-    B.dial = (o) => {
-      const { x, y, r } = o, [k, n] = o.share, p = k / n, a = 2 * Math.PI * p;
-      const ex = x + r * Math.sin(a), ey = y - r * Math.cos(a);
-      let s = `<circle cx="${x}" cy="${y}" r="${r + 3}" fill="none" stroke="${o.ring}" stroke-width="4"/><circle cx="${x}" cy="${y}" r="${r}" fill="var(--paper)"/>`;
-      s += `<path d="M${x} ${y}V${y - r}A${r} ${r} 0 ${p > 0.5 ? 1 : 0} 1 ${f1(ex)} ${f1(ey)}Z" fill="${o.color}"/>`;
-      const mid = (f) => [x + r * 0.55 * Math.sin(2 * Math.PI * f), y - r * 0.55 * Math.cos(2 * Math.PI * f) + 4.5];
-      const [ax, ay] = mid(p / 2), [bx, by] = mid(0.5 + p / 2);
-      s += `<text x="${f1(ax)}" y="${f1(ay)}" font-size="12" text-anchor="middle" class="t-tick" style="fill:var(--paper) !important">${k}</text><text x="${f1(bx)}" y="${f1(by)}" font-size="12" text-anchor="middle" class="t-tick" style="fill:var(--ink) !important">${n - k}</text>`;
-      return ga.raw(s, { at: o.at, anim: "pop", t: 0.5 });
     };
 
     // ---- note: a muted callout that explains a mark, with a thin leader from the mark

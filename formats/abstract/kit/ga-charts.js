@@ -383,11 +383,10 @@
     }, m.x);
 
     // Text reading upward, its start at canvas (x, y): column names above a matrix.
-    // m.hang: true ends the text at (x, y) instead, so it hangs below a plot.
     // Rotated text is not linted, so keep it clear of other marks.
     ch.upText = (str, x, y, m = {}) => {
       const size = m.size || 13, xb = x + size * 0.36; // centre the cap height on x
-      return ga.raw(`<text x="${xb}" y="${y}" transform="rotate(-90 ${xb} ${y})" font-size="${size}"${m.hang ? ` text-anchor="end"` : ""} class="t-${m.role || "tick"}"${m.color ? ` style="fill:${m.color} !important"` : ""}>${str}</text>`, { at: m.at ?? at, anim: "fade" });
+      return ga.raw(`<text x="${xb}" y="${y}" transform="rotate(-90 ${xb} ${y})" font-size="${size}" class="t-${m.role || "tick"}"${m.color ? ` style="fill:${m.color} !important"` : ""}>${str}</text>`, { at: m.at ?? at, anim: "fade" });
     };
 
     // Count matrix (18): counts in cells, each cell shaded by a binned share.
@@ -496,114 +495,6 @@
       });
       ga.raw(s, { at, anim: "fade" });
     };
-    // ---- records (07, 25, 26) -------------------------------------------------------------
-    // Swimmer plot (25): one row per patient on a shared time axis. rows: [{label,
-    // end, dead, relapse, strips: [colour], bars: [{t0, t1, color}], events: [{t, kind,
-    // ...glyph}], samples: [colour]}]. The follow-up line runs from 0 to `end`: 1.5px
-    // rule, then 2.5px ink-2 from `relapse` on, so the disease state reads off the
-    // line. Treatment bars (8px) sit on it; event glyphs over them; a 12px ink tick
-    // ends a row at death.
-    // `samples` are dots after the row's end, two rows deep, in the site's colour.
-    // strips are annotation squares left of the plot at m.stripX (canvas x per strip),
-    // named upward above them (m.stripLabels), with the patient's label left of them.
-    ch.swimmer = (rows, m = {}) => {
-      const pitch = H / rows.length, gs = m.size || 11, t = m.at ?? mt;
-      let line = "", bars = "", ev = "", smp = "", str = "";
-      rows.forEach((r, i) => {
-        const cy = Y0 + (i + 0.5) * pitch;
-        line += `<path d="M${sx(0)} ${cy}H${sx(r.end)}" stroke="var(--rule)" stroke-width="1.5"/>`;
-        if (r.relapse !== undefined) line += `<path d="M${sx(r.relapse)} ${cy}H${sx(r.end)}" stroke="var(--ink-2)" stroke-width="2.5"/>`;
-        for (const b of r.bars || []) bars += `<rect x="${sx(b.t0)}" y="${cy - 4}" width="${Math.max(2, sx(b.t1) - sx(b.t0))}" height="8" fill="${b.color}"/>`;
-        for (const e of r.events || []) ev += GA.glyph(e.kind, sx(e.t), cy, { size: gs, ...e });
-        if (r.dead) ev += GA.glyph("tick", sx(r.end), cy, { size: 12 });
-        const sr = m.sampleR || 4, sp = 2 * sr + 1.5;
-        (r.samples || []).forEach((c, k) => {
-          const col = Math.floor(k / 2), row = k % 2;
-          smp += `<circle cx="${sx(r.end) + 9 + sr + col * sp}" cy="${cy + (row ? sp / 2 : -sp / 2)}" r="${sr}" fill="${c}" stroke="var(--paper)" stroke-width="1"/>`;
-        });
-        (r.strips || []).forEach((c, k) => { str += `<rect x="${m.stripX[k]}" y="${cy - pitch / 2 + 1.5}" width="${pitch - 3}" height="${pitch - 3}" fill="${c}"/>`; });
-        ga.text(r.label, { x: (m.stripX ? m.stripX[0] : X0) - 8, y: cy - 7.5, role: "tick", size: 12, anchor: "end", at, anim: "fade" });
-      });
-      ga.raw(str, { at, anim: "fade" });
-      ga.raw(line, { at: t, anim: "fade" });
-      ga.raw(bars, { at: t === undefined ? undefined : t + 0.2, anim: "grow", t: 0.7 });
-      ga.raw(ev + smp, { at: t === undefined ? undefined : t + 0.5, anim: "fade", t: 0.5 });
-      (m.stripLabels || []).forEach((l, k) => ch.upText(l, m.stripX[k] + (pitch - 3) / 2, Y0 - 6, { size: 12 }));
-    };
-    // Unit columns (26): one dot per item, stacked into a column per unit (a patient),
-    // coloured by the item's state, states in one fixed order from the baseline up.
-    // cols: [{label, parts: [count per state]}], colors: fill per state; a state whose
-    // colour is "hollow" is paper with the ring alone. Dots are one unit of y apart,
-    // so the y axis counts items; each has a 1px ink-2 ring so light states show.
-    ch.units = (cols, colors, m = {}) => {
-      const pitch = Math.abs(sy(1) - sy(0)), r = Math.min(pitch / 2 - 0.6, m.r || 6), t = m.at ?? mt;
-      let s = "";
-      cols.forEach((c, j) => {
-        let k = 0;
-        c.parts.forEach((n, st) => {
-          for (let q = 0; q < n; q++, k++) {
-            const hollow = colors[st] === "hollow";
-            s += `<circle cx="${g1(sx(j))}" cy="${g1(sy(k + 0.5))}" r="${g1(r)}" fill="${hollow ? "var(--paper)" : colors[st]}" stroke="var(--ink-2)" stroke-width="1"/>`;
-          }
-        });
-        ch.upText(c.label, sx(j), Y1 + 8, { size: 12, hang: true });
-      });
-      ga.raw(s, { at: t, anim: "rise", t: 0.8 });
-    };
-    // Categorical heatmap, the oncoprint (07): alterations per gene (rows) and
-    // patient (columns). Every cell is a wash square; an altered cell is filled in
-    // its class's colour, inset 1px.
-    // cell: null | {cls, mark} — mark: true adds a small paper ring with a 1px ink
-    // edge, the glyph for a second event in the same gene (a biallelic hit).
-    // m.classColors[cls]; m.groups [{label, n}] split rows (10px gap), named upward
-    // at m.groupX; m.totals: true adds a stacked bar of each row's classes to the
-    // right, m.totalW px for m.totalMax; m.annot: [{label, colors}] strips under the grid.
-    ch.oncoprint = (matrix, m = {}) => {
-      const nr = matrix.length, nc = matrix[0].length, GAP = 10, groups = m.groups || [{ n: nr }];
-      const rh = (H - GAP * (groups.length - 1)) / nr, cw = W / nc, ry = [];
-      groups.forEach((g, k) => { for (let q = 0; q < g.n; q++) ry.push(Y0 + ry.length * rh + k * GAP); });
-      const cls = m.classes || Object.keys(m.classColors);
-      let bg = "", fg = "", mk = "", tot = "";
-      matrix.forEach((row, i) => {
-        const counts = cls.map(() => 0);
-        row.forEach((c, j) => {
-          const x = X0 + j * cw, y = ry[i];
-          bg += `<rect x="${g1(x + 1)}" y="${g1(y + 1)}" width="${g1(cw - 2)}" height="${g1(rh - 2)}" fill="var(--wash)"/>`;
-          if (!c) return;
-          counts[cls.indexOf(c.cls)]++;
-          fg += `<rect x="${g1(x + 1)}" y="${g1(y + 1)}" width="${g1(cw - 2)}" height="${g1(rh - 2)}" fill="${m.classColors[c.cls]}"/>`;
-          if (c.mark) mk += `<circle cx="${g1(x + cw / 2)}" cy="${g1(y + rh / 2)}" r="${g1(Math.min(cw, rh) * 0.22)}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1"/>`;
-        });
-        if (m.totals) {
-          let acc = 0;
-          const u = (m.totalW || 60) / (m.totalMax || nc), tx = X1 + 10;
-          counts.forEach((n, k) => { if (n) tot += `<rect x="${g1(tx + acc * u)}" y="${g1(ry[i] + 2)}" width="${g1(n * u - (acc + n < counts.reduce((a, b) => a + b, 0) ? 1 : 0))}" height="${g1(rh - 4)}" fill="${m.classColors[cls[k]]}"/>`; acc += n; });
-        }
-      });
-      ga.raw(bg, { at, anim: "fade" });
-      ga.raw(fg + mk, { at: m.at ?? mt, anim: "fade", t: 0.8 });
-      if (m.totals) {
-        const tx = X1 + 10, tw = m.totalW || 60;
-        ga.raw(`${tot}<path d="M${tx} ${Y0 - 4}H${tx + tw}" stroke="var(--ink-2)" stroke-width="1.5"/><path d="M${tx} ${Y0 - 4}v-5M${tx + tw} ${Y0 - 4}v-5" stroke="var(--ink-2)" stroke-width="1.5"/>`, { at: m.at ?? mt, anim: "grow", t: 0.8 });
-        ga.text("0", { x: tx, y: Y0 - 24, role: "tick", size: 11, anchor: "middle", at, anim: "fade" });
-        ga.text(String(m.totalMax || nc), { x: tx + tw, y: Y0 - 24, role: "tick", size: 11, anchor: "middle", at, anim: "fade" });
-      }
-      (m.rowLabels || []).forEach((l, i) => ga.text(`*${l}*`, { x: X0 - 8, y: ry[i] + rh / 2 - 7, role: "tick", size: 11.5, anchor: "end", color: "var(--ink-2)", at, anim: "fade" }));
-      if (m.groups) groups.forEach((g, k) => {
-        const i0 = groups.slice(0, k).reduce((a, b) => a + b.n, 0), ya = ry[i0], yb = ry[i0 + g.n - 1] + rh;
-        ch.upText(g.label, m.groupX ?? X0 - 70, yb, { role: "axis", size: 13 });
-        ga.raw(`<path d="M${(m.groupX ?? X0 - 70) + 10} ${ya + 2}V${yb - 2}" stroke="var(--rule)" stroke-width="1.5"/>`, { at, anim: "fade" });
-      });
-      let ay = ry[nr - 1] + rh + 6;
-      for (const a of m.annot || []) {
-        ga.raw(a.colors.map((c, j) => `<rect x="${g1(X0 + j * cw + 1)}" y="${ay}" width="${g1(cw - 2)}" height="10" fill="${c}"/>`).join(""), { at, anim: "fade" });
-        ga.text(a.label, { x: X1 + 10, y: ay - 2, role: "tick", size: 11.5, at, anim: "fade" });
-        ay += 14;
-      }
-      (m.colLabels || []).forEach((l, j) => ch.upText(l, X0 + (j + 0.5) * cw, ay + 4, { size: 11, hang: true }));
-      return { rowY: ry, rh, cw, bottom: ay };
-    };
-
     // ---- embeddings (20) ----------------------------------------------------------
     // Build with axes: "" and no ticks: an embedding's coordinates mean nothing.
     // Point cloud. pts: [[x, y, k]]; k indexes `colors`, and a k of null or -1 (or a
@@ -763,96 +654,6 @@
       if (m.hi) ga.text(m.hi, { x: m.x + w, y: yb, role: "tick", size: 12, anchor: "end", at, anim: "fade" });
     };
     return R;
-  };
-
-  // ---- glyphs (charts.md, *Glyphs*) -------------------------------------------------
-  // One mark for one kind of event or state, the same everywhere in a figure.
-  // Shape says the kind, fill the class, a ring the role, and a digit or letter
-  // inside a count or a role. GA.glyph returns SVG markup centred on (x, y).
-  //   kind: "circle" (a sample or measurement) | "diamond" (a procedure) |
-  //         "square" (a swatch in keys and strips) | "tick" (death, an end)
-  //   o: size (px, the glyph's side; default 11), fill, ring (colour), ringW,
-  //      text (a digit or letter inside), textColor
-  const g1 = (v) => +v.toFixed(1);
-  GA.glyph = (kind, x, y, o = {}) => {
-    const s = o.size || 11, h = s / 2, fill = o.fill || "var(--ink)";
-    const edge = o.ring ? ` stroke="${o.ring}" stroke-width="${o.ringW || 1.5}"` : ` stroke="var(--paper)" stroke-width="1"`;
-    let m;
-    if (kind === "circle") m = `<circle cx="${g1(x)}" cy="${g1(y)}" r="${g1(h)}" fill="${fill}"${edge}/>`;
-    else if (kind === "square") m = `<rect x="${g1(x - h)}" y="${g1(y - h)}" width="${s}" height="${s}" fill="${fill}"${edge}/>`;
-    else if (kind === "diamond") { const k = h * 1.25; m = `<path d="M${g1(x)} ${g1(y - k)}L${g1(x + k)} ${g1(y)}L${g1(x)} ${g1(y + k)}L${g1(x - k)} ${g1(y)}Z" fill="${fill}"${edge}/>`; }
-    else if (kind === "tick") m = `<path d="M${g1(x)} ${g1(y - h)}V${g1(y + h)}" stroke="${o.fill || "var(--ink)"}" stroke-width="1.5"/>`;
-    if (o.text !== undefined) m += `<text x="${g1(x)}" y="${g1(y + s * 0.26)}" font-size="${g1(s * 0.72)}" font-weight="500" text-anchor="middle" style="fill:${o.textColor || "var(--paper)"}">${o.text}</text>`;
-    return m;
-  };
-  // Glyph key: one row per glyph (drawn as it is used) and its name, at canvas
-  // (x, y), `pitch` px apart, with an optional title above. rows: [{kind, label, ...glyph options}];
-  // a row with bar: colour draws a short bar instead (treatment intervals), and one
-  // with line: {color, width} a short line (a state of the follow-up line).
-  GA.glyphKey = (ga, rows, o) => {
-    const pitch = o.pitch || 20, at = o.at;
-    let y = o.y, s = "";
-    if (o.title) { ga.text(o.title, { x: o.x, y, role: "tick", color: "var(--muted)", at, anim: "fade" }); y += pitch; }
-    for (const r of rows) {
-      s += r.bar ? `<rect x="${o.x}" y="${y + 4}" width="16" height="8" fill="${r.bar}"/>`
-        : r.line ? `<path d="M${o.x} ${y + 8}h16" stroke="${r.line.color}" stroke-width="${r.line.width}"/>`
-        : GA.glyph(r.kind, o.x + 8, y + 8, r);
-      ga.text(r.label, { x: o.x + 24, y, role: "tick", size: 12, at, anim: "fade" });
-      y += pitch;
-    }
-    ga.raw(s, { at, anim: "fade" });
-    return y;
-  };
-
-  // Clone tree (form 24): a phylogeny of subclones, root on a short stem at the
-  // top, straight 1.5px ink-2 edges, nodes as glyphs. Leaves take equal slots
-  // across w; a parent sits over the middle of its children; depth runs down h.
-  // node: {id, fill, role: "P" | "M" | undefined, children: [...]}. A "P" node
-  // (seeds from the primary) has a 2.5px ink ring and a P; an "M" node (seeds from
-  // a metastasis) a 2.5px muted ring and an M. Returns {id: {x, y}}.
-  GA.cloneTree = (ga, o) => {
-    const r = o.r || 8, pos = {};
-    const leaves = [], depthOf = [];
-    const walk = (n, d) => { depthOf.push(d); if (!n.children || !n.children.length) leaves.push(n); else n.children.forEach((c) => walk(c, d + 1)); };
-    walk(o.root, 0);
-    const maxD = Math.max(...depthOf), dx = o.w / Math.max(1, leaves.length - 1), dy = o.h / Math.max(1, maxD);
-    let li = 0;
-    const place = (n, d) => {
-      if (!n.children || !n.children.length) pos[n.id] = { x: o.x + (leaves.length === 1 ? o.w / 2 : li++ * dx), y: o.y + d * dy };
-      else { n.children.forEach((c) => place(c, d + 1)); const xs = n.children.map((c) => pos[c.id].x); pos[n.id] = { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: o.y + d * dy }; }
-    };
-    place(o.root, 0);
-    let edges = `<path d="M${pos[o.root.id].x} ${o.y - 22}V${o.y}" stroke="var(--ink-2)" stroke-width="1.5"/>`, nodes = "";
-    const draw = (n) => {
-      for (const c of n.children || []) { edges += `<path d="M${g1(pos[n.id].x)} ${g1(pos[n.id].y)}L${g1(pos[c.id].x)} ${g1(pos[c.id].y)}" stroke="var(--ink-2)" stroke-width="1.5"/>`; draw(c); }
-      const p = pos[n.id];
-      nodes += n.role
-        ? GA.glyph("circle", p.x, p.y, { size: 2 * r, fill: n.fill, ring: n.role === "P" ? "var(--ink)" : "var(--muted)", ringW: 2.5, text: n.role, textColor: n.textColor || "var(--paper)" })
-        : GA.glyph("circle", p.x, p.y, { size: 2 * r, fill: n.fill });
-    };
-    draw(o.root);
-    ga.raw(edges, { at: o.at, anim: "fade", t: 0.5 });
-    ga.raw(nodes, { at: o.at === undefined ? undefined : o.at + 0.2, anim: "fade", t: 0.5 });
-    return pos;
-  };
-
-  // Routes (form 23): curved arrows between points on a body map, from a source
-  // site to the site it seeded, in the seeding clone's colour. Each bows to the
-  // left of its direction of travel by `bow` × its length, and stops `gap` px short
-  // of the target so the target's dot stays whole. routes: [{from: {x, y}, to: {x, y}, color}]
-  GA.routes = (ga, routes, o = {}) => {
-    const bow = o.bow ?? 0.25, gap = o.gap ?? 8, L = 7;
-    let s = "";
-    for (const rt of routes) {
-      const { from: a, to: b } = rt, dx = b.x - a.x, dy = b.y - a.y;
-      const cx = (a.x + b.x) / 2 + dy * bow, cy = (a.y + b.y) / 2 - dx * bow;
-      // stop short along the curve's end tangent (control point -> target)
-      const tx = b.x - cx, ty = b.y - cy, tl = Math.hypot(tx, ty), ex = b.x - (tx / tl) * gap, ey = b.y - (ty / tl) * gap;
-      const ang = Math.atan2(ey - cy, ex - cx), hx = (d) => ex + L * Math.cos(ang + d), hy = (d) => ey + L * Math.sin(ang + d);
-      s += `<path d="M${g1(a.x)} ${g1(a.y)}Q${g1(cx)} ${g1(cy)} ${g1(ex)} ${g1(ey)}" fill="none" stroke="${rt.color || "var(--prussian)"}" stroke-width="2" stroke-linecap="round"/>`;
-      s += `<path d="M${g1(hx(Math.PI - 0.5))} ${g1(hy(Math.PI - 0.5))}L${g1(ex)} ${g1(ey)}L${g1(hx(Math.PI + 0.5))} ${g1(hy(Math.PI + 0.5))}" fill="none" stroke="${rt.color || "var(--prussian)"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-    }
-    return ga.raw(s, { at: o.at, anim: "fade", t: 0.6 });
   };
 
   // Deterministic pseudo-random numbers for schematic data (mulberry32)

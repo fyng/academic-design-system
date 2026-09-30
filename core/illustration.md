@@ -17,14 +17,6 @@ each of these.
 - **Tissue.** A silhouette in neutral wash with a slightly darker core for inner
   anatomy, outlined in `context`. Tissue stays neutral, so colour is kept for the
   cell types measured in it.
-- **Body maps.** An anterior body from the head to the upper thighs: the Expression
-  Atlas anatomogram (CC BY 4.0, vendored in `kit/anatomy.js`), drawn as tissue is:
-  a wash silhouette, a `context` outline, and twelve organs (brain, lungs, heart,
-  liver, stomach, spleen, pancreas, kidneys, adrenals, colon, small intestine,
-  bladder) in `rule`, parted by 1 px wash lines. It carries findings, not
-  colour: site bubbles, dials, routes (`charts.md`, forms 22 and 23). The patient's
-  right is the viewer's left, and the sites have fixed places (`GA.bio`'s
-  `B.SITES`), so a site sits in the same spot in every figure.
 - **Model systems.** Drawn neutral (wash fill, ink-2 outline and nucleus), because the
   comparison, not the system, carries colour. An **organoid** is a ring of cells around
   a lumen; a **cell line** is a monolayer of flattened cells on a dish line;

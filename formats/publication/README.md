@@ -260,12 +260,6 @@ Canvas px from the core docs become these pt values at print size.
 | Embedding point (20) | r 2, no ring | r 0.6 pt, no ring |
 | Magnified inset point (20) | r 3, 1 px paper ring | r 1 pt, 0.25 pt paper ring |
 | Zoom frame and leaders (20) | 1 px | 0.25 pt, ink and ink-2 |
-| Glyph (event, sample, tree node) | 11 px; 13–16 px with a digit or letter | 2.5 mm; 3 mm with a digit or letter (5 pt, 500) |
-| Role ring (clone tree, 24) | 2.5 px | 1 pt |
-| Route arrow (23) | 2 px, open head | 0.75 pt, 1.5 mm head |
-| Treatment bar (swimmer, 25) | 8 px | 1.8 mm |
-| Unit dot (26) | r 6, 1 px ink-2 ring | r 1.3 mm, 0.25 pt ring |
-| Body map (22, 23) | 420–440 px tall, head to upper thighs | 45–70 mm tall; site names 6 pt |
 
 Strokes stay between 0.5 and 1 pt, which every journal accepts (Nature 0.25–1 pt,
 Science from 0.5 pt, Cell Press 0.5–1.5 pt).
