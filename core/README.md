@@ -7,9 +7,9 @@ What every format shares: the principles, the voice, and five elements. The form
 |---|---|---|
 | Colour | [`color.md`](color.md) | Palettes grouped by meaning, and how they were validated |
 | Typography | [`typography.md`](typography.md) | One family (IBM Plex), type roles, numbers and units |
-| Charts | [`charts.md`](charts.md) | Chart grammar and twenty-one forms |
+| Charts | [`charts.md`](charts.md) | Chart grammar, glyphs and twenty-six forms |
 | Icons | [`icons.md`](icons.md) | Health Icons, custom glyphs, when an icon takes colour |
-| Illustration | [`illustration.md`](illustration.md) | Cells, tissue, model systems, zooms, arrows and method boxes |
+| Illustration | [`illustration.md`](illustration.md) | Cells, tissue, body maps, model systems, zooms, arrows and method boxes |
 | Tokens | `tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit the `.mjs`, run `node core/tokens.mjs` |
 | Specimens | `specimen-*.html` → `out/specimen-*.png`; `formats/publication/specimen-*.typ` → `out/specimen-figure.png`, `out/specimen-panel.png`, `out/specimen-marginal.png`, `out/specimen-multitrack-timeline.png` | Reference sheets for colour, scales and charts (drawn with the abstract kit), and the journal figure, panel and composite panel (drawn with Typst) |
 

@@ -8,7 +8,8 @@ arc, its kinds of text, type sizes, motion and the kit that implements them.
 | File | What |
 |---|---|
 | `kit/ga-kit.css`, `kit/ga-kit.js` | Layout, type roles, motion, lint |
-| `kit/ga-bio.js` | Cells, tissue, zooms (`../../core/illustration.md`) |
+| `kit/ga-bio.js` | Cells, tissue, body maps, zooms (`../../core/illustration.md`) |
+| `kit/anatomy.js` | The anatomy the body map draws: a curated Expression Atlas anatomogram (CC BY 4.0). Load it before `ga-bio.js` |
 | `kit/ga-charts.js` | Chart forms (`../../core/charts.md`) |
 | `kit/icons.js` | Icons (`../../core/icons.md`) |
 | `kit/render.cjs` | PNG / MP4 / WebM renderer |
@@ -160,11 +161,17 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `counts`, `upText` | Count matrix with totals and a 100 % bar per row (18); column names reading upward |
 | `dotMatrix`, `sizeKey` | Dot matrix, area for share and colour for magnitude, and its size key (19) |
 | `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud (20) |
-| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20) |
+| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20); a named part of a bar (08) |
 | `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack (21) |
+| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside; keys with glyph, bar and line rows (*Glyphs*) |
+| `GA.bio` → `body`, `bubbles`, `dial` | Body map with site bubbles or region dials (22); needs `kit/anatomy.js` |
+| `GA.routes`, `GA.cloneTree` | Route map (23) and clone tree (24) |
+| `swimmer` | Swimmer plot, the follow-up line carrying relapse (25) |
+| `units` | Unit columns (26) |
+| `oncoprint` | Heatmap with categorical cells, the oncoprint (07) |
 
 `../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html`,
-`-iii.html`, `-iv.html` and `-v.html` use every mark.
+`-iii.html` through `-viii.html` use every mark.
 
 ## Deliverables per figure
 
