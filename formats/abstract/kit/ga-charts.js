@@ -97,8 +97,13 @@
       const d = axis === "x" ? `M${sx(v)} ${Y0}V${Y1}` : axis === "y" ? `M${X0} ${sy(v)}H${X1}` : `M${X0} ${Y1}L${X1} ${Y0}`;
       return ga.raw(`<path d="${d}" stroke="${m.color || "var(--muted)"}" stroke-width="1.5" stroke-dasharray="2 4" stroke-linecap="round" fill="none"/>`, { at: m.at ?? at, anim: "fade" });
     };
-    // Direct label at a data point. dx/dy offset in px; anchor as ga.text
-    ch.label = (str, x, y, m = {}) => ga.text(str, { x: sx(x) + (m.dx || 0), y: sy(y) + (m.dy ?? -9), role: m.role || "cap", anchor: m.anchor || "start", color: m.color, w: m.w, at: m.at ?? (mt === undefined ? undefined : mt + 1.2), anim: "fade" });
+    // Direct label at a data point. dx/dy offset in px; anchor as ga.text.
+    // m.halo draws a 3px paper halo behind the glyphs, for labels set on points.
+    ch.label = (str, x, y, m = {}) => {
+      const it = ga.text(str, { x: sx(x) + (m.dx || 0), y: sy(y) + (m.dy ?? -9), role: m.role || "cap", size: m.size, anchor: m.anchor || "start", color: m.color, w: m.w, at: m.at ?? (mt === undefined ? undefined : mt + 1.2), anim: "fade" });
+      if (m.halo) it.node.querySelectorAll("text").forEach((t) => t.setAttribute("style", `${t.getAttribute("style") || ""};stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;paint-order:stroke`));
+      return it;
+    };
 
     // Horizontal bars for named categories. rows: [{label, v, color}]
     // Bars are <= 22px, square-cornered, and grow from the baseline.
@@ -371,12 +376,284 @@
       });
     };
     // Paired-comparison key: a dot and a name per series, in a row at canvas (x, y).
+    // m.square draws square swatches instead, for bars and segments.
     ch.dotKey = (rows, m) => rows.reduce((kx, r) => {
-      ga.raw(`<circle cx="${kx + 6}" cy="${m.y + 8}" r="5.5" fill="${r.color}"/>`, { at: m.at ?? at, anim: "fade" });
+      ga.raw(m.square ? `<rect x="${kx + 1}" y="${m.y + 3}" width="10" height="10" fill="${r.color}"/>` : `<circle cx="${kx + 6}" cy="${m.y + 8}" r="5.5" fill="${r.color}"/>`, { at: m.at ?? at, anim: "fade" });
       return ga.text(r.label, { x: kx + 18, y: m.y, role: "tick", at: m.at ?? at, anim: "fade" }).r + 18;
     }, m.x);
+
+    // Text reading upward, its start at canvas (x, y): column names above a matrix.
+    // Rotated text is not linted, so keep it clear of other marks.
+    ch.upText = (str, x, y, m = {}) => {
+      const size = m.size || 13, xb = x + size * 0.36; // centre the cap height on x
+      return ga.raw(`<text x="${xb}" y="${y}" transform="rotate(-90 ${xb} ${y})" font-size="${size}" class="t-${m.role || "tick"}"${m.color ? ` style="fill:${m.color} !important"` : ""}>${str}</text>`, { at: m.at ?? at, anim: "fade" });
+    };
+
+    // Count matrix (18): counts in cells, each cell shaded by a binned share.
+    // matrix[row][col] counts; 0 or null stays blank. ramp: one colour per bin;
+    // m.bins: bin edges, one more than the ramp (0, .05, .1, .2, .4, 1).
+    // m.shade(v, i, j) gives the share to bin (default v itself). The count is
+    // printed in every filled cell, ink on light steps and paper from step
+    // m.dark on. m.rowLabels left of the grid; m.colLabels read upward above it.
+    // m.totals prints a column of row totals right of the grid; m.parts with
+    // m.partColors adds a 100 % bar per row after it (m.partW px wide).
+    ch.counts = (matrix, ramp, m = {}) => {
+      const nr = matrix.length, nc = matrix[0].length, cw = W / nc, rh = H / nr;
+      const bins = m.bins, dark = m.dark ?? Math.ceil(ramp.length / 2), shade = m.shade || ((v) => v);
+      const bin = (v) => { let k = 0; while (k < ramp.length - 1 && v > bins[k + 1]) k++; return k; };
+      const fs = m.size || 11;
+      let s = "";
+      const nums = [];
+      matrix.forEach((row, i) => row.forEach((v, j) => {
+        if (!v) return;
+        const k = bin(shade(v, i, j));
+        s += `<rect x="${X0 + j * cw + 1}" y="${Y0 + i * rh + 1}" width="${cw - 2}" height="${rh - 2}" fill="${ramp[k]}"/>`;
+        nums.push({ v, i, j, d: k >= dark });
+      }));
+      ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      const tt = m.at ?? (mt === undefined ? undefined : mt + 0.5);
+      for (const n of nums) ga.text(String(n.v), { x: X0 + (n.j + 0.5) * cw, y: Y0 + (n.i + 0.5) * rh - fs * 0.43, size: fs, role: "tick", anchor: "middle", color: n.d ? "var(--paper)" : "var(--ink)", at: tt, anim: "fade" });
+      (m.rowLabels || []).forEach((l, i) => ga.text(l, { x: X0 - 10, y: Y0 + (i + 0.5) * rh - 8, role: "label", size: 13, anchor: "end", at, anim: "fade" }));
+      (m.colLabels || []).forEach((l, j) => ch.upText(l, X0 + (j + 0.5) * cw, Y0 - 8));
+      if (m.totals) {
+        const tx = X1 + (m.totalsW || 44);
+        if (m.totalsTitle) ga.text(m.totalsTitle, { x: tx, y: Y0 - 22, role: "tick", anchor: "end", color: "var(--muted)", at, anim: "fade" });
+        m.totals.forEach((v, i) => ga.text(String(v), { x: tx, y: Y0 + (i + 0.5) * rh - 7.5, role: "tick", anchor: "end", at, anim: "fade" }));
+      }
+      if (m.parts) {
+        const px = X1 + (m.totals ? (m.totalsW || 44) + 10 : 12), pw = m.partW || 100, th = Math.min(rh - 4, 12);
+        let p = "";
+        m.parts.forEach((parts, i) => {
+          const cy = Y0 + (i + 0.5) * rh, tot = parts.reduce((a, b) => a + b, 0);
+          let acc = 0;
+          parts.forEach((q, k) => {
+            if (!q) return;
+            const xa = px + (acc / tot) * pw, xb = px + ((acc + q) / tot) * pw;
+            p += `<rect x="${xa + (acc ? 1 : 0)}" y="${cy - th / 2}" width="${Math.max(0.5, xb - xa - (acc ? 1 : 0))}" height="${th}" fill="${m.partColors[k]}"/>`;
+            acc += q;
+          });
+        });
+        p += `<path d="M${px} ${Y1 + 2}H${px + pw}" stroke="var(--ink-2)" stroke-width="1.5"/>`;
+        for (const f of [0, 0.5, 1]) p += `<path d="M${px + f * pw} ${Y1 + 2}v5" stroke="var(--ink-2)" stroke-width="1.5"/>`;
+        ga.raw(p, { at: m.at ?? mt, anim: "grow", t: 0.8 });
+        for (const f of [0, 0.5, 1]) ga.text(String(f), { x: px + f * pw, y: Y1 + 11, role: "tick", anchor: "middle", at, anim: "fade" });
+        return { partsX: px, partsW: pw };
+      }
+    };
+
+    // Dot matrix (19): two measures per cell. share[row][col] in [0, 1] sets the
+    // dot's AREA (the largest dot fills the cell less a margin); mag[row][col]
+    // sets its colour on `ramp` over m.domain (m.log for a log scale; values past
+    // the domain take the end colour). Every cell is a wash square, so a share of 0
+    // reads as "measured, absent". m.groups: [{label, n}] splits rows with a 10px
+    // gap and names each group upward at m.groupX. m.n prints each column's n above
+    // the grid; m.notes prints a text column right of the grid (m.notesW wide).
+    ch.dotMatrix = (share, mag, ramp, m = {}) => {
+      const nr = share.length, nc = share[0].length, GAP = 10;
+      const groups = m.groups || [{ n: nr }];
+      const rh = (H - GAP * (groups.length - 1)) / nr, cw = W / nc;
+      const ry = [];
+      groups.forEach((g, k) => { for (let q = 0; q < g.n; q++) ry.push(Y0 + ry.length * rh + k * GAP); });
+      const [lo, hi] = m.domain || [0, 1];
+      const f = (v) => Math.max(0, Math.min(1, m.log ? (Math.log10(v) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) : (v - lo) / (hi - lo)));
+      const rmax = Math.min(cw, rh) / 2 - 1.5;
+      let bg = "", dots = "";
+      share.forEach((row, i) => row.forEach((p, j) => {
+        const x = X0 + j * cw, y = ry[i];
+        bg += `<rect x="${x + 1}" y="${y + 1}" width="${cw - 2}" height="${rh - 2}" fill="var(--wash)"/>`;
+        if (p > 0) dots += `<circle cx="${x + cw / 2}" cy="${y + rh / 2}" r="${(rmax * Math.sqrt(p)).toFixed(2)}" fill="${ramp[Math.round(f(mag[i][j]) * (ramp.length - 1))]}"/>`;
+      }));
+      ga.raw(bg, { at, anim: "fade" });
+      ga.raw(dots, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      (m.rowLabels || []).forEach((l, i) => ga.text(l, { x: X0 - 10, y: ry[i] + rh / 2 - 7.5, role: "label", size: 12, anchor: "end", at, anim: "fade" }));
+      (m.notes || []).forEach((l, i) => l && ga.text(l, { x: X1 + 12, y: ry[i] + rh / 2 - 7.5, role: "tick", size: 12, at, anim: "fade" }));
+      let top = Y0 - 8;
+      if (m.n) {
+        m.n.forEach((v, j) => ga.text(String(v), { x: X0 + (j + 0.5) * cw, y: Y0 - 20, role: "tick", size: 11, anchor: "middle", at, anim: "fade" }));
+        ga.text("n", { x: X0 - 10, y: Y0 - 20, role: "tick", size: 11, anchor: "end", at, anim: "fade" });
+        top = Y0 - 28;
+      }
+      (m.colLabels || []).forEach((l, j) => ch.upText(l, X0 + (j + 0.5) * cw, top, { size: 12 }));
+      if (m.groups) groups.forEach((g, k) => {
+        const i0 = groups.slice(0, k).reduce((a, b) => a + b.n, 0), ya = ry[i0], yb = ry[i0 + g.n - 1] + rh;
+        ch.upText(g.label, m.groupX ?? X0 - 80, yb, { role: "axis", size: 13 });
+        ga.raw(`<path d="M${(m.groupX ?? X0 - 80) + 10} ${ya + 2}V${yb - 2}" stroke="var(--rule)" stroke-width="1.5"/>`, { at, anim: "fade" });
+      });
+      return { rmax, rowY: ry, rh, cw };
+    };
+    // Size key for a dot matrix: dots at the given shares, in context grey, with
+    // the share under each; `title` above. rmax as returned by dotMatrix.
+    ch.sizeKey = (shares, rmax, m) => {
+      let x = m.x, s = "";
+      const cy = m.y + 22 + rmax;
+      if (m.title) ga.text(m.title, { x: m.x, y: m.y, role: "tick", color: "var(--muted)", at, anim: "fade" });
+      shares.forEach((p) => {
+        const r = rmax * Math.sqrt(p);
+        s += `<circle cx="${x + rmax}" cy="${cy}" r="${r.toFixed(2)}" fill="var(--context)"/>`;
+        ga.text(String(p), { x: x + rmax, y: cy + rmax + 5, role: "tick", size: 12, anchor: "middle", at, anim: "fade" });
+        x += 2 * rmax + 16;
+      });
+      ga.raw(s, { at, anim: "fade" });
+    };
+    // ---- embeddings (20) ----------------------------------------------------------
+    // Build with axes: "" and no ticks: an embedding's coordinates mean nothing.
+    // Point cloud. pts: [[x, y, k]]; k indexes `colors`, and a k of null or -1 (or a
+    // missing colour) is context grey, drawn first so coloured points sit on top.
+    // Points carry no ring (they are too many); m.r radius (default 2), m.opacity
+    // (default .8). m.ring gives each point a 1px paper ring (sparse clouds and
+    // magnified insets). The cloud is clipped to the plot area.
+    ch.cloud = (pts, colors = [], m = {}) => {
+      const r = m.r || 2, op = m.opacity ?? 0.8;
+      const col = (k) => (k === null || k === undefined || k < 0 ? null : colors[k] || null);
+      const back = pts.filter((p) => !col(p[2])), front = pts.filter((p) => col(p[2]));
+      let s = "";
+      for (const p of [...back, ...front]) {
+        const c = col(p[2]) || m.context || "var(--context)", X = sx(p[0]).toFixed(1), Y = sy(p[1]).toFixed(1);
+        if (m.ring) s += `<circle cx="${X}" cy="${Y}" r="${r + 1}" fill="var(--paper)"/>`;
+        s += `<circle cx="${X}" cy="${Y}" r="${r}" fill="${c}" fill-opacity="${m.ring ? 1 : op}"/>`;
+      }
+      ga.raw(`<svg x="${X0}" y="${Y0}" width="${W}" height="${H}" viewBox="${X0} ${Y0} ${W} ${H}" overflow="hidden">${s}</svg>`, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+    };
+    // Axis stub: two short 1.5px ink-2 arms with open heads at the plot's
+    // bottom-left corner, named in the tick role ("UMAP 1", "UMAP 2"). It says which
+    // projection this is without implying a scale.
+    ch.stub = (m = {}) => {
+      const L = m.len || 34, x = X0, y = Y1, h = 4;
+      ga.raw(`<path d="M${x} ${y - L}V${y}H${x + L}M${x + L - h} ${y - h}L${x + L} ${y}L${x + L - h} ${y + h}M${x - h} ${y - L + h}L${x} ${y - L}L${x + h} ${y - L + h}" stroke="var(--ink-2)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`, { at, anim: "fade" });
+      ga.text(m.x || "UMAP 1", { x: x + L + 6, y: y - 8, role: "tick", size: 12, at, anim: "fade" });
+      ga.text(m.y || "UMAP 2", { x, y: y - L - 20, role: "tick", size: 12, at, anim: "fade" });
+    };
+    // A 1px ink frame around the plot area: the edge of a magnified inset.
+    ch.frame = (m = {}) => ga.raw(`<rect x="${X0}" y="${Y0}" width="${W}" height="${H}" fill="none" stroke="${m.color || "var(--ink)"}" stroke-width="1"/>`, { at: m.at ?? at, anim: "fade" });
+    // A region of the data, framed 1px ink: the source of an inset. Returns its
+    // canvas box {x0, y0, x1, y1} for GA.leaders.
+    ch.region = (xa, xb, ya, yb, m = {}) => {
+      const b = { x0: sx(xa), x1: sx(xb), y0: sy(yb), y1: sy(ya) };
+      ga.raw(`<rect x="${b.x0}" y="${b.y0}" width="${b.x1 - b.x0}" height="${b.y1 - b.y0}" fill="none" stroke="${m.color || "var(--ink)"}" stroke-width="1"/>`, { at: m.at ?? (mt === undefined ? undefined : mt + 0.8), anim: "fade" });
+      return b;
+    };
+    // Callouts: named points labelled in a column at canvas x = m.x, one row per
+    // item (m.pitch px apart, from m.y), ordered by the points' height so leaders
+    // do not cross. Each named point gets a 1px ink ring; each leader is a 1px ink-2
+    // line from the point to its label. items: [{x, y, label}] in data units.
+    ch.callouts = (items, m) => {
+      const pitch = m.pitch || 18, t = m.at ?? (mt === undefined ? undefined : mt + 1);
+      const rows = [...items].sort((a, b) => sy(a.y) - sy(b.y));
+      const y0 = m.y ?? (rows.reduce((a, r) => a + sy(r.y), 0) / rows.length - ((rows.length - 1) * pitch) / 2);
+      let s = "";
+      rows.forEach((r, i) => {
+        const X = sx(r.x), Y = sy(r.y), ly = y0 + i * pitch;
+        s += `<path d="M${X} ${Y}L${m.x - 4} ${ly}" stroke="var(--ink-2)" stroke-width="1" fill="none"/><circle cx="${X}" cy="${Y}" r="${m.r || 4}" fill="none" stroke="var(--ink)" stroke-width="1"/>`;
+        ga.text(r.label, { x: m.x, y: ly - 8, role: "tick", size: 12, color: r.color || "var(--ink-2)", at: t, anim: "fade" });
+      });
+      ga.raw(s, { at: t, anim: "fade" });
+    };
+
     ch.id = ++uid;
     return ch;
+  };
+
+  // Leaders from a source region to its inset: two straight 1px ink-2 lines
+  // joining the facing corners of two canvas boxes {x0, y0, x1, y1}, so the eye
+  // reads the inset as a magnified copy of the region.
+  GA.leaders = (ga, a, b, m = {}) => {
+    const acx = (a.x0 + a.x1) / 2, acy = (a.y0 + a.y1) / 2, bcx = (b.x0 + b.x1) / 2, bcy = (b.y0 + b.y1) / 2;
+    const side = Math.abs(bcx - acx) >= Math.abs(bcy - acy);
+    const [p1, p2, q1, q2] = side
+      ? bcx > acx ? [[a.x1, a.y0], [a.x1, a.y1], [b.x0, b.y0], [b.x0, b.y1]] : [[a.x0, a.y0], [a.x0, a.y1], [b.x1, b.y0], [b.x1, b.y1]]
+      : bcy > acy ? [[a.x0, a.y1], [a.x1, a.y1], [b.x0, b.y0], [b.x1, b.y0]] : [[a.x0, a.y0], [a.x1, a.y0], [b.x0, b.y1], [b.x1, b.y1]];
+    return ga.raw(`<path d="M${p1}L${q1}M${p2}L${q2}" stroke="${m.color || "var(--ink-2)"}" stroke-width="1" fill="none"/>`, { at: m.at, anim: "fade" });
+  };
+
+  // Radial track stack (21): individuals around a circle, grouped into sectors,
+  // with one ring per variable.
+  //   const R = GA.radial(ga, { cx, cy, r, groups: [{label, n}], at });
+  // r is the inner edge of the sector ring. Angles run clockwise from 12 o'clock;
+  // an opening of `open` degrees at 12 o'clock holds the bar ring's scale, and
+  // `gap` degrees separate sectors. Rings added with R.ring() stack inward from r.
+  GA.radial = function (ga, o) {
+    const { cx, cy, r } = o, at = o.at, mt = at === undefined ? undefined : at + 0.4;
+    const gap = o.gap ?? 1.5, open = o.open ?? 8;
+    const N = o.groups.reduce((a, g) => a + g.n, 0);
+    const unit = (360 - open - gap * (o.groups.length - 1)) / N;
+    const starts = [];
+    let acc = 0;
+    o.groups.forEach((g, k) => { starts.push(open / 2 + k * gap + acc * unit); acc += g.n; });
+    const rad = (d) => (d * Math.PI) / 180;
+    const pol = (rr, d) => [(cx + rr * Math.sin(rad(d))).toFixed(2), (cy - rr * Math.cos(rad(d))).toFixed(2)];
+    const wedge = (r0, r1, a0, a1) => {
+      const lg = a1 - a0 > 180 ? 1 : 0;
+      return `M${pol(r1, a0)}A${r1} ${r1} 0 ${lg} 1 ${pol(r1, a1)}L${pol(r0, a1)}A${r0} ${r0} 0 ${lg} 0 ${pol(r0, a0)}Z`;
+    };
+    // angle span of individual q (0-based, in group order)
+    const span = (q) => {
+      let k = 0, c = 0;
+      while (q >= c + o.groups[k].n) { c += o.groups[k].n; k++; }
+      const a0 = starts[k] + (q - c) * unit;
+      return [a0, a0 + unit];
+    };
+    const R = { N, pol, wedge, span, next: r - (o.ringGap ?? 2) };
+    // Sector ring: m.depth px outward from r, alternating ink-2 and context so
+    // neighbouring sectors part; names outside, at m.labelR.
+    R.sectors = (m = {}) => {
+      const d = m.depth || 5;
+      let s = "";
+      o.groups.forEach((g, k) => { s += `<path d="${wedge(r, r + d, starts[k], starts[k] + g.n * unit)}" fill="${k % 2 ? "var(--context)" : "var(--ink-2)"}"/>`; });
+      ga.raw(s, { at, anim: "fade" });
+      const lr = m.labelR || r + d + 10;
+      o.groups.forEach((g, k) => {
+        const a = starts[k] + (g.n * unit) / 2, [x, y] = pol(lr, a).map(Number);
+        const sin = Math.sin(rad(a)), cos = Math.cos(rad(a));
+        const anchor = Math.abs(sin) < 0.2 ? "middle" : sin > 0 ? "start" : "end";
+        // hang below the ring at 6 o'clock, stand on it at 12, centre on it at 3 and 9
+        ga.text(g.label, { x, y: y - 7.5 - 7.5 * cos, role: "tick", size: 12, anchor, at, anim: "fade" });
+      });
+    };
+    // Bar ring: one bar per individual, outward from r0 = m.r0, m.depth px deep,
+    // in context grey. The scale runs to the round number at or above the peak
+    // (1, 2, 2.5, 5 × 10^k), labelled once on a short radial axis in the opening.
+    R.bars = (values, m = {}) => {
+      const r0 = m.r0, d = m.depth || 24, peak = Math.max(...values);
+      const e = 10 ** Math.floor(Math.log10(peak)), top = [1, 2, 2.5, 5, 10].map((k) => k * e).find((v) => v >= peak);
+      let s = "";
+      values.forEach((v, q) => { if (v > 0) { const [a0, a1] = span(q); s += `<path d="${wedge(r0, r0 + (v / top) * d, a0, a1)}" fill="${m.color || "var(--context)"}"/>`; } });
+      ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      const [ax, ay0] = pol(r0, 0).map(Number), ay1 = ay0 - d;
+      ga.raw(`<path d="M${ax} ${ay0}V${ay1}M${ax} ${ay1}h5M${ax} ${ay0}h5" stroke="var(--ink-2)" stroke-width="1.5" fill="none"/>`, { at, anim: "fade" });
+      ga.text(String(top), { x: ax + 9, y: ay1 - 8, role: "tick", size: 12, at, anim: "fade" });
+      return top;
+    };
+    // Heat ring: one annular cell per individual, m.depth px deep, stacked inward
+    // from the last ring with a 2px paper gap. values in m.domain map onto `ramp`;
+    // 0 or null stays paper. Returns the ring's radii.
+    R.ring = (values, ramp, m = {}) => {
+      const d = m.depth || 12, r1 = R.next, r0 = r1 - d, [lo, hi] = m.domain || [0, Math.max(...values)];
+      let s = "";
+      values.forEach((v, q) => {
+        if (!v) return;
+        const [a0, a1] = span(q), f = hi > lo ? Math.max(0, Math.min(1, (v - lo) / (hi - lo))) : 1;
+        s += `<path d="${wedge(r0, r1, a0, a1 + 0.02)}" fill="${ramp[Math.round(f * (ramp.length - 1))]}"/>`;
+      });
+      ga.raw(s, { at: m.at ?? mt, anim: "fade", t: 0.8 });
+      R.next = r0 - (o.ringGap ?? 2);
+      return { r0, r1 };
+    };
+    // Ring key: one row per ring, outside in: its ramp as a strip and its name,
+    // at canvas (m.x, m.y); m.lo / m.hi label the strips' ends under the last row.
+    R.key = (rows, m) => {
+      const w = m.w || 72, pitch = m.pitch || 20;
+      let s = "";
+      rows.forEach((row, i) => {
+        const y = m.y + i * pitch, n = row.ramp.length;
+        row.ramp.forEach((c, j) => { s += `<rect x="${m.x + (j * w) / n}" y="${y + 4}" width="${w / n + 0.5}" height="8" fill="${c}"/>`; });
+        ga.text(row.label, { x: m.x + w + 10, y, role: "tick", size: 12, at, anim: "fade" });
+      });
+      ga.raw(s, { at, anim: "fade" });
+      const yb = m.y + rows.length * pitch - 2;
+      if (m.lo) ga.text(m.lo, { x: m.x, y: yb, role: "tick", size: 12, at, anim: "fade" });
+      if (m.hi) ga.text(m.hi, { x: m.x + w, y: yb, role: "tick", size: 12, anchor: "end", at, anim: "fade" });
+    };
+    return R;
   };
 
   // Deterministic pseudo-random numbers for schematic data (mulberry32)

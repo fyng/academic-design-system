@@ -12,6 +12,9 @@ Reference sheets, synthetic data:
   (`specimen-chart-forms.html`).
 - `out/specimen-chart-forms-iii.png`: Kaplan–Meier by risk group and with numbers
   at risk (03), forms 15 and 16 (`specimen-chart-forms-iii.html`).
+- `out/specimen-chart-forms-iv.png`: forms 18, 19 and 21 (`specimen-chart-forms-iv.html`).
+- `out/specimen-chart-forms-v.png`: form 20, simple and as an atlas
+  (`specimen-chart-forms-v.html`).
 
 Sizes below are px on the abstract canvas. `../formats/publication/README.md` gives
 the print equivalents.
@@ -38,6 +41,10 @@ Start from the data's job.
 | A regression's predictions against the measured values | Predicted vs observed (15) |
 | Many tests, effect against significance | Volcano (06) |
 | Matrix of values (tissue × drug, gene × cell) | Heatmap (07), grouped when columns carry an annotation |
+| Counts in a matrix (patients per gene × tumour type) | Count matrix (18) |
+| Two measures per cell of a matrix (how many have it, how much) | Dot matrix (19) |
+| Observations in a learned space (cells, patients, codes) | Labelled embedding (20) |
+| Many variables for thousands of individuals in groups | Radial track stack (21) |
 | Parts of a whole, a few units | 100 % stacked bars (08) |
 | Parts of a whole, many samples | Stacked columns grouped by dominant part (14) |
 | One share per location in space | Proportion dials in small multiples (`illustration.md`) |
@@ -328,4 +335,96 @@ in `specimen-multitrack-timeline.typ`.
   in `muted`.
 - When tracks outnumber the cell, keep the top-ranked lanes and say so in the
   legend.
+
+### 18 · Count matrix
+
+For counts over two categorical axes, when the counts are the finding: patients with
+a driver in each gene per tumour type, events per site per arm.
+
+- One cell per pair, separated by a 2 px paper gap. The **count is printed in every
+  filled cell** (`tick`, 11 px), ink on the light steps and paper from step 700 on.
+  Zero stays blank, and the caption says so.
+- The shade bins a **share** (the count over its column's n), so columns of
+  different size compare: five steps of the quantity ramp (100, 200, 400, 700, 900),
+  edges at round shares (0, .05, .1, .2, .4, 1). The key is the five swatches with
+  the edges printed between them, above the grid.
+- Rows sort by their total; columns by the story (organ, or n). Row names left of
+  the grid; column names read upward above it.
+- Right of the grid, one column of row totals in the `tick` role, titled once
+  ("Total"), and, when it matters how each row's count splits, a 100 % bar per row
+  (form 08's rules, a 0–1 axis beneath, the legend below as square swatches). The
+  bar's parts keep to the categorical slots and skip teal, which the matrix already
+  uses.
+
+### 19 · Dot matrix
+
+For two measures per cell of a matrix: the share of tumours with a signature and the
+burden among them, the share of cells expressing a gene and its mean level.
+
+- Every cell is a `wash` square with a 2 px paper gap, so a cell without a dot reads
+  as measured and absent. A cell that was not measured has no square.
+- The dot's **area** carries the share (radius ∝ √share); the largest dot fills
+  the cell less 1.5 px. Its **colour** carries the magnitude on the quantity ramp
+  from step 300, so the lightest dot still shows on the wash. Use a log scale when
+  the magnitude spans decades, and cap it (`color.md`).
+- Each column's n sits in a row above the grid in the `tick` role, with "n" at the
+  row's left; column names read upward above that.
+- Row groups (SBS, DBS, ID) part with a 10 px gap and are named upward at the left
+  beside a `rule` bar. A text column right of the grid (`tick`) annotates each row
+  (the proposed aetiology) and stays blank where there is nothing to say.
+- Two keys beneath: dots in `context` at three shares (0.25, 0.5, 1), and the colour
+  key with labelled ends.
+
+### 20 · Labelled embedding
+
+For observations placed in a learned space (UMAP, t-SNE, a model's latent space):
+cells, patients, clinical codes. Position means similarity; the coordinates mean
+nothing.
+
+- No ticks, no frame and no gridlines. An **axis stub** at the bottom-left corner,
+  two 34 px `ink-2` arms with open heads, names the projection ("UMAP 1", "UMAP 2").
+- Points are small and ringless (r 2, 75–80 % opacity), drawn in shuffled order so
+  no group always sits on top; grey points go first.
+- **Colour** follows `color.md`: identity slots in order; a lineage or ordered
+  states take the ordinal steps of one ramp (400–800); an eighth type folds into
+  `context` and keeps its name.
+- **Names replace the legend.** Each group's name sits at the edge of its cloud in
+  its text step, with a 3 px paper halo where it crosses points. A legend (dots and
+  names, above the plot) is for when groups interleave so much that names would not
+  point at one place.
+- **Atlas.** When the story runs from the whole space down to single items, zoom in
+  steps: the overview; a subset re-embedded on its own; magnified insets of that.
+  - A source region is framed 1 px `ink`, and two straight 1 px `ink-2` leaders join
+    its facing corners to the next view's. A re-embedded subset has a `rule` frame;
+    a magnified inset an `ink` one, with its points enlarged (r 3) and ringed.
+  - Colour carries the top level at every zoom. In a subset, the clusters that the
+    insets examine keep their colour and the rest turn `context`. Leaves are
+    **named, not coloured**: callouts in one column right of the inset (`tick`,
+    18–20 px apart), ordered by the points' height, each leader a 1 px `ink-2` line
+    from a 1 px `ink` ring on the point.
+  - Each inset is named in its subset, beside its source frame, in the text step.
+
+### 21 · Radial track stack
+
+For many variables across thousands of individuals in groups: the drivers of every
+patient in a pan-cancer cohort. It is the track stack (17) bent into a circle, so a
+long axis of individuals fits a square panel. With a few hundred individuals or
+fewer, use the straight track stack.
+
+- Individuals run clockwise from 12 o'clock, one angular slice each, in **sectors**
+  by group with a 1.5° gap between sectors. An 8° opening at 12 o'clock holds the
+  scale. Within a sector, sort individuals by the outer bar.
+- From the outside in: the **bar ring** (26 px deep, `context`, one bar per
+  individual, its scale running to a round number at or above the peak, labelled
+  once on a short axis in the opening); the **sector ring** (5 px, `ink-2` and
+  `context` alternating); then one **heat ring** per variable (11–12 px deep, 2 px
+  paper gaps).
+- Each heat ring takes its own hue's ramp (steps 200–800 for counts; one step for
+  present or absent). Zero stays paper. Hues follow the categorical order, and the
+  ring's order is the key's order.
+- Sector names sit outside the bar ring in the `tick` role, reading horizontally:
+  standing on the ring at the top, hanging from it at the bottom, level with it at
+  the sides.
+- The **ring key** lists the rings outside in, each a short ramp strip and its name,
+  with the strips' end values under the last one. The centre stays empty.
 
