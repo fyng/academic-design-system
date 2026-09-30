@@ -1,4 +1,4 @@
-// Lamina design tokens: the one source for every colour and type value.
+// kare design tokens: the one source for every colour and type value.
 //
 //   node core/tokens.mjs      -> writes tokens.css and tokens.json beside it
 //

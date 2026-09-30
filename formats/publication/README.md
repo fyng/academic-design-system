@@ -97,7 +97,7 @@ baseline, and descenders hang 0.5 mm below.
   their place when labels change.
 - The y title reads upward, rotated in the left margin and centred on the axis; the
   x title is right-aligned under the ticks. The rotated y title is this format's
-  rule; core keeps it horizontal above the axis (`../../core/charts.md`).
+  rule; core keeps it horizontal above the axis (`../../core/charts/README.md`).
 - `specimen-panel.typ` draws the reference panel at 5× with each distance
   dimensioned (`out/specimen-panel.pdf`, `.png`). `margins()` in `spec-lib.typ`
   computes the margins from the measured tick labels; the figure specimen shares it.
@@ -209,42 +209,15 @@ PNG. The constants are in `spec-lib.typ`.
 - When the tracks do not fit the cell, drop tracks (keep the top-ranked lanes and
   say so in the legend) before shrinking type or track heights.
 
-**Magnified insets** zoom a dense region of a plot, or of an embedding, into a
-second plot area beside it (form 20's atlas; a scatter's dense corner). This and the
-radial stack below are drawn at canvas scale in `../../core/specimen-chart-forms-v.html`
-and `-iv.html`; the values here are their print sizes.
-
-| Distance | mm |
-|---|---|
-| Inset side (square; at least twice the source region's side) | 15–25 |
-| Inset to the next inset, stacked | 2.0 |
-| Inset to its callout column | 2.5 |
-| Callout pitch | 3.0 |
-
-- The source region is framed 0.25 pt ink; two straight 0.25 pt ink-2 leaders join
-  its facing corners to the inset's, and cross nothing but the plot they leave.
-- An inset of a chart keeps two ticks per axis, at its start and end, so its scale
-  reads; an inset of an embedding has none.
-- Insets sit in the same panel as their source, under one letter.
-
-**A radial stack** (form 21) is square: the circle and its sector names fill the
-cell's width, and the ring key sits in a corner the circle leaves free.
-
-| Distance | mm |
-|---|---|
-| Bar ring depth | 4.0 |
-| Sector ring depth | 0.8 |
-| Heat ring depth | 1.5–2.0 |
-| Between rings | 0.3 |
-| Sector gap / opening at 12 o'clock | 1.5° / 8° |
-| Sector name to the bar ring | 1.5 |
-
-- The inner radius stays at least 40 % of the outer, so the innermost ring's slices
-  keep their width; drop rings before shrinking it.
+Form-specific arrangements keep their print sizes in the form's file: the
+magnified insets of an atlas (`../../core/charts/forms/20-labelled-embedding.md`) and
+the radial stack (`../../core/charts/forms/21-radial-track-stack.md`).
 
 ## Lines and marks
 
-Canvas px from the core docs become these pt values at print size.
+Canvas px from the core grammar (`../../core/charts/README.md`) become these pt values
+at print size. Sizes that belong to one form (a route arrow, a unit dot, the body)
+are in that form's file, `../../core/charts/forms/`, under *In each format*.
 
 | Element | Canvas | Print |
 |---|---|---|
@@ -256,16 +229,7 @@ Canvas px from the core docs become these pt values at print size.
 | Point, dense beeswarm | r 3 | r 1 pt |
 | Summary bar | 3 px | 1 pt, with a 0.5 pt paper halo |
 | Paper gap (segments, cells) | 2 px | 0.5 pt |
-| Count in a matrix cell (18) | `tick`, 11 px | 5 pt, tabular |
-| Embedding point (20) | r 2, no ring | r 0.6 pt, no ring |
-| Magnified inset point (20) | r 3, 1 px paper ring | r 1 pt, 0.25 pt paper ring |
-| Zoom frame and leaders (20) | 1 px | 0.25 pt, ink and ink-2 |
 | Glyph (event, sample, tree node) | 11 px; 13–16 px with a digit or letter | 2.5 mm; 3 mm with a digit or letter (5 pt, 500) |
-| Role ring (clone tree, 24) | 2.5 px | 1 pt |
-| Route arrow (23) | 2 px, open head | 0.75 pt, 1.5 mm head |
-| Treatment bar (swimmer, 25) | 8 px | 1.8 mm |
-| Unit dot (26) | r 6, 1 px ink-2 ring | r 1.3 mm, 0.25 pt ring |
-| Body map (22, 23) | 420–440 px tall, head to upper thighs | 45–70 mm tall; site names 6 pt |
 
 Strokes stay between 0.5 and 1 pt, which every journal accepts (Nature 0.25–1 pt,
 Science from 0.5 pt, Cell Press 0.5–1.5 pt).
@@ -438,8 +402,8 @@ divides its width its own way:
 | 3, typical | 3 × 66.0 mm | g one unit; h two units |
 
 Its raster panel is `specimen-micrograph.html`, a text-free cell field drawn with
-the abstract kit and rendered to `out/specimen-micrograph.png` with
-`../abstract/kit/render.cjs`.
+the kit and rendered to `out/specimen-micrograph.png` with
+`../../kit/render.cjs`.
 
 `specimen-marginal.typ` and `specimen-multitrack-timeline.typ` compile to
 `out/specimen-marginal.pdf`, `out/specimen-multitrack-timeline.pdf` and their PNGs: the

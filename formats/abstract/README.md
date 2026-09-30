@@ -3,16 +3,11 @@
 The graphical abstract (the Lamina canvas) states a paper's argument in three panels.
 It plays as a 16-second animation on the web and stands as a still poster for
 journals and slides. It builds on `../../core/`; this file adds the canvas, the
-arc, its kinds of text, type sizes, motion and the kit that implements them.
+arc, its kinds of text, type sizes and motion; the kit that draws them is `../../kit/`.
 
 | File | What |
 |---|---|
-| `kit/ga-kit.css`, `kit/ga-kit.js` | Layout, type roles, motion, lint |
-| `kit/ga-bio.js` | Cells, tissue, body maps, zooms (`../../core/illustration.md`) |
-| `kit/anatomy.js` | The anatomy the body map draws: a curated Expression Atlas anatomogram (CC BY 4.0). Load it before `ga-bio.js` |
-| `kit/ga-charts.js` | Chart forms (`../../core/charts.md`) |
-| `kit/icons.js` | Icons (`../../core/icons.md`) |
-| `kit/render.cjs` | PNG / MP4 / WebM renderer |
+| `../../kit/` | The kit this format draws with: layout, type roles, motion, lint, charts, biology, icons and the renderer (`../../kit/README.md`) |
 | `specimen-type.html` → `out/specimen-type.png` | Type roles and the canvas |
 
 ## What a graphical abstract is
@@ -72,7 +67,7 @@ conclusion underneath; labels that add to the panel title and conclusion.
 
 ## Type sizes
 
-Px on the 1600 × 900 canvas (`GA.ROLE` in `kit/ga-kit.js`), as size/line height.
+Px on the 1600 × 900 canvas (`GA.ROLE` in `../../kit/ga-kit.js`), as size/line height.
 Roles and settings: `../../core/typography.md`.
 
 | Role | Size | Role | Size |
@@ -112,72 +107,15 @@ found.
 
 ## The kit
 
-A figure page loads the kit by relative path from the design system checkout and is
-rendered from its own folder:
-
-```html
-<link rel="stylesheet" href="../design-system/formats/abstract/kit/ga-kit.css">
-<script src="../design-system/formats/abstract/kit/icons.js"></script>
-<script src="../design-system/formats/abstract/kit/ga-kit.js"></script>
-<script src="../design-system/formats/abstract/kit/ga-bio.js"></script>
-<script src="../design-system/formats/abstract/kit/ga-charts.js"></script>
-```
-
-```bash
-node ../design-system/formats/abstract/kit/render.cjs my-figure.html   # -> out/my-figure.{png,mp4,webm,webp}
-```
-
-The renderer needs Playwright (resolved from the project's `node_modules`, or a global
-install via `NODE_PATH=$(npm root -g)`) and ffmpeg.
-
-Charts use `GA.chart`, which applies the grammar in `../../core/charts.md`:
-
-```js
-const ch = GA.chart(ga, { x, y, w, h, xd: [0, 24], yd: [0, 0.12],
-  xTicks: [0, 12, 24], yTicks: [0, 0.1], xTitle: "Months on ICI", yTitle: "Cumulative incidence", at: 10.9 });
-ch.line(points, { curve: "step", color: "var(--harm)" });
-ch.label("carriers", 24, 0.08, { dx: 10, color: "var(--harm-text)" });
-```
-
-`x, y, w, h` place the **plot area**; titles and ticks sit outside it. All chart text
-goes through `ga.text`, so the lint covers it, and a label sitting on a curve fails the
-render. `axes: "x"`, `"y"` or `""` keeps only those axes.
-
-| Mark | Form in `charts.md` |
-|---|---|
-| `line`, `fn`, `ribbon` | Curves, step curves, ECDF, CI ribbons (03, 04, 05, 13) |
-| `dots`, `ref`, `label`, `lineKey`, `key` | Points, dotted reference lines, direct labels, keys |
-| `hbars` | Ranked bars (01) |
-| `intervals` | Forest plot (02) |
-| `heat` | Heatmap; `groups` splits columns, `dense` drops column gaps (07) |
-| `stack` | 100 % stacked bars (08) |
-| `swarm`, `summary` | Beeswarm with a median bar (09, 10) |
-| `vbars` | Bars from zero (11) |
-| `lollipop` | Lollipop (12) |
-| `columns` | Stacked columns grouped by dominant part (14) |
-| `censor`, `atRisk` | Censoring ticks and the numbers-at-risk rows of a Kaplan–Meier plot (03) |
-| `hexbin`, `marginal` | Density bins and marginal strips (15) |
-| `dumbbell`, `dotKey` | Dumbbell and its key; `p: "exact"` or `"stars"` (16); `square: true` keys bars |
-| `counts`, `upText` | Count matrix with totals and a 100 % bar per row (18); column names reading upward |
-| `dotMatrix`, `sizeKey` | Dot matrix, area for share and colour for magnitude, and its size key (19) |
-| `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud (20) |
-| `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders (20); a named part of a bar (08) |
-| `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack (21) |
-| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside; keys with glyph, bar and line rows (*Glyphs*) |
-| `GA.bio` → `body`, `bubbles`, `dial` | Body map with site bubbles or region dials (22); needs `kit/anatomy.js` |
-| `GA.routes`, `GA.cloneTree` | Route map (23) and clone tree (24) |
-| `swimmer` | Swimmer plot, the follow-up line carrying relapse (25) |
-| `units` | Unit columns (26) |
-| `oncoprint` | Heatmap with categorical cells, the oncoprint (07) |
-
-`../../core/specimen-charts.html` and `../../core/specimen-chart-forms.html`,
-`-iii.html` through `-viii.html` use every mark.
+The kit lives at the repo root, `../../kit/`, because the core specimens are drawn
+with it too. `../../kit/README.md` covers loading it, rendering, `GA.chart` and the
+mark for each chart form.
 
 ## Deliverables per figure
 
 `out/<slug>.png` (poster, 2×), `out/<slug>.mp4` (H.264), `out/<slug>.webm` (VP9 fallback),
 and `out/<slug>.webp` (preview, not committed), written to an `out/` folder beside the
-figure's HTML. Render with `node <design-system>/formats/abstract/kit/render.cjs <slug>.html` from the
+figure's HTML. Render with `node <design-system>/kit/render.cjs <slug>.html` from the
 folder that holds the figure; the render fails if lint fails.
 
 Figures live in the project that publishes them; the kit loads by relative path

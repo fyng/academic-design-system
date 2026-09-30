@@ -1,7 +1,7 @@
 # Icons
 
 Icons name things a reader already knows: a patient, an organ, a model, a drug. Their
-code lives in the abstract kit (`../formats/abstract/kit/icons.js`), where
+code lives in the kit (`../kit/icons.js`), where
 `ga.icon(name, …)` places them; other formats use the same glyphs as SVG.
 
 - Use Health Icons (MIT) from `@iconify-json/healthicons`, on a 48-unit grid, as

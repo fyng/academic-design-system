@@ -67,7 +67,7 @@ and colour**. Sizes depend on the medium, so each format sets them:
 ## Numbers and units
 
 - **Figures:** tabular in ticks and tables (`tick` does this); proportional elsewhere.
-- **Minus:** true minus `−` (U+2212). The abstract kit's chart layer converts
+- **Minus:** true minus `−` (U+2212). The kit's chart layer converts
   negative tick labels automatically.
 - **Thousands:** use a comma (35,669). Use no separator for years and IDs.
 - **Decimals:** drop the leading zero only for bounded metrics (AUROC .81).

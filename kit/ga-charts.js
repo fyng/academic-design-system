@@ -1,4 +1,4 @@
-// Chart layer for the graphical abstract kit (see core/charts.md).
+// Chart layer for the kit (see core/charts/).
 //
 //   const ch = GA.chart(ga, { x, y, w, h, xd: [0, 1], yd: [0, 1], xTitle, yTitle, at });
 //   ch.line([[0, 0], [1, 1]], { color: "var(--accent)" });
@@ -7,7 +7,7 @@
 // outside it. Every piece of text goes through ga.text(), so the kit's lint
 // sees chart labels like any other label. Data marks are drawn with ga.raw().
 //
-// House conventions baked in (charts.md explains each):
+// House conventions baked in (core/charts/ explains each):
 //   - left + bottom axes only, 1.5px ink-2; 5px outward ticks
 //   - y title horizontal, above the axis, left-aligned to it
 //   - x title right-aligned under the tick labels, at the high end
@@ -765,7 +765,7 @@
     return R;
   };
 
-  // ---- glyphs (charts.md, *Glyphs*) -------------------------------------------------
+  // ---- glyphs (core/charts/README.md, *Glyphs*) ---------------------------------
   // One mark for one kind of event or state, the same everywhere in a figure.
   // Shape says the kind, fill the class, a ring the role, and a digit or letter
   // inside a count or a role. GA.glyph returns SVG markup centred on (x, y).

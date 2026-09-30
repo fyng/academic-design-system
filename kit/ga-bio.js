@@ -1,4 +1,4 @@
-// Explanatory layer for the graphical abstract kit (see core/illustration.md).
+// Explanatory layer for the kit (see core/illustration.md).
 //
 //   const B = GA.bio(ga);
 //   B.body({ cx, y, h });  B.bubbles(body, rows);  B.dial({...})   // needs kit/anatomy.js
