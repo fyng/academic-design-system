@@ -12,12 +12,14 @@ see_also: [form-22, form-24]
 For where a tumour spread and from where: seeding routes in one patient, drawn on
 the body map (22).
 
-- The primary is an open ring (paper fill, 2.5 px `ink`); each metastasis a 13 px
-  dot at its site, filled with the colour of the lineage that seeded it.
+- Sites are drawn as the clone tree's nodes (24), so the pair shares one vocabulary:
+  16 px dots with a 1 px paper ring. The primary is filled with the primary-unique
+  class (`blue-700`) and named "primary"; each metastasis is filled with the colour
+  of the lineage that seeded it. Role rings and letters (P, M) stay on the tree.
 - A route is a 2 px arrow with an open head from the source site to the seeded site,
   in the lineage's colour. Every route bows to the left of its direction of travel by
   a quarter of its length, so routes that share an end fan out instead of stacking,
-  and each stops short of its target so the dot stays whole.
+  and each stops short of its target so the dot stays whole (a 10 px gap).
 - **One hue per seeding lineage** (the categorical slots not already used by the
   location classes: ochre, violet, rose), its 500 step for the clone that seeded
   from the primary and a lighter step (300 for dots, 400 for arrows) for its

@@ -70,10 +70,8 @@ and colour**. Sizes depend on the medium, so each format sets them:
 - **Minus:** true minus `−` (U+2212). The kit's chart layer converts
   negative tick labels automatically.
 - **Thousands:** use a comma (35,669). Use no separator for years and IDs.
-- **Decimals:** drop the leading zero only for bounded metrics (AUROC .81).
-  Keep it elsewhere (0.42 µM). Journals that keep it everywhere win in their format
-  (`../formats/publication/README.md`). Ticks on one axis share their decimal
-  places (.50, .75, 1.00).
+- **Decimals:** keep the leading zero on every decimal (AUROC 0.81, 0.42 µM,
+  *P* = 0.03). Ticks on one axis share their decimal places (0.50, 0.75, 1.00).
 - **P values:** *P* italic capital, `P = 3 × 10⁻⁸`. Use superscript digits, not `e-8`.
   Dense panels may use stars instead (`../formats/publication/README.md`,
   *Statistics on the page*).

@@ -17,8 +17,9 @@ a driver in each gene per tumour type, events per site per arm.
   Zero stays blank, and the caption says so.
 - The shade bins a **share** (the count over its column's n), so columns of
   different size compare: five steps of the quantity ramp (100, 200, 400, 700, 900),
-  edges at round shares (0, .05, .1, .2, .4, 1). The key is the five swatches with
-  the edges printed between them, above the grid.
+  edges at round shares (0, 0.05, 0.1, 0.2, 0.4, 1). The key is the five swatches
+  with the edges printed between them. It sits above the grid, in the room beside the
+  upward column names, rather than add a row beneath (*Labels*).
 - Rows sort by their total; columns by the story (organ, or n). Row names left of
   the grid; column names read upward above it.
 - Right of the grid, one column of row totals in the `tick` role, titled once

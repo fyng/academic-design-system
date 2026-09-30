@@ -82,7 +82,7 @@ const semantic = {
   "quantity-wash": "teal.100",
 };
 
-// sequential ramps (continuous: 100-900; ordinal/discrete: 400-800)
+// sequential ramps (continuous: 100-900; ordinal/discrete: steps from anywhere in 100-900)
 const sequential = { quantity: "teal", harm: "vermilion", benefit: "blue" };
 // diverging: [negative arm, positive arm]; midpoint is always the neutral wash
 const diverging = { valence: ["blue", "vermilion"], direction: ["violet", "ochre"] };

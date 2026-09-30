@@ -354,7 +354,7 @@
     // fixes the row pitch in px (default: the plot height over the rows).
     ch.dumbbell = (rows, m = {}) => {
       const pitch = m.pitch || H / rows.length, cb = m.color || "var(--prussian)", ca = m.colorA || "var(--context)";
-      const fv = m.fmt || ((v) => v.toFixed(2).replace(/^0/, ""));
+      const fv = m.fmt || ((v) => v.toFixed(2));
       const stars = (p) => (p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "ns");
       const fp = (p) => (p < 0.001 ? "*P* < 0.001" : `*P* = ${p < 0.01 ? p.toFixed(3) : p.toFixed(2)}`);
       rows.forEach((r, i) => {
@@ -501,7 +501,7 @@
     // end, dead, relapse, strips: [colour], bars: [{t0, t1, color}], events: [{t, kind,
     // ...glyph}], samples: [colour]}]. The follow-up line runs from 0 to `end`: 1.5px
     // rule, then 2.5px ink-2 from `relapse` on, so the disease state reads off the
-    // line. Treatment bars (8px) sit on it; event glyphs over them; a 12px ink tick
+    // line. Treatment bars (8px) sit on it; event glyphs over them; an ink x (11px)
     // ends a row at death.
     // `samples` are dots after the row's end, two rows deep, in the site's colour.
     // strips are annotation squares left of the plot at m.stripX (canvas x per strip),
@@ -515,7 +515,7 @@
         if (r.relapse !== undefined) line += `<path d="M${sx(r.relapse)} ${cy}H${sx(r.end)}" stroke="var(--ink-2)" stroke-width="2.5"/>`;
         for (const b of r.bars || []) bars += `<rect x="${sx(b.t0)}" y="${cy - 4}" width="${Math.max(2, sx(b.t1) - sx(b.t0))}" height="8" fill="${b.color}"/>`;
         for (const e of r.events || []) ev += GA.glyph(e.kind, sx(e.t), cy, { size: gs, ...e });
-        if (r.dead) ev += GA.glyph("tick", sx(r.end), cy, { size: 12 });
+        if (r.dead) ev += GA.glyph("x", sx(r.end), cy, { size: 11 });
         const sr = m.sampleR || 4, sp = 2 * sr + 1.5;
         (r.samples || []).forEach((c, k) => {
           const col = Math.floor(k / 2), row = k % 2;
@@ -770,7 +770,8 @@
   // Shape says the kind, fill the class, a ring the role, and a digit or letter
   // inside a count or a role. GA.glyph returns SVG markup centred on (x, y).
   //   kind: "circle" (a sample or measurement) | "diamond" (a procedure) |
-  //         "square" (a swatch in keys and strips) | "tick" (death, an end)
+  //         "square" (a swatch in keys and strips) | "x" (death) |
+  //         "tick" (a censored observation, an end)
   //   o: size (px, the glyph's side; default 11), fill, ring (colour), ringW,
   //      text (a digit or letter inside), textColor
   const g1 = (v) => +v.toFixed(1);
@@ -781,6 +782,7 @@
     if (kind === "circle") m = `<circle cx="${g1(x)}" cy="${g1(y)}" r="${g1(h)}" fill="${fill}"${edge}/>`;
     else if (kind === "square") m = `<rect x="${g1(x - h)}" y="${g1(y - h)}" width="${s}" height="${s}" fill="${fill}"${edge}/>`;
     else if (kind === "diamond") { const k = h * 1.25; m = `<path d="M${g1(x)} ${g1(y - k)}L${g1(x + k)} ${g1(y)}L${g1(x)} ${g1(y + k)}L${g1(x - k)} ${g1(y)}Z" fill="${fill}"${edge}/>`; }
+    else if (kind === "x") { const k = h * 0.8; m = `<path d="M${g1(x - k)} ${g1(y - k)}L${g1(x + k)} ${g1(y + k)}M${g1(x + k)} ${g1(y - k)}L${g1(x - k)} ${g1(y + k)}" stroke="${o.fill || "var(--ink)"}" stroke-width="1.5" stroke-linecap="round"/>`; }
     else if (kind === "tick") m = `<path d="M${g1(x)} ${g1(y - h)}V${g1(y + h)}" stroke="${o.fill || "var(--ink)"}" stroke-width="1.5"/>`;
     if (o.text !== undefined) m += `<text x="${g1(x)}" y="${g1(y + s * 0.26)}" font-size="${g1(s * 0.72)}" font-weight="500" text-anchor="middle" style="fill:${o.textColor || "var(--paper)"}">${o.text}</text>`;
     return m;

@@ -15,7 +15,8 @@ For community, cell-type or ancestry composition over dozens to hundreds of samp
 - Group samples by their dominant part (or by the design: control, treated), with a
   small gap between groups and the group's name beneath it in the part's text colour.
   Within a group, sort by the dominant part's share.
-- Seven categorical slots; further parts fold into "other" in `context`.
+- As in form 08, consider the top 5 parts and fold the rest into "other" in
+  `context`; the right number depends on the data, up to the seven categorical slots.
 - The legend sits above or below the plot, in stack order.
 
 ## In each format

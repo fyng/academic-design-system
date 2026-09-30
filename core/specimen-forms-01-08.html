@@ -73,7 +73,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
   // 04 dose-response: log concentration, IC50 drop lines
   {
     const c = cell(3); head(c, 4, "DOSE–RESPONSE");
-    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [0.001, 10], xlog: true, yd: [0, 1.1], xTicks: [0.001, 0.01, 0.1, 1, 10], xFmt: (v) => (v >= 1 ? String(v) : v.toString().replace("0.", ".")), yTicks: [0, 0.5, 1], xTitle: "Drug (µM)", yTitle: "Viability", at });
+    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [0.001, 10], xlog: true, yd: [0, 1.1], xTicks: [0.001, 0.01, 0.1, 1, 10], yTicks: [0, 0.5, 1], xTitle: "Drug (µM)", yTitle: "Viability", at });
     const hill = (ic, n = 1.4) => (x) => 1 / (1 + (x / ic) ** n);
     ch.fn(hill(1.8), { color: "var(--context)" });
     ch.fn(hill(0.03), { color: "var(--benefit)" });
@@ -91,7 +91,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
     const roc = (a) => (x) => 1 - (1 - x) ** a;
     ch.fn(roc(1.7), { color: "var(--context)" });
     ch.fn(roc(4.2), { color: "var(--prussian)" });
-    ch.lineKey([{ label: "model  AUROC .81", color: "var(--prussian)" }, { label: "baseline  .64", color: "var(--context)" }], { x: ch.x1 + 16, y: ch.y1 - 44 });
+    ch.lineKey([{ label: "model  AUROC 0.81", color: "var(--prussian)" }, { label: "baseline  0.64", color: "var(--context)" }], { x: ch.x1 + 16, y: ch.y1 - 44 });
     note(c, "Square plot, chance diagonal dotted. Curves converge, so a line key replaces end labels. AUROC to 2 figures.");
   }
 
@@ -140,7 +140,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
       const t = ga.text(n, { x: lx + 14, y: ly, role: "tick", at, anim: "fade" });
       lx = t.r + 14;
     });
-    note(c, "Categorical slots 1→5 in fixed order. >5 parts: fold into “other”. Legend in stack order.");
+    note(c, "Categorical slots in fixed order. Show the top parts (about 5) and fold the rest into “other”. Legend in stack order.");
   }
 });
 </script>

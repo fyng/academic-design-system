@@ -286,10 +286,9 @@ The legend is the figure's text, set in the paper, not in the figure.
 - Show each observation where n allows (form 09); journals ask for individual points
   at small n, and Nature journals for points or box plots from n > 5.
 - Say in the legend what every error bar is.
-- Nature journals keep the leading zero on every decimal (C-index 0.78,
-  *P* = 0.16), which overrides the core rule for bounded metrics
-  (`../../core/typography.md`). The ticks on one axis share their decimal places
-  (0.50, 0.75, 1.00).
+- Every decimal keeps its leading zero (C-index 0.78, *P* = 0.16), as the core rule
+  (`../../core/typography.md`) and Nature journals both ask. The ticks on one axis
+  share their decimal places (0.50, 0.75, 1.00).
 - A statistics block inside the plot area (n, *P*, C-index) takes the `tick` role,
   5 pt, so it fits a small panel's empty corner.
 - Give exact *P* values in the figure (`../../core/typography.md`). In a dense

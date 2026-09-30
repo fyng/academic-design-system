@@ -108,13 +108,13 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 22–24", desc: "A
     GA.routes(ga, [
       { from: s("lung R"), to: s("liver"), color: A }, { from: s("lung R"), to: s("adrenal"), color: A },
       { from: s("lung R"), to: s("lung L"), color: Bv }, { from: s("lung L"), to: s("brain"), color: tok("violet-400") }, { from: s("lung L"), to: s("soft tissue"), color: tok("violet-400") },
-    ], { at: at + 0.6, bow: 0.22 });
-    let dots = mets.map((m) => GA.glyph("circle", s(m.site).x, s(m.site).y, { size: 13, fill: m.c })).join("");
-    dots += GA.glyph("circle", s("lung R").x, s("lung R").y, { size: 16, fill: "var(--paper)", ring: "var(--ink)", ringW: 2.5 });
+    ], { at: at + 0.6, bow: 0.22, gap: 10 });
+    let dots = mets.map((m) => GA.glyph("circle", s(m.site).x, s(m.site).y, { size: 16, fill: m.c })).join("");
+    dots += GA.glyph("circle", s("lung R").x, s("lung R").y, { size: 16, fill: prim });
     ga.raw(dots, { at: at + 0.4, anim: "pop" });
     const pl = ga.text("primary", { x: s("lung R").x - 14, y: s("lung R").y - 8, role: "tick", size: 12, anchor: "end", color: "var(--ink-2)", at, anim: "fade" });
     pl.node.querySelectorAll("text").forEach((t) => t.setAttribute("style", `${t.getAttribute("style")};stroke:var(--paper);stroke-width:3px;paint-order:stroke`));
-    note(x, CW, "The tree says which clones seeded; the body says where they went. Fill is where a clone lives, a ring and a letter its seeding role. Each seeding lineage takes one hue, lighter for its descendants, and its arrows share it: from the open primary to each site, bowing to one side.");
+    note(x, CW, "The tree says which clones seeded; the body says where they went. Fill is where a clone lives, a ring and a letter its seeding role. Each seeding lineage takes one hue, lighter for its descendants, and its arrows share it: from the primary to each site, bowing to one side.");
   }
 });
 </script>

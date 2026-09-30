@@ -10,7 +10,8 @@ see_also: [form-14, form-20, form-26]
 # 08 · Composition bars
 
 - Horizontal bars, with categorical slots in fixed order and the same order in every
-  bar. Up to 5 parts; the rest fold into "other" (`context`). Ordered parts (stages)
+  bar. Consider the top 5 parts and fold the rest into "other" (`context`); the
+  right number depends on the data. Ordered parts (stages)
   take the ordinal steps of one ramp.
 - Shares go inside segments when they fit with padding. The legend sits above or
   below the bars, in stack order.

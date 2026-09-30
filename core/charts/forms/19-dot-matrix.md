@@ -20,7 +20,7 @@ burden among them, the share of cells expressing a gene and its mean level.
   the magnitude spans decades, and cap it (`../../color.md`).
 - Each column's n sits in a row above the grid in the `tick` role, with "n" at the
   row's left; column names read upward above that.
-- Row groups (SBS, DBS, ID) part with a 10 px gap and are named upward at the left
+- Row groups (SBS, DBS, ID) part with a gap (about 10 px) and are named upward at the left
   beside a `rule` bar. A text column right of the grid (`tick`) annotates each row
   (the proposed aetiology) and stays blank where there is nothing to say.
 - Two keys beneath: dots in `context` at three shares (0.25, 0.5, 1), and the colour

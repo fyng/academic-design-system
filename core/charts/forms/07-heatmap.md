@@ -5,7 +5,7 @@ family: matrix
 specimens: [core/specimen-forms-01-08.html, core/specimen-forms-09-14.html, core/specimen-forms-07-08.html]
 kit: [ch.heat, ch.oncoprint, ch.key]
 sources: ["Li, Friends Don't Let Friends Make Bad Graphs (grouped heatmap)", "Hessey, Bunkum, Huebner et al., Nature 2026, Fig. 2a (categorical cells)"]
-see_also: [form-18, form-19, form-24]
+see_also: [form-18, form-19, form-24, form-21]
 ---
 # 07 · Heatmap
 
@@ -13,7 +13,7 @@ see_also: [form-18, form-19, form-24]
   or the direction scale, with the midpoint (`wash`) at the value that means no
   change. Magnitude uses a sequential scale from 0.
 - Order rows and columns by clustering or by a known variable. When columns carry an
-  annotation (cell type, cohort), **group** them: a 6–8 px gap between groups, the
+  annotation (cell type, cohort), **group** them: a gap between groups sized to the matrix (6–10 px), the
   group's name and n above it, and rows ordered by the group where each peaks.
 - Cells are separated by a 2 px paper gap. In dense matrices (hundreds of columns),
   keep the gaps between rows and between groups and let columns touch.
@@ -30,7 +30,7 @@ see_also: [form-18, form-19, form-24]
     primary-unique `blue-700`, metastasis-unique `teal-500`.
   - A second event in the same gene (a biallelic hit) is a small ring inside the
     cell: paper fill, 1 px `ink` edge (*Glyphs*).
-  - Row groups (amplification, LOH, mutation) part with a 10 px gap and are named
+  - Row groups (amplification, LOH, mutation) part with a gap (about 10 px) and are named
     as in form 19; gene names are italic and sort by frequency within a group.
   - Each row's classes stack into a bar at its right on a count axis, as form 18's
     totals do; annotation strips (histology, treatment) run under the grid, named

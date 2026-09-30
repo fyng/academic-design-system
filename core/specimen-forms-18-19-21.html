@@ -59,7 +59,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 18, 19, 21", desc:
     const kx = c.x + 318, ky = c.T + 38, kw = 26;
     ga.text("Share of patients", { x: kx, y: ky - 20, role: "tick", color: "var(--muted)", at, anim: "fade" });
     ga.raw(q.map((col, i) => `<rect x="${kx + i * kw}" y="${ky}" width="${kw - 2}" height="10" fill="${col}"/>`).join(""), { at, anim: "fade" });
-    ["0", ".05", ".1", ".2", ".4", "1"].forEach((s, i) => ga.text(s, { x: kx + i * kw - 1, y: ky + 14, role: "tick", size: 11, anchor: "middle", at, anim: "fade" }));
+    ["0", "0.05", "0.1", "0.2", "0.4", "1"].forEach((s, i) => ga.text(s, { x: kx + i * kw - 1, y: ky + 14, role: "tick", size: 11, anchor: "middle", at, anim: "fade" }));
     ch.dotKey([{ label: "mutation", color: pc[0] }, { label: "amplification", color: pc[1] }, { label: "deletion", color: pc[2] }], { x: c.x, y: ch.y1 + 44, square: true });
     note(c, "Counts are the data, so each cell prints its count; the shade bins its share of the column's patients (5 steps, edges on the key). Blank means none. Rows sort by total; a 100 % bar per row splits it by mechanism.");
   }
@@ -88,7 +88,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 18, 19, 21", desc:
     });
     ch.sizeKey([0.25, 0.5, 1], dm.rmax, { x: c.x + 84, y: ch.y1 + 22, title: "Share of tumours" });
     ga.text("Mutations per Mb", { x: c.x + 250, y: ch.y1 + 22, role: "tick", color: "var(--muted)", at, anim: "fade" });
-    ch.key(q, { x: c.x + 250, y: ch.y1 + 48, w: 150, lo: ".05", hi: "> 25" });
+    ch.key(q, { x: c.x + 250, y: ch.y1 + 48, w: 150, lo: "0.05", hi: "> 25" });
     note(c, "Two measures per cell: the dot's area is the share of tumours with the signature, its colour the burden among them (log, capped). Every cell is a wash square, so an empty cell reads as measured and absent. Groups part with a gap; notes sit right.");
   }
 

@@ -154,8 +154,9 @@ One hue, light to dark.
 - Ordered classes that also carry a judgement (risk quartiles) take the valence
   arms instead: benefit 700 and 400, then harm 400 and 700.
 - Continuous fields (heatmaps, spatial maps) use the full 100–900. Discrete ordered
-  classes (grades 1–4, tiers, doses, stages) use steps 400–800, so the lightest class
-  is still ≥ 2:1 on paper and the order shows in the colour.
+  classes (grades 1–4, tiers, doses, stages, binned values) take steps from
+  anywhere in 100–900, spaced so neighbours stay apart and the order shows. Steps 400 and darker stay
+  ≥ 2:1 on paper (*Validation*).
 - **Cap the scale** when a few outliers would use up its range: end it near the 95th
   percentile and label the key's end "> 2". A rank plot of the values shows where
   the cap belongs.

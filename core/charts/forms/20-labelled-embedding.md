@@ -19,7 +19,7 @@ nothing.
   opacity), drawn in shuffled order so no group always sits on top; grey points go
   first.
 - **Colour** follows `../../color.md`: identity slots in order; a lineage or ordered
-  states take the ordinal steps of one ramp (400–800); an eighth type folds into
+  states take steps of one ramp; an eighth type folds into
   `context` and keeps its name.
 - **Names replace the legend.** Each group's name sits at the edge of its cloud in
   its text step, with a 3 px paper halo where it crosses points. A legend (dots and
