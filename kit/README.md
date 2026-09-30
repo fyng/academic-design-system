@@ -14,7 +14,8 @@ on it.
 | `ga-bio.js` | Cells, tissue, body maps, zooms (`../core/illustration.md`) |
 | `anatomy.js` | The anatomy the body map draws: a curated Expression Atlas anatomogram (CC BY 4.0). Load it before `ga-bio.js` |
 | `icons.js` | Icons (`../core/icons.md`) |
-| `render.cjs` | PNG / MP4 / WebM renderer |
+| `render.cjs` | PNG / MP4 / WebM renderer; also renders the figure blocks of Markdown specs |
+| `figures.cjs` | Reads figure blocks, writes the page each is drawn on, and stamps each PNG with its block's hash |
 
 ## Loading and rendering
 
@@ -35,6 +36,18 @@ node ../design-system/kit/render.cjs my-figure.html   # -> out/my-figure.{png,mp
 
 The renderer needs Playwright (resolved from the project's `node_modules`, or a global
 install via `NODE_PATH=$(npm root -g)`) and ffmpeg.
+
+A figure smaller than the 1600 × 900 canvas passes its size and margin to `GA.build`:
+`GA.build({ width: 520, height: 450, margin: 16 }, (ga) => …)`. The lint then keeps
+text inside that margin on every side. The chart forms' figure blocks are drawn this
+way (`../core/charts/README.md`, *Figures*): given Markdown files, the renderer draws
+each block to the PNG named above it, skipping those whose image already carries the
+block's hash.
+
+```bash
+node kit/render.cjs core/charts/forms/*.md          # changed figures -> core/charts/forms/out/
+node kit/render.cjs core/charts/forms/22-body-map.md --all --fit   # redraw; print each drawing's bounds
+```
 
 Charts use `GA.chart`, which applies the grammar in `../core/charts/README.md`:
 
@@ -80,4 +93,4 @@ plot, left-aligned at `yTitleX`.
 | `units` | Unit columns ([26](../core/charts/forms/26-unit-columns.md)) |
 | `oncoprint` | Heatmap with categorical cells, the oncoprint ([07](../core/charts/forms/07-heatmap.md)) |
 
-The chart specimens, `../core/specimen-forms-*.html` (named by the forms they draw), use every mark.
+The chart forms' figure blocks (`../core/charts/forms/`) use every mark.

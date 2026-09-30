@@ -7,11 +7,11 @@ What every format shares: the principles, the voice, and five elements. The form
 |---|---|---|
 | Colour | [`color.md`](color.md) | Palettes grouped by meaning, and how they were validated |
 | Typography | [`typography.md`](typography.md) | One family (IBM Plex), type roles, numbers and units |
-| Charts | [`charts/`](charts/README.md) | Choosing a form, the chart grammar and glyphs; one file per form in `charts/forms/` (26 forms) |
+| Charts | [`charts/`](charts/README.md) | Choosing a form, the chart grammar and glyphs; one file per form in `charts/forms/` (26 forms), each holding its rules and its figures, and a contact sheet per family in `charts/out/` |
 | Icons | [`icons.md`](icons.md) | Health Icons, custom glyphs, when an icon takes colour |
 | Illustration | [`illustration.md`](illustration.md) | Cells, tissue, body maps, model systems, zooms, arrows and method boxes |
 | Tokens | `tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit the `.mjs`, run `node core/tokens.mjs` |
-| Specimens | `specimen-color.html`, `specimen-scales.html`, `specimen-forms-<numbers>.html` → `out/*.png` | Reference sheets for colour, scales and the chart forms, drawn with the kit (`../kit/`). Each chart specimen is named by the forms it draws. The journal figure specimens are Typst, in `../formats/publication/` |
+| Specimens | `specimen-color.html`, `specimen-scales.html` → `out/*.png` | Reference sheets for colour and scales, drawn with the kit (`../kit/`). The chart forms draw their own figures (`charts/README.md`, *Figures*). The journal figure specimens are Typst, in `../formats/publication/` |
 
 | Format | For | Adds |
 |---|---|---|

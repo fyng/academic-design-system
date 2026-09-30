@@ -28,15 +28,15 @@ mm and pt; the abstract adds a canvas, an arc and motion.
 |---|---|
 | [`INDEX.md`](INDEX.md) | Generated map of every doc, chart form, specimen and kit file. Start here to find something |
 | `core/*.md` | The shared elements: `color.md`, `typography.md`, `icons.md`, `illustration.md` |
-| `core/charts/` | Charts: `README.md` (choosing a form, the grammar, glyphs) and `forms/NN-name.md`, one file per chart form |
+| `core/charts/` | Charts: `README.md` (choosing a form, the grammar, glyphs, the form file) and `forms/NN-name.md`, one file per chart form holding its rules and the code of its figures, rendered to `core/charts/forms/out/`; `core/charts/out/sheet-<family>.png` lays out each family's figures |
 | `core/tokens.mjs` → `tokens.css`, `tokens.json` | Every colour and font value. Edit `tokens.mjs`, run `node core/tokens.mjs` |
 | `core/fonts/ibm-plex-sans/` | Vendored IBM Plex Sans static TTFs (SIL OFL) for print figures |
-| `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour and scales, and the chart forms (`specimen-forms-22-24.html` draws forms 22 to 24) |
-| `kit/` | The HTML kit that draws every non-Typst specimen and graphical abstract: `ga-kit.css`/`ga-kit.js` (layout, type roles, motion, lint), `ga-charts.js`, `ga-bio.js`, `anatomy.js`, `icons.js`, and `render.cjs` (PNG/MP4/WebM renderer) |
+| `core/specimen-*.html` → `core/out/*.png` | Reference sheets for colour and scales |
+| `kit/` | The HTML kit that draws every non-Typst specimen and graphical abstract: `ga-kit.css`/`ga-kit.js` (layout, type roles, motion, lint), `ga-charts.js`, `ga-bio.js`, `anatomy.js`, `icons.js`, `render.cjs` (PNG/MP4/WebM renderer, and the figure blocks of Markdown specs) and `figures.cjs` (reads figure blocks) |
 | `formats/web/scss/instrument-prussian/` | The web format in Sass: `_tokens.scss` (framework-agnostic) and `_al-folio.scss` (al-folio adapter) |
 | `formats/publication/` | The journal figure spec: the panel contract, composite panels, `fig.typ` that assembles figures in Typst, and the specimens (`specimen-figure.typ`, `specimen-panel.typ`, `specimen-marginal.typ`, `specimen-multitrack-timeline.typ`, sharing `spec-lib.typ`) |
 | `formats/abstract/` | The graphical abstract: canvas, arc, text, type sizes and motion |
-| `tools/index.mjs` | Writes `INDEX.md` and checks that paths, form files, specimens and kit calls agree (`npm run check`) |
+| `tools/index.mjs`, `tools/sheets.mjs` | `index.mjs` writes `INDEX.md` and checks that paths, form files, figures, specimens and kit calls agree (`npm run check`); `sheets.mjs` writes the contact sheets (`npm run figures`) |
 
 ## Using it in a project
 
@@ -65,13 +65,15 @@ Every project that uses the system can improve it. Change it here, not in a copy
    feature is documented in the matching core or format README in the same commit.
    Shared guidance goes in `core/`; guidance for one medium goes in its format. A new
    chart form takes the next number and its own file, `core/charts/forms/NN-name.md`
-   (copy the front matter of an existing one).
+   (copy an existing one: `core/charts/README.md`, *Figures*, describes the file).
 3. Regenerate what is generated: `node core/tokens.mjs` after editing tokens, then
    re-render the specimens it affects (`node kit/render.cjs core/specimen-color.html --still`
    writes `core/out/specimen-color.png`). Every image in an `out/` folder comes from a
-   specimen page in the repo, so a token or kit change shows up in the specimens.
+   specimen in the repo, so a token or kit change shows up in the specimens. After
+   editing a form's figure, `npm run figures` renders it and rewrites the contact
+   sheets (`node kit/render.cjs core/charts/forms/*.md --all` first after a kit change).
    Then run `npm run check`, which rewrites `INDEX.md` and fails on a broken path, a
-   form file without its front matter, or a kit call that does not exist.
+   form file without its front matter, a stale figure, or a kit call that does not exist.
 4. Push the branch and open a pull request here. Keep it about the system; anything
    that only one project needs (a page layout, a figure) stays in that project.
 5. Once it merges, bump the pointer in each project that should pick it up:

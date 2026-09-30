@@ -6,17 +6,19 @@ format; each format sets the sizes and the tools (`../../formats/`).
 
 This file holds what every chart shares: how to choose a form, and the grammar
 (frame, marks, labels, glyphs, colour). Each form has its own file in `forms/`,
-named by its number and a short name (`forms/22-body-map.md`). A form file opens
-with front matter (`id: form-22`, `family`, `specimens`, `kit`, `sources`,
-`see_also`, which runs both ways), states the form's rules, and ends with *In each format*: its specimen,
-its kit calls and its print sizes. Form numbers are permanent: a new form takes the
-next number, and a retired number is not reused. `../../INDEX.md` lists every form
-with its files.
+named by its number and a short name (`forms/22-body-map.md`), which holds both its
+rules and its figures (*Figures*, below). Form numbers are permanent: a new form
+takes the next number, and a retired number is not reused. `../../INDEX.md` lists
+every form with its figures, and `out/` holds one contact sheet per family
+(`out/sheet-anatomy.png`), laying out every figure of its forms.
 
 Sizes are px on the abstract canvas. `../../formats/publication/README.md` gives the
 print equivalents that every form shares; a form's own print sizes are in its file.
 
 ## Forms by family
+
+This table is the list of families: a form's `family` must be one of them, and each
+row lists exactly its forms.
 
 | Family | Forms |
 |---|---|
@@ -28,6 +30,69 @@ print equivalents that every form shares; a form's own print sizes are in its fi
 | Composition (`composition`) | [08 · Composition bars](forms/08-composition-bars.md), [14 · Composition columns](forms/14-composition-columns.md), [26 · Unit columns](forms/26-unit-columns.md) |
 | Embedding (`embedding`) | [20 · Labelled embedding](forms/20-labelled-embedding.md) |
 | Anatomy and phylogeny (`anatomy`) | [22 · Body map](forms/22-body-map.md), [23 · Route map](forms/23-route-map.md), [24 · Clone tree](forms/24-clone-tree.md) |
+
+## Figures
+
+A form file is one Markdown document that a reader or an agent can take whole: front
+matter to find it by, the rules as prose, and the figures that show them, each drawn
+by code in the file itself.
+
+````markdown
+---
+id: form-22                    # permanent; the file is NN-name.md
+name: Body map                 # 1–3 words
+kind: chart
+family: anatomy                # a row of *Forms by family*
+job: ["Counts per anatomical site", "A share compared between body regions"]
+kit: [GA.bio.body, GA.bio.bubbles, GA.bio.dial]
+sources: ["Hessey, Bunkum, Huebner et al., Nature 2026, Figs 1a and 4h"]
+see_also: [form-23, form-25]   # runs both ways
+---
+# 22 · Body map
+
+For counts per anatomical site … (the lead paragraph: what the form is for)
+
+- The rules of the main figure.
+
+![Metastases per site on the body map, as bubbles sized by count](out/22-body-map.main.png)
+
+```js figure=main w=521 h=453
+const B = GA.bio(ga);
+const body = B.body({ cx: 267, y: 16, h: 420 });
+…
+```
+
+## Region dials
+
+To compare a share between regions … (the variant's lead paragraph)
+
+- The variant's own rules, then its image and figure block, `figure=region-dials`.
+
+## In each format
+
+| Element | Canvas | Print |
+|---|---|---|
+````
+
+- **Variants are sections.** The figure before the first `##` heading is `main`; a
+  figure under a `##` heading is named by that heading's slug, so
+  `forms/22-body-map.md#region-dials` links the section and names the figure. A
+  form's print sizes go last, under *In each format*.
+- **A job is a row of *Choosing the form*.** Each entry of `job` is the text of a row
+  below that links the form, and each row that links a form is one of its jobs.
+- **A figure block** is a `js` block whose info string gives its name and its canvas
+  in px, `figure=<name> w=<w> h=<h>`. Its code runs inside `GA.build` on that canvas
+  with a 16 px margin (`../../kit/README.md`), with `ga`, `GA`, `tok(name)` and
+  `ramp(hue, steps)` in scope. It draws with synthetic data from a seeded `GA.rng`,
+  places marks from the canvas origin, and passes no `at`: a figure is still.
+- **Its image sits above it**, `![alt](out/<file>.<name>.png)`, the alt text saying
+  what the figure shows. `node kit/render.cjs core/charts/forms/*.md` renders every
+  figure whose code changed (`--all` after a kit change; `--fit` prints each
+  drawing's bounds, to set `w` and `h`), and `node tools/sheets.mjs` rewrites the
+  contact sheets; `npm run figures` does both. Each image carries its block's hash,
+  so `npm run check` fails on a stale one.
+- A form drawn outside the kit (17, in Typst) names its source in `specimens` and
+  shows its image instead of a figure block.
 
 ## Choosing the form
 

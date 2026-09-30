@@ -5,6 +5,7 @@
   "scripts": {
     "tokens": "node core/tokens.mjs",
     "render": "node kit/render.cjs",
+    "figures": "node kit/render.cjs core/charts/forms/*.md && node tools/sheets.mjs",
     "check": "node tools/index.mjs"
   },
   "devDependencies": {

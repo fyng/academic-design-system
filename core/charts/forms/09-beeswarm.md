@@ -1,8 +1,9 @@
 ---
 id: form-09
 name: Beeswarm
+kind: chart
 family: distribution
-specimens: [core/specimen-forms-09-14.html]
+job: ["Compare groups of observations", "A distribution"]
 kit: [ch.swarm, ch.summary]
 sources: ["Li, Friends Don't Let Friends Make Bad Graphs"]
 see_also: [form-10, form-13]
@@ -24,7 +25,14 @@ along with the centre.
 - For n below about 30, this is also the form for a distribution: the points say
   more than any histogram or violin of the same data.
 
-## In each format
+![Three groups of 60 points in a beeswarm, each with its median bar](out/09-beeswarm.main.png)
 
-- Specimens: `../../specimen-forms-09-14.html` → `../../out/specimen-forms-09-14.png`.
-- Kit: `ch.swarm`, `ch.summary` (`../../../kit/README.md`).
+```js figure=main w=349 h=218
+const rnd = GA.rng(11);
+const normal = (mu = 0, sd = 1) => mu + sd * Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+const A = Array.from({ length: 60 }, () => normal(0.8, 1));
+const B = Array.from({ length: 60 }, (_, i) => (i % 2 ? normal(2.6, 0.6) : normal(-0.4, 0.6)));
+const C = Array.from({ length: 60 }, () => Math.min(4.6, -0.6 + Math.exp(normal(0.4, 0.6))));
+const ch = GA.chart(ga, { x: 68, y: 6, w: 274, h: 172, xd: [0.5, 3.5], yd: [-3, 5], xTicks: [1, 2, 3], xFmt: (v) => "ABC"[v - 1], yTicks: [-2, 0, 2, 4], yTitle: "Response" });
+ch.swarm([{ x: 1, values: A }, { x: 2, values: B }, { x: 3, values: C }], { r: 3 });
+```
