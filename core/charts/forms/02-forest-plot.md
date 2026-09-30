@@ -4,6 +4,7 @@ name: Forest plot
 family: comparison
 specimens: [core/specimen-forms-01-08.html]
 kit: [ch.intervals, ch.ref]
+see_also: [form-16]
 ---
 # 02 · Forest plot
 

@@ -83,7 +83,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 07, 08 (variants)"
     ga.text("Actionable drivers", { x: tb.x0, y: tb.y0 - 16, role: "tick", color: "var(--muted)", at: at + 1, anim: "fade" });
     for (const l of lines) { ga.text(l, { x: tb.x0, y: yy, role: "tick", size: 13, color: "var(--ink)", at: at + 1, anim: "fade" }); yy += 20; }
     // the part is framed, and two straight leaders zoom it into its list (as in form 20)
-    ga.raw(`<rect x="${seg.x0}" y="${seg.y0}" width="${seg.x1 - seg.x0}" height="${seg.y1 - seg.y0}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`, { at: at + 0.9, anim: "fade" });
+    ga.raw(`<rect x="${seg.x0}" y="${seg.y0}" width="${seg.x1 - seg.x0}" height="${seg.y1 - seg.y0}" fill="none" stroke="var(--ink)" stroke-width="1"/>`, { at: at + 0.9, anim: "fade" });
     GA.leaders(ga, seg, { x0: tb.x0 - 10, x1: tb.x0 + 200, y0: tb.y0 + 6, y1: yy + 2 }, { at: at + 0.9 });
     note(x, CW, "To name what one part of a bar holds, zoom into it the way the atlas does: frame the part in ink and run two straight leaders from its corners to a short list beside the bar, which names each item in the paper's terms.");
   }

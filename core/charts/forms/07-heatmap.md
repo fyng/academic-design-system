@@ -34,7 +34,7 @@ see_also: [form-18, form-19, form-24]
     as in form 19; gene names are italic and sort by frequency within a group.
   - Each row's classes stack into a bar at its right on a count axis, as form 18's
     totals do; annotation strips (histology, treatment) run under the grid, named
-    at the right, as in form 25.
+    at the right.
 
 ## In each format
 

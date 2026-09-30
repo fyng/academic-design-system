@@ -3,9 +3,9 @@ id: form-08
 name: Composition bars
 family: composition
 specimens: [core/specimen-forms-01-08.html, core/specimen-forms-07-08.html]
-kit: [ch.stack, ch.region, GA.leaders]
+kit: [ch.stack, GA.leaders]
 sources: ["Hessey, Bunkum, Huebner et al., Nature 2026, Fig. 2b (a named part)"]
-see_also: [form-14, form-20]
+see_also: [form-14, form-20, form-26]
 ---
 # 08 · Composition bars
 
@@ -19,13 +19,13 @@ see_also: [form-14, form-20]
   tissue with the same colours.
 - When the question is whether a part changed, add a points-and-mean panel per part
   (form 10) beside the stack.
-- **A named part.** To say what one part of a bar holds (the actionable drivers among
-  the truncal mutations), zoom into it as form 20's atlas does: frame the part 1.5 px
-  `ink` and run two straight 1 px `ink-2` leaders from its corners to a short list
+- **A named part.** To say what one part of a bar or column holds (the actionable
+  drivers among the truncal mutations), zoom into it as form 20's atlas does: frame
+  the part 1 px `ink` and run two straight 1 px `ink-2` leaders from its corners to a short list
   beside the bar. The list's title is `muted`; its items are `ink`, gene names
   italic.
 
 ## In each format
 
 - Specimens: `../../specimen-forms-01-08.html` → `../../out/specimen-forms-01-08.png`, `../../specimen-forms-07-08.html` → `../../out/specimen-forms-07-08.png`.
-- Kit: `ch.stack`, `ch.region`, `GA.leaders` (`../../../kit/README.md`).
+- Kit: `ch.stack`, `GA.leaders` (`../../../kit/README.md`).

@@ -4,7 +4,7 @@ name: Patient timeline
 family: time
 specimens: [formats/publication/specimen-multitrack-timeline.typ]
 kit: []
-see_also: [form-21, form-25]
+see_also: [form-21, form-25, form-03]
 ---
 # 17 · Patient timeline
 
@@ -14,10 +14,10 @@ in `../../../formats/publication/specimen-multitrack-timeline.typ`.
 
 - One time axis on top. Tracks stack below in groups (risk, events, treatment, sites,
   labs), each group opened by a header in the `group` role.
-- A black rule at the start time runs from the axis through every track.
-- Observed data are vermilion 500 with a paper ring: event dots, interval bars
+- An `ink` rule at the start time runs from the axis through every track.
+- Observed data are `vermilion-500` with a paper ring: event dots, interval bars
   (round-capped), and lab measurements.
-- Predicted data are blue: lines in blue 600, probabilities as a heat strip on the
+- Predicted data are blue: lines in `blue-600`, probabilities as a heat strip on the
   blue ramp (100 at 0, 700 at 1), drawn under the observed marks.
 - The risk line takes the valence diverging scale, each segment coloured by its
   value, with a dotted zero rule when 0 lies in range. It is the only track with
@@ -30,7 +30,7 @@ in `../../../formats/publication/specimen-multitrack-timeline.typ`.
 
 ## In each format
 
-- Specimens: `../../../formats/publication/specimen-multitrack-timeline.typ`.
+- Specimens: `../../../formats/publication/specimen-multitrack-timeline.typ` → `../../../formats/publication/out/specimen-multitrack-timeline.png`.
 - Kit: none; the specimen is drawn in Typst.
 
 The track stack's distances in print are the publication format's composite panel (`../../../formats/publication/README.md`, *Composite panels*).

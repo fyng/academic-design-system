@@ -4,6 +4,7 @@ name: Ranked bars
 family: comparison
 specimens: [core/specimen-forms-01-08.html]
 kit: [ch.hbars]
+see_also: [form-11, form-12]
 ---
 # 01 · Ranked bars
 

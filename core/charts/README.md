@@ -8,7 +8,7 @@ This file holds what every chart shares: how to choose a form, and the grammar
 (frame, marks, labels, glyphs, colour). Each form has its own file in `forms/`,
 named by its number and a short name (`forms/22-body-map.md`). A form file opens
 with front matter (`id: form-22`, `family`, `specimens`, `kit`, `sources`,
-`see_also`), states the form's rules, and ends with *In each format*: its specimen,
+`see_also`, which runs both ways), states the form's rules, and ends with *In each format*: its specimen,
 its kit calls and its print sizes. Form numbers are permanent: a new form takes the
 next number, and a retired number is not reused. `../../INDEX.md` lists every form
 with its files.
@@ -125,9 +125,8 @@ them in every panel.
   death, a bar for an interval (a treatment). Samples of different kinds (at
   relapse, at progression) share the circle; their place on the timeline tells them
   apart.
-- **A change of state changes the line, not a glyph**: the follow-up line is a
-  hairline until relapse and heavier after it, as the track stack's lanes carry
-  state (form 17).
+- **A change of state changes the line, not a glyph**: the swimmer plot's
+  follow-up line is 1.5 px `rule` until relapse and 2.5 px `ink-2` after it (form 25).
 - **Fill says the class** (where a clone lives, which site a sample came from), from
   one palette per job (`../color.md`).
 - **A ring says the role**: 2.5 px `ink` for the primary role (seeds from the

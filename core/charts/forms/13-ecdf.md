@@ -5,7 +5,7 @@ family: distribution
 specimens: [core/specimen-forms-09-14.html]
 kit: [ch.line, ch.dots]
 sources: ["Li, Friends Don't Let Friends Make Bad Graphs"]
-see_also: [form-09]
+see_also: [form-09, form-03]
 ---
 # 13 · ECDF
 

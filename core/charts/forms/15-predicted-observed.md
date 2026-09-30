@@ -4,6 +4,7 @@ name: Predicted vs observed
 family: response
 specimens: [core/specimen-forms-03-15-16.html, formats/publication/specimen-marginal.typ]
 kit: [ch.hexbin, ch.marginal, ch.ref]
+see_also: [form-05]
 ---
 # 15 · Predicted vs observed
 
@@ -23,7 +24,7 @@ For a regression's predictions against the measured values, over many observatio
 
 ## In each format
 
-- Specimens: `../../specimen-forms-03-15-16.html` → `../../out/specimen-forms-03-15-16.png`, `../../../formats/publication/specimen-marginal.typ`.
+- Specimens: `../../specimen-forms-03-15-16.html` → `../../out/specimen-forms-03-15-16.png`, `../../../formats/publication/specimen-marginal.typ` → `../../../formats/publication/out/specimen-marginal.png`.
 - Kit: `ch.hexbin`, `ch.marginal`, `ch.ref` (`../../../kit/README.md`).
 
 Marginal strips follow the publication format's composite panel (`../../../formats/publication/README.md`, *Composite panels*), drawn at scale in `../../../formats/publication/specimen-marginal.typ`.
