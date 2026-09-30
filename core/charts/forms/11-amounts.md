@@ -5,6 +5,7 @@ family: comparison
 specimens: [core/specimen-forms-09-14.html]
 kit: [ch.vbars, ch.dots]
 sources: ["Li, Friends Don't Let Friends Make Bad Graphs"]
+see_also: [form-01]
 ---
 # 11 · Amounts
 

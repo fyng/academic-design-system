@@ -5,6 +5,7 @@ family: comparison
 specimens: [core/specimen-forms-09-14.html]
 kit: [ch.lollipop, ch.key]
 sources: ["Li, Friends Don't Let Friends Make Bad Graphs"]
+see_also: [form-01]
 ---
 # 12 · Lollipop
 

@@ -13,7 +13,7 @@ For counts per anatomical site: metastases by organ, samples by site, lesions by
 region. The body gives the sites their places, so no axis is needed.
 
 - The body is neutral (`../../illustration.md`, *Body maps*): wash fill, `context`
-  outline, organ cores in slate 200. The patient's right is the viewer's left.
+  outline, organs in `rule`. The patient's right is the viewer's left.
 - **Site bubbles**: one circle per site at its place, **area** proportional to the
   count, the count inside in paper (13 px, or 11 px in small bubbles). Bigger
   bubbles are drawn first, each with a 1 px paper ring, so overlapping sites stay

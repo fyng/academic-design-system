@@ -59,7 +59,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
   // 03 cumulative incidence: focus vs context, step curves, CI ribbon
   {
     const c = cell(2); head(c, 3, "CUMULATIVE INCIDENCE");
-    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 124, h: PH, xd: [0, 24], yd: [0, 0.12], xTicks: [0, 6, 12, 18, 24], yTicks: [0, 0.05, 0.1], yFmt: (v) => `${Math.round(v * 100)}%`, xTitle: "Months on ICI", yTitle: "Cumulative incidence", at });
+    const ch = GA.chart(ga, { x: c.x + 64, y: c.T + 60, w: CW - 152, h: PH, xd: [0, 24], yd: [0, 0.12], xTicks: [0, 6, 12, 18, 24], yTicks: [0, 0.05, 0.1], yFmt: (v) => `${Math.round(v * 100)}%`, xTitle: "Months on ICI", yTitle: "Cumulative incidence", at });
     const curve = (k, s) => { const pts = [[0, 0]]; let y = 0; for (let m = 1; m <= 24; m++) { y += k * Math.exp(-m / 9) * (0.6 + rnd() * 0.8); pts.push([m, y]); } return pts; };
     const car = curve(0.011, 1), non = curve(0.0022, 2);
     ch.ribbon(car.map(([x, y]) => [x, y * 0.72]), car.map(([x, y]) => [x, y * 1.28]), { curve: "step", color: "var(--harm)" });
@@ -73,7 +73,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
   // 04 dose-response: log concentration, IC50 drop lines
   {
     const c = cell(3); head(c, 4, "DOSE–RESPONSE");
-    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [0.001, 10], xlog: true, yd: [0, 1.1], xTicks: [0.001, 0.01, 0.1, 1, 10], xFmt: (v) => (v >= 1 ? String(v) : v.toString().replace("0.", ".")), yTicks: [0, 0.5, 1], xTitle: "Drug (µM)", yTitle: "Viability", at });
+    const ch = GA.chart(ga, { x: c.x + 56, y: c.T + 60, w: CW - 70, h: PH, xd: [0.001, 10], xlog: true, yd: [0, 1.1], xTicks: [0.001, 0.01, 0.1, 1, 10], yTicks: [0, 0.5, 1], xTitle: "Drug (µM)", yTitle: "Viability", at });
     const hill = (ic, n = 1.4) => (x) => 1 / (1 + (x / ic) ** n);
     ch.fn(hill(1.8), { color: "var(--context)" });
     ch.fn(hill(0.03), { color: "var(--benefit)" });
@@ -86,19 +86,19 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
   // 05 ROC: model vs baseline, chance diagonal
   {
     const c = cell(4); head(c, 5, "ROC");
-    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: PH + 20, h: PH, xd: [0, 1], yd: [0, 1], xTicks: [0, 0.5, 1], yTicks: [0, 0.5, 1], xTitle: "1 − specificity", yTitle: "Sensitivity", at });
+    const ch = GA.chart(ga, { x: c.x + 56, y: c.T + 60, w: PH + 20, h: PH, xd: [0, 1], yd: [0, 1], xTicks: [0, 0.5, 1], yTicks: [0, 0.5, 1], xTitle: "1 − specificity", yTitle: "Sensitivity", at });
     ch.ref("diag");
     const roc = (a) => (x) => 1 - (1 - x) ** a;
     ch.fn(roc(1.7), { color: "var(--context)" });
     ch.fn(roc(4.2), { color: "var(--prussian)" });
-    ch.lineKey([{ label: "model  AUROC .81", color: "var(--prussian)" }, { label: "baseline  .64", color: "var(--context)" }], { x: ch.x1 + 16, y: ch.y1 - 44 });
+    ch.lineKey([{ label: "model  AUROC 0.81", color: "var(--prussian)" }, { label: "baseline  0.64", color: "var(--context)" }], { x: ch.x1 + 16, y: ch.y1 - 44 });
     note(c, "Square plot, chance diagonal dotted. Curves converge, so a line key replaces end labels. AUROC to 2 figures.");
   }
 
   // 06 volcano: direction without judgement (violet down, ochre up)
   {
     const c = cell(5); head(c, 6, "VOLCANO");
-    const ch = GA.chart(ga, { x: c.x + 36, y: c.T + 60, w: CW - 50, h: PH, xd: [-4, 4], yd: [0, 12], xTicks: [-4, -2, 0, 2, 4], yTicks: [0, 5, 10], xTitle: "log₂ fold change", yTitle: "−log₁₀ P", at });
+    const ch = GA.chart(ga, { x: c.x + 52, y: c.T + 60, w: CW - 66, h: PH, xd: [-4, 4], yd: [0, 12], xTicks: [-4, -2, 0, 2, 4], yTicks: [0, 5, 10], xTitle: "log₂ fold change", yTitle: "−log₁₀ P", at });
     const pts = [];
     for (let i = 0; i < 260; i++) {
       const fc = (rnd() - 0.5) * 2 * (rnd() < 0.85 ? 1.4 : 3.8), p = Math.abs(fc) * (1.2 + rnd() * 2.2) + rnd() * 1.2;
@@ -140,7 +140,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 01–08", desc: "E
       const t = ga.text(n, { x: lx + 14, y: ly, role: "tick", at, anim: "fade" });
       lx = t.r + 14;
     });
-    note(c, "Categorical slots 1→5 in fixed order. >5 parts: fold into “other”. Legend in stack order.");
+    note(c, "Categorical slots in fixed order. Show the top parts (about 5) and fold the rest into “other”. Legend in stack order.");
   }
 });
 </script>

@@ -8,7 +8,7 @@ This file holds what every chart shares: how to choose a form, and the grammar
 (frame, marks, labels, glyphs, colour). Each form has its own file in `forms/`,
 named by its number and a short name (`forms/22-body-map.md`). A form file opens
 with front matter (`id: form-22`, `family`, `specimens`, `kit`, `sources`,
-`see_also`), states the form's rules, and ends with *In each format*: its specimen,
+`see_also`, which runs both ways), states the form's rules, and ends with *In each format*: its specimen,
 its kit calls and its print sizes. Form numbers are permanent: a new form takes the
 next number, and a retired number is not reused. `../../INDEX.md` lists every form
 with its files.
@@ -55,7 +55,7 @@ Start from the data's job.
 | Counts in a matrix (patients per gene × tumour type) | Count matrix ([18](forms/18-count-matrix.md)) |
 | Two measures per cell of a matrix (how many have it, how much) | Dot matrix ([19](forms/19-dot-matrix.md)) |
 | Observations in a learned space (cells, patients, codes) | Labelled embedding ([20](forms/20-labelled-embedding.md)) |
-| Many variables for thousands of individuals in groups | Radial track stack ([21](forms/21-radial-track-stack.md)) |
+| Many variables for thousands of individuals in groups | Radial track stack ([21](forms/21-radial-track-stack.md)) to show the cohort; the oncoprint ([07](forms/07-heatmap.md)) to evaluate it |
 | Counts per anatomical site | Body map ([22](forms/22-body-map.md)) |
 | A share compared between body regions | Body map with region dials ([22](forms/22-body-map.md)) |
 | Where a tumour's clones spread, and which clones seeded | Route map ([23](forms/23-route-map.md)) beside its clone tree ([24](forms/24-clone-tree.md)) |
@@ -73,10 +73,13 @@ Start from the data's job.
 
 - Left and bottom axes, 1.5 px `ink-2`, with 5 px outward ticks. The plot area is
   open on the top and right.
-- **y title:** horizontal, above the axis, left-aligned to it. Each format may set its
-  own; publication rotates it into the left margin (`../../formats/publication/README.md`).
-- **x title:** right-aligned under the ticks, at the high end of the axis.
-  Units go in parentheses.
+- **Axis titles are centred on their axis**, in every form and format. The x title
+  sits under the tick labels, centred on the x axis. The y title reads upward in the
+  left margin, left of the tick labels, centred on the y axis. Units go in
+  parentheses.
+- A plot without a y axis line, whose rows are named instead (ranked bars, forest
+  plot, heatmap, composition bars), names its rows or its measure in a title above
+  the plot, left-aligned.
 - **Ticks:** 3–5 per axis, at round values, in the `tick` role (tabular, muted).
   Drop an axis when every value is labelled directly (bars).
 - **Baselines:** a bar's axis starts at 0, because its length carries the value.
@@ -110,6 +113,9 @@ Start from the data's job.
 - **Add a legend or line key when direct labels would collide**, for example
   converging curves (ROC) or many small segments (composition). Place it above the
   plot, in the plot's empty region, or directly below, in series order.
+- **Keys of matrices** (07, 18, 19) sit beneath the grid. A key may sit above
+  instead when the plot leaves room there and a key beneath would add a row that is
+  mostly empty (form 18).
 - Label text uses the series' **text step** (`--harm-text`, `--cat-n-text`) or
   `muted`. Journal figures set labels in ink with a colour swatch
   (`../../formats/publication/README.md`).
@@ -121,13 +127,14 @@ gene) are drawn as glyphs, one mark per kind, so a reader learns them once and r
 them in every panel.
 
 - **Shape says the kind, and there are few**: a diamond for a procedure (surgery,
-  radiotherapy), a circle for a sample or a measurement, a short vertical tick for
-  death, a bar for an interval (a treatment). Samples of different kinds (at
-  relapse, at progression) share the circle; their place on the timeline tells them
-  apart.
-- **A change of state changes the line, not a glyph**: the follow-up line is a
-  hairline until relapse and heavier after it, as the track stack's lanes carry
-  state (form 17).
+  radiotherapy), a circle for a sample or a measurement, an x for death, a short
+  vertical tick for a censored observation (form 03), a bar for an interval (a
+  treatment). Interval bars are square-cornered in a plot of data alone (form 25)
+  and may be round-capped where predictions overlay the record (form 17). Samples of
+  different kinds (at relapse, at progression) share the circle; their place on the
+  timeline tells them apart.
+- **A change of state changes the line, not a glyph**: the swimmer plot's
+  follow-up line is 1.5 px `rule` until relapse and 2.5 px `ink-2` after it (form 25).
 - **Fill says the class** (where a clone lives, which site a sample came from), from
   one palette per job (`../color.md`).
 - **A ring says the role**: 2.5 px `ink` for the primary role (seeds from the
@@ -140,8 +147,9 @@ them in every panel.
   of the cell's class (a biallelic hit in an oncoprint).
 - A glyph means one thing across the figure. The key draws each glyph as it is used,
   grouped under a title per kind (Event, Treatment, Sample).
-- Sizes: 11 px glyphs (8–9 px for minor events such as radiotherapy or a biopsy),
-  13 px when they carry a digit.
+- Sizes are a reference range; each form sets its own for its context: about 11 px
+  for a glyph, 8–9 px for minor events (radiotherapy, a biopsy), 13–16 px when it
+  carries a digit or letter or stands for a clone (form 24).
 
 **Colour** (see `../color.md`)
 
@@ -150,7 +158,8 @@ them in every panel.
 - Focus against comparator: finding colour against `context` grey.
 - Direction of effect: valence (benefit / harm) or direction (violet / ochre).
 - Identity: categorical slots in order.
-- Ordered categories (doses, stages): the ordinal steps 400, 600, 800 of one ramp.
+- Ordered categories (doses, stages, binned values): steps of one ramp from anywhere
+  in 100–900 (`../color.md`, *Magnitude*).
 - Ordered categories with a judgement (risk groups): the valence arms, benefit 700
   and 400 for the better half, harm 400 and 700 for the worse (`../color.md`, *Magnitude*).
 - A model against comparators: the model in `prussian`, comparators in `context`.

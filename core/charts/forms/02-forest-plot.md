@@ -4,6 +4,7 @@ name: Forest plot
 family: comparison
 specimens: [core/specimen-forms-01-08.html]
 kit: [ch.intervals, ch.ref]
+see_also: [form-16]
 ---
 # 02 · Forest plot
 
@@ -13,7 +14,8 @@ kit: [ch.intervals, ch.ref]
 - A filled point means the CI excludes the null; a hollow point means it doesn't.
 - Colour by direction when direction is the point: harm above 1, benefit below.
   Non-significant rows are `ink-2`.
-- Row labels are the variable names; the y title names the family ("HLA allele").
+- Row labels are the variable names; a title above them names the family ("HLA
+  allele").
 
 ## In each format
 

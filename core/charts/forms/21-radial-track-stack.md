@@ -5,14 +5,14 @@ family: matrix
 specimens: [core/specimen-forms-18-19-21.html]
 kit: [GA.radial]
 sources: ["PCAWG Consortium, Nature 2020, Fig. 2a"]
-see_also: [form-17]
+see_also: [form-07]
 ---
 # 21 · Radial track stack
 
 For many variables across thousands of individuals in groups: the drivers of every
-patient in a pan-cancer cohort. It is the track stack (17) bent into a circle, so a
-long axis of individuals fits a square panel. With a few hundred individuals or
-fewer, use the straight track stack.
+patient in a pan-cancer cohort. It is the oncoprint (07) bent into a circle, so a
+long axis of individuals fits a square panel. Use it to show a cohort's shape at a
+glance; for data the reader must evaluate, use the oncoprint.
 
 - Individuals run clockwise from 12 o'clock, one angular slice each, in **sectors**
   by group with a 1.5° gap between sectors. An 8° opening at 12 o'clock holds the

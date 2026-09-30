@@ -60,7 +60,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
   // 03 Kaplan-Meier by risk group: ordered groups on the valence arms
   {
     const c = cell(0); head(c, 3, "KAPLAN–MEIER, RISK GROUPS");
-    const ch = GA.chart(ga, { x: c.x + 52, y: c.T + 76, w: CW - 68, h: 160, xd: [0, 60], yd: [0, 1], xTicks: [0, 12, 24, 36, 48, 60], yTicks: [0, 0.5, 1], yFmt: pct, xTitle: "Months from landmark", yTitle: "Overall survival", at });
+    const ch = GA.chart(ga, { x: c.x + 72, y: c.T + 76, w: CW - 88, h: 160, xd: [0, 60], yd: [0, 1], xTicks: [0, 12, 24, 36, 48, 60], yTicks: [0, 0.5, 1], yFmt: pct, xTitle: "Months from landmark", yTitle: "Overall survival", at });
     const groups = [
       { label: "Q1", rate: 0.004, color: tok("blue-700") },
       { label: "Q2", rate: 0.009, color: tok("blue-400") },
@@ -79,7 +79,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
       const t = ga.text(g.label, { x: kx + 24, y: c.T + 46, role: "tick", at, anim: "fade" });
       kx = t.r + 16;
     }
-    ["n = 560", "*P* = 3 × 10⁻⁴²", "C-index .78"].forEach((s, i) => ga.text(s, { x: ch.x0 + 10, y: ch.sy(0.3) + i * 17, role: "cap", size: 13, at: at + 1.4, anim: "fade" }));
+    ["n = 560", "*P* = 3 × 10⁻⁴²", "C-index 0.78"].forEach((s, i) => ga.text(s, { x: ch.x0 + 10, y: ch.sy(0.3) + i * 17, role: "cap", size: 13, at: at + 1.4, anim: "fade" }));
     note(c, "Risk quartiles are ordered and carry valence: benefit 700 and 400, harm 400 and 700. Ticks mark censoring; n, the log-rank P and the C-index sit in the empty corner.");
   }
 
@@ -106,8 +106,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
   // 15 predicted vs observed: density bins, identity line, marginal strips
   {
     const c = cell(2); head(c, 15, "PREDICTED VS OBSERVED");
-    const ch = GA.chart(ga, { x: c.x + 44, y: c.T + 100, w: 142, h: 142, xd: [1, 5], yd: [1, 5], xTicks: [1, 3, 5], yTicks: [1, 3, 5], xTitle: "Measured (g/dL)", at });
-    ga.text("Predicted (g/dL)", { x: ch.x0, y: c.T + 34, role: "axis", at, anim: "fade" });
+    const ch = GA.chart(ga, { x: c.x + 44, y: c.T + 100, w: 142, h: 142, xd: [1, 5], yd: [1, 5], xTicks: [1, 3, 5], yTicks: [1, 3, 5], xTitle: "Measured (g/dL)", yTitle: "Predicted (g/dL)", at });
     const pts = Array.from({ length: 5000 }, () => {
       const x = rnd() < 0.8 ? normal(3.9, 0.35) : normal(3.0, 0.6);
       return [x, 0.75 * x + 0.95 + normal(0, 0.22)];
@@ -126,7 +125,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
   // 16 dumbbell: exact P, values at the ends
   {
     const c = cell(3); head(c, 16, "DUMBBELL, PAIRED COMPARISON");
-    const ch = GA.chart(ga, { x: c.x + 172, y: c.T + 62, w: CW - 282, h: 170, xd: [0.5, 0.9], xTicks: [0.5, 0.7, 0.9], xFmt: (v) => v.toFixed(2).replace(/^0/, ""), xTitle: "C-index", axes: "x", at });
+    const ch = GA.chart(ga, { x: c.x + 172, y: c.T + 62, w: CW - 282, h: 170, xd: [0.5, 0.9], xTicks: [0.5, 0.7, 0.9], xFmt: (v) => v.toFixed(2), xTitle: "C-index", axes: "x", at });
     ch.dumbbell([
       { label: "Ovarian, NACT (227)", a: 0.59, b: 0.64, p: 0.16 },
       { label: "Renal cell (285)", a: 0.62, b: 0.67, p: 0.13 },
@@ -160,7 +159,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 03, 15, 16", desc:
     const pitch = 30;
     multiples.forEach((g, k) => {
       const x = c.x + k * SW + 196, w = SW - 196 - 64, h = g.rows.length * pitch;
-      const ch = GA.chart(ga, { x, y: c.T + 90, w, h, xd: [0.6, 0.8], xTicks: [0.6, 0.7, 0.8], xFmt: (v) => v.toFixed(1).replace(/^0/, ""), xTitle: k === multiples.length - 1 ? "C-index" : undefined, axes: "x", at });
+      const ch = GA.chart(ga, { x, y: c.T + 90, w, h, xd: [0.6, 0.8], xTicks: [0.6, 0.7, 0.8], xFmt: (v) => v.toFixed(1), xTitle: k === multiples.length - 1 ? "C-index" : undefined, axes: "x", at });
       ga.text(g.name, { x: c.x + k * SW, y: c.T + 58, role: "label", size: 15, at, anim: "fade" });
       ch.dumbbell(g.rows, { pitch, p: "stars", pRight: x + w + 28 });
       if (k === 0) ch.dotKey([{ label: "before treatment", color: "var(--context)" }, { label: "on treatment", color: "var(--prussian)" }], { x: c.x + 196, y: c.T + 26 });

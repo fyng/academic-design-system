@@ -72,7 +72,7 @@
       put(mn.x - tick-len, mn.y + mn.h - f * mn.h, line(length: tick-len, stroke: axes))
       put(mn.x - tick-len - m.kgap - m.yw, mn.y + mn.h - f * mn.h - cap-tick / 2, box(width: m.yw, align(right, tick(s))))
     }
-    put(mn.x, ah - m.edge - desc - cap-title, box(width: mn.w, align(right, axis[Measured (g/dL)])))
+    put(mn.x, ah - m.edge - desc - cap-title, box(width: mn.w, align(center, axis[Measured (g/dL)])))
     put(0mm, mn.y, band-label(2 * m.edge + cap-title, mn.h, axis[Predicted (g/dL)]))
     // top strip: histogram of x, bars in context grey, one tick at the peak
     let bw = mn.w / n

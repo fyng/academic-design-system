@@ -15,10 +15,11 @@ nothing.
 
 - No ticks, no frame and no gridlines. An **axis stub** at the bottom-left corner,
   two 34 px `ink-2` arms with open heads, names the projection ("UMAP 1", "UMAP 2").
-- Points are small and ringless (r 2, 75–80 % opacity), drawn in shuffled order so
-  no group always sits on top; grey points go first.
+- Points are small and ringless (r 1.6–2.2, smaller in smaller views; 75–85 %
+  opacity), drawn in shuffled order so no group always sits on top; grey points go
+  first.
 - **Colour** follows `../../color.md`: identity slots in order; a lineage or ordered
-  states take the ordinal steps of one ramp (400–800); an eighth type folds into
+  states take steps of one ramp; an eighth type folds into
   `context` and keeps its name.
 - **Names replace the legend.** Each group's name sits at the edge of its cloud in
   its text step, with a 3 px paper halo where it crosses points. A legend (dots and

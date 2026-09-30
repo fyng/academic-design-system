@@ -47,7 +47,11 @@ ch.label("carriers", 24, 0.08, { dx: 10, color: "var(--harm-text)" });
 
 `x, y, w, h` place the **plot area**; titles and ticks sit outside it. All chart text
 goes through `ga.text`, so the lint covers it, and a label sitting on a curve fails the
-render. `axes: "x"`, `"y"` or `""` keeps only those axes.
+render. `axes: "x"`, `"y"` or `""` keeps only those axes. Axis titles are centred on
+their axis: `xTitle` under the tick labels, `yTitle` reading upward left of the widest
+y tick label (`yTitleX` sets its baseline instead). Leave the plot's `x` enough room
+on the left for it. On a chart with no y axis line, `yTitle` is a heading above the
+plot, left-aligned at `yTitleX`.
 
 | Mark | Form (`../core/charts/forms/`) |
 |---|---|
@@ -69,7 +73,7 @@ render. `axes: "x"`, `"y"` or `""` keeps only those axes.
 | `cloud`, `stub`, `label` (`halo`) | Embedding points, the axis stub, names on the cloud ([20](../core/charts/forms/20-labelled-embedding.md)) |
 | `region`, `frame`, `callouts`, `GA.leaders` | An atlas's zoom: source frame, inset frame, named points in a column, corner-to-corner leaders ([20](../core/charts/forms/20-labelled-embedding.md)); a named part of a bar ([08](../core/charts/forms/08-composition-bars.md)) |
 | `GA.radial` → `sectors`, `bars`, `ring`, `key` | Radial track stack ([21](../core/charts/forms/21-radial-track-stack.md)) |
-| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind, fill for class, ring for role, a digit or letter inside; keys with glyph, bar and line rows (`../core/charts/README.md`, *Glyphs*) |
+| `GA.glyph`, `GA.glyphKey` | Glyphs: shape for kind (`circle`, `diamond`, `square`, `x` for death, `tick` for censoring), fill for class, ring for role, a digit or letter inside; keys with glyph, bar and line rows (`../core/charts/README.md`, *Glyphs*) |
 | `GA.bio` → `body`, `bubbles`, `dial` | Body map with site bubbles or region dials ([22](../core/charts/forms/22-body-map.md)); needs `anatomy.js` |
 | `GA.routes`, `GA.cloneTree` | Route map ([23](../core/charts/forms/23-route-map.md)) and clone tree ([24](../core/charts/forms/24-clone-tree.md)) |
 | `swimmer` | Swimmer plot, the follow-up line carrying relapse ([25](../core/charts/forms/25-swimmer-plot.md)) |

@@ -65,7 +65,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 25, 26", desc: "A 
       { kind: "diamond", fill: "var(--prussian)", text: "4", size: 13, label: "surgery (regions)" },
       { kind: "diamond", fill: "var(--ink)", size: 8, label: "radiotherapy" },
       { kind: "circle", fill: "var(--ink-2)", size: 9, label: "biopsy (site colour)" },
-      { kind: "tick", size: 12, label: "death" },
+      { kind: "x", size: 11, label: "death" },
     ], { x: kx, y: ky + 12, title: "Event", at });
     GA.glyphKey(ga, [{ bar: tx.chemo, label: "chemotherapy" }, { bar: tx.immuno, label: "immunotherapy" }, { bar: tx.targeted, label: "targeted" }], { x: kx, y: ky + 12, title: "Treatment", at });
     const key = (title, labels, cols, xx) => GA.glyphKey(ga, labels.map((l, i) => ({ kind: "square", fill: cols[i], size: 10, ring: cols[i] === tok("wash") ? "var(--context)" : undefined, ringW: 1, label: l })), { x: xx, y: ch.y1 + 58, pitch: 18, title, at });
@@ -73,7 +73,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 25, 26", desc: "A 
     key("Stage", ["I", "II", "III"], stage, x + 130);
     key("Smoking", ["never", "ex", "current"], smoke, x + 240);
     GA.glyphKey(ga, siteKeys.map((k) => ({ kind: "circle", fill: site[k], size: 9, label: k === "other" ? "other site" : k })), { x: x + 370, y: ch.y1 + 58, pitch: 18, title: "Autopsy sample", at });
-    note(x, 960, "One row per patient, shortest survival first. The line carries the disease state: a hairline until relapse, heavier after it. Few glyphs: a diamond for a procedure (surgery, with the regions sampled inside), a circle for every sample, a tick for death; treatments are slate bars. Colour has one job, the sampled site as on the body map: biopsies sit on the line, autopsy samples after its end.");
+    note(x, 960, "One row per patient, shortest survival first. The line carries the disease state: thin until relapse, heavier after it. Few glyphs: a diamond for a procedure (surgery, with the regions sampled inside), a circle for every sample, an x for death; treatments are slate bars. Colour has one job, the sampled site as on the body map: biopsies sit on the line, autopsy samples after its end.");
   }
 
   // 26 unit columns: metastases per patient, by what was done with each
@@ -84,7 +84,7 @@ GA.build({ duration: 8, poster: 7.5, title: "kare chart forms 25, 26", desc: "A 
       const tot = 2 + Math.round(j * 1.25 + rnd() * 3), both = Math.round(tot * (0.3 + 0.4 * rnd())), smp = Math.round((tot - both) * rnd());
       return { label: `P-${String(11 + j * 7).padStart(2, "0")}`, parts: [both, smp, tot - both - smp], tot };
     }).sort((a, b) => a.tot - b.tot);
-    const ch = GA.chart(ga, { x: x + 34, y: T + 100, w: 360, h: 360, xd: [-0.5, 13.5], yd: [0, 20], yTicks: [0, 5, 10, 15, 20], yTitle: "Metastases", axes: "y", at });
+    const ch = GA.chart(ga, { x: x + 54, y: T + 100, w: 360, h: 360, xd: [-0.5, 13.5], yd: [0, 20], yTicks: [0, 5, 10, 15, 20], yTitle: "Metastases", axes: "y", at });
     ch.units(cols, [tok("prussian"), tok("blue-200"), "hollow"]);
     const kx = ch.dotKey([{ label: "imaged and sampled", color: tok("prussian") }, { label: "sampled only", color: tok("blue-200") }], { x, y: T + 26 });
     ga.raw(GA.glyph("circle", kx + 6, T + 34, { size: 11, fill: "var(--paper)", ring: "var(--ink-2)", ringW: 1 }), { at, anim: "fade" });

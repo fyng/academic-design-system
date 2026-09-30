@@ -100,7 +100,7 @@ GA.build({ duration: 6, poster: 5.5, title: "kare colour specimens", desc: "Neut
   strip(204, seq("teal"), "quantity (default)", "teal");
   strip(262, seq("vermilion"), "harm: risk, toxicity", "vermilion");
   strip(320, seq("blue"), "benefit: response", "blue");
-  ga.text("Continuous fields use 100–900. Discrete ordered classes use 400–800 (every class ≥ 2:1 on paper).", { x: c3.x0, y: 372, w: c3.w, role: "cap", size: 14, at });
+  ga.text("Continuous fields use 100–900. Discrete ordered classes take steps from anywhere in 100–900 (400 and darker are ≥ 2:1 on paper).", { x: c3.x0, y: 372, w: c3.w, role: "cap", size: 14, at });
 
   sub(c3, 450, "Diverging: two arms, grey midpoint");
   const div = (a, b) => [...[800, 700, 600, 500, 400, 300, 200].map((s) => tok(`${a}-${s}`)), tok("wash"), ...[200, 300, 400, 500, 600, 700, 800].map((s) => tok(`${b}-${s}`))];

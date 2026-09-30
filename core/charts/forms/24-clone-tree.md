@@ -18,7 +18,8 @@ metastases.
 - Nodes are 16 px circle glyphs (*Glyphs*). **Fill is where the clone lives**:
   trunk `context`, shared `blue-300`, primary-unique `blue-700`, metastasis-unique
   `teal-500`. Beside a route map, seeding clones and their metastatic descendants
-  take their lineage's colour instead (23).
+  take their lineage's colour instead (23), and the route map draws its sites with
+  the same dots, so a fill means the same clone in both panels.
 - **Ring and letter are its seeding role**: P with a 2.5 px `ink` ring for a clone
   that seeds from the primary, M with a 2.5 px `muted` ring for one that seeds from a
   metastasis.

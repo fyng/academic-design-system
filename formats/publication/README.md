@@ -95,9 +95,9 @@ baseline, and descenders hang 0.5 mm below.
   9.9 mm.
 - Titles sit against the cell edge and tick text against the ticks, so both keep
   their place when labels change.
-- The y title reads upward, rotated in the left margin and centred on the axis; the
-  x title is right-aligned under the ticks. The rotated y title is this format's
-  rule; core keeps it horizontal above the axis (`../../core/charts/README.md`).
+- Axis titles are centred on their axis, as in core (`../../core/charts/README.md`,
+  *Frame*): the y title reads upward, rotated in the left margin; the x title sits
+  under the tick labels.
 - `specimen-panel.typ` draws the reference panel at 5× with each distance
   dimensioned (`out/specimen-panel.pdf`, `.png`). `margins()` in `spec-lib.typ`
   computes the margins from the measured tick labels; the figure specimen shares it.
@@ -192,7 +192,7 @@ PNG. The constants are in `spec-lib.typ`.
 | Group header row, above each group's first track | 2.5 |
 | Track label to the value ticks, or to the plot | 1.0 |
 
-- One shared axis, on top when the stack reads in time; the x title right-aligns
+- One shared axis, on top when the stack reads in time; the x title is centred on it,
   above the tick labels. The bottom margin is then the edge gap alone.
 - Track labels (6 pt, 400, ink) right-align in a label column. The column is as wide
   as the widest label and grows the left margin; wrap a long label onto two lines
@@ -286,10 +286,9 @@ The legend is the figure's text, set in the paper, not in the figure.
 - Show each observation where n allows (form 09); journals ask for individual points
   at small n, and Nature journals for points or box plots from n > 5.
 - Say in the legend what every error bar is.
-- Nature journals keep the leading zero on every decimal (C-index 0.78,
-  *P* = 0.16), which overrides the core rule for bounded metrics
-  (`../../core/typography.md`). The ticks on one axis share their decimal places
-  (0.50, 0.75, 1.00).
+- Every decimal keeps its leading zero (C-index 0.78, *P* = 0.16), as the core rule
+  (`../../core/typography.md`) and Nature journals both ask. The ticks on one axis
+  share their decimal places (0.50, 0.75, 1.00).
 - A statistics block inside the plot area (n, *P*, C-index) takes the `tick` role,
   5 pt, so it fits a small panel's empty corner.
 - Give exact *P* values in the figure (`../../core/typography.md`). In a dense

@@ -14,7 +14,7 @@ is one patient's record in depth; the swimmer plot is every patient's in outline
 
 - Rows sort by survival (or follow-up), shortest first. The follow-up line runs from
   time 0 to the row's end and **carries the disease state**: 1.5 px `rule` until
-  relapse, 2.5 px `ink-2` after it. A death ends the row with a tick.
+  relapse, 2.5 px `ink-2` after it. A death ends the row with an x.
 - Few glyphs (*Glyphs*): surgery a `prussian` diamond with the number of regions
   sampled inside; radiotherapy a small `ink` diamond; every sample a circle.
 - Treatments, adjuvant ones included, are 8 px bars on the line, square-cornered.

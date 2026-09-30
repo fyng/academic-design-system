@@ -5,7 +5,7 @@
 //
 // Checks: every chart form file has valid front matter, a name of 1-3 words that
 // matches its file name, existing specimens, kit calls that exist in kit/, and
-// see_also ids that exist; every path written in backticks or linked in a doc
+// see_also ids that exist and link both ways; every path written in backticks or linked in a doc
 // resolves; every kit specimen has its rendered PNG.
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
@@ -91,6 +91,12 @@ forms.forEach((f, i) => {
   if (Number(f.n) !== i + 1) fail(f.file, `form numbers should run 01, 02, … without gaps; found ${f.n} at position ${i + 1}`);
   for (const s of f.see_also || []) if (!ids.has(s)) fail(f.file, `see_also ${s} is not a form`);
 });
+// see_also runs both ways: a form that points at another is pointed back at
+const byId = new Map(forms.map((f) => [f.id, f]));
+for (const f of forms) for (const s of f.see_also || []) {
+  const g = byId.get(s);
+  if (g && !(g.see_also || []).includes(f.id)) fail(g.file, `see_also lacks ${f.id}, which lists ${g.id}`);
+}
 
 // ---- paths in docs ------------------------------------------------------------------
 // Paths that live in a consuming project, not here.
